@@ -118,7 +118,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 24px 8px;
+      padding: 16px 24px 10px;
     }
     .top-nav__location {
       display: flex;
@@ -128,6 +128,7 @@
       font-size: 13px;
       font-weight: 500;
       color: var(--color-text-2);
+      margin-bottom: 4px;
     }
     .top-nav__app {
       font-family: var(--font-head);
@@ -142,7 +143,7 @@
       font-size: 14px;
       font-weight: 400;
       color: var(--color-text-2);
-      margin-top: 4px;
+      margin-top: 6px;
       letter-spacing: 0;
     }
     .top-nav__greeting .greeting-name {
@@ -1977,6 +1978,8 @@
       border: 1.8px solid #CBD5E1;
       background: #fff;
       transition: all .15s ease;
+      flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
     }
     .rec-check--done {
       background: var(--color-primary);
@@ -2713,9 +2716,7 @@
               </svg>
             </div>
             <div class="rec-text"><em>減少戶外活動</em>，尤其早上 7–9 時花粉濃度最高</div>
-            <div class="rec-check rec-check--done">
-              <svg width="11" height="8" viewBox="0 0 11 8"><path d="M1 4L4 7L10 1" stroke="#15803D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </div>
+            <div class="rec-check rec-check--done"></div>
           </div>
           <div class="rec-item">
             <div class="rec-icon rec-icon--amber">
@@ -3035,25 +3036,6 @@
       <div class="page-header__subtitle">基於 30 天個人過敏日誌 • AI 建模</div>
     </div>
 
-    <!-- 城市選擇器 -->
-    <div class="city-selector-row">
-      <svg width="13" height="16" viewBox="0 0 13 16" fill="none" style="flex-shrink:0">
-        <path d="M6.5 0C4.0147 0 2 2.0147 2 4.5C2 7.8 6.5 13 6.5 13C6.5 13 11 7.8 11 4.5C11 2.0147 8.9853 0 6.5 0ZM6.5 6C5.6716 6 5 5.3284 5 4.5C5 3.6716 5.6716 3 6.5 3C7.3284 3 8 3.6716 8 4.5C8 5.3284 7.3284 6 6.5 6Z" fill="#4C7DFF"/>
-      </svg>
-      <select class="city-select" id="citySelect" onchange="onCityChange(this.value)">
-        <option value="台中" selected>台中</option>
-        <option value="台北">台北</option>
-        <option value="新北">新北</option>
-        <option value="桃園">桃園</option>
-        <option value="新竹">新竹</option>
-        <option value="台南">台南</option>
-        <option value="高雄">高雄</option>
-        <option value="嘉義">嘉義</option>
-        <option value="花蓮">花蓮</option>
-        <option value="台東">台東</option>
-      </select>
-      <span class="city-data-status" id="cityDataStatus">資料載入中…</span>
-    </div>
 
     <!-- Time Tabs -->
     <div class="tab-bar" id="analysisTabBar">
@@ -3494,7 +3476,7 @@
             </div>
           </div>
 
-          <div class="forgot-link">忘記密碼？</div>
+          <div class="forgot-link" onclick="openForgotModal()">忘記密碼？</div>
 
           <div id="login-error" style="display:none;padding:10px 14px;border-radius:12px;font-size:13px;color:#DC2626;background:#FEE2E2;margin-bottom:4px;"></div>
           <button class="btn-primary" id="login-submit-btn" onclick="trySupabaseLogin();this.style.transform='scale(0.97)';setTimeout(()=>this.style.transform='',150)">
@@ -3506,28 +3488,6 @@
         </div>
 
         <!-- Divider -->
-        <div class="or-divider">
-          <div class="or-line"></div>
-          <div class="or-text">或使用以下方式</div>
-          <div class="or-line"></div>
-        </div>
-
-        <!-- Social Buttons -->
-        <div class="social-btns">
-          <button class="btn-social" onclick="handleGoogleLogin()">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <path d="M14.5 9.2c0-.1 0-.2 0-.3H9v2.5h3.1c-.1.7-.6 1.8-1.6 2.5h0c-1 .7-2.3.9-3.5.5-1.7-.5-3-1.8-3.5-3.5-.9-2.9 1-5.9 3.9-6.8 1.3-.4 2.7-.3 3.9.3l1.9-1.9C11.6 1.4 9.1.7 6.6 1.2 2.8 2.2.3 5.8 1.3 9.6 2.1 13.1 5.4 15.5 9 15.5c2.1 0 4.1-.7 5.5-2.1 1.3-1.3 2-3.3 0-4.2z" fill="#4285F4"/>
-            </svg>
-            Google
-          </button>
-          <button class="btn-social" data-nav-target="screen-home" onclick="setLoginState(true)">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <path d="M13.2 9.1c0-2.2 1.8-3.3 1.9-3.3-1-1.5-2.6-1.7-3.2-1.8-1.4-.1-2.7.8-3.4.8-.7 0-1.8-.8-3-.8C3.9 4 2 5.3 2 8.3c0 1.8.7 3.7 1.6 5 .8 1.1 1.5 2.2 2.6 2.2 1 0 1.4-.7 2.7-.7 1.3 0 1.7.7 2.7.6 1.1 0 1.8-1.1 2.5-2.2.8-1.2 1.1-2.4 1.1-2.4s-2-.8-2-3.7zM11 3.2C11.6 2.5 12 1.5 11.8.5c-1 0-2.1.6-2.8 1.4-.6.7-1.1 1.8-.9 2.8 1 0 2.1-.6 2.9-1.5z" fill="#1A1F36"/>
-            </svg>
-            Apple
-          </button>
-        </div>
-
         <!-- Footer -->
         <div class="login-footer" onclick="handleRegisterRedirect()">
           還沒有帳號？<strong>立即免費註冊</strong>
@@ -4471,7 +4431,7 @@
         <div class="input-group">
           <label class="input-label">電子郵件</label>
           <div class="input-wrap">
-            <input type="email" class="input-field input-field--active" value="user@allersense.app" readonly/>
+            <input type="email" id="modal-login-email" class="input-field" placeholder="輸入電子郵件" autocomplete="email"/>
             <div class="input-icon">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <rect x="2" y="4" width="14" height="10" rx="2" stroke="#A0ADBF" stroke-width="1.5"/>
@@ -4483,7 +4443,7 @@
         <div class="input-group">
           <label class="input-label">密碼</label>
           <div class="input-wrap">
-            <input type="password" class="input-field" value="password123" readonly/>
+            <input type="password" id="modal-login-password" class="input-field" placeholder="輸入密碼" autocomplete="current-password"/>
             <div class="input-icon">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <rect x="4" y="8" width="10" height="8" rx="2" stroke="#A0ADBF" stroke-width="1.5"/>
@@ -4494,34 +4454,153 @@
           </div>
         </div>
         <div class="forgot-link">忘記密碼？</div>
-        <button class="btn-primary" onclick="trySupabaseLogin();setLoginState(true);closeLoginModal();">
+        <div id="modal-login-error" style="display:none;padding:10px 14px;border-radius:12px;font-size:13px;color:#DC2626;background:#FEE2E2;margin-bottom:4px;"></div>
+        <button class="btn-primary" id="modal-login-submit-btn" onclick="tryModalLogin();this.style.transform='scale(0.97)';setTimeout(()=>this.style.transform='',150)">
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
             <path d="M9 2a5 5 0 00-5 5v1H3a1 1 0 00-1 1v6a1 1 0 001 1h12a1 1 0 001-1V9a1 1 0 00-1-1h-1V7a5 5 0 00-5-5zm3 6H6V7a3 3 0 016 0v1z" fill="white"/>
           </svg>
           登入
         </button>
       </div>
-      <div class="or-divider">
-        <div class="or-line"></div>
-        <div class="or-text">或使用以下方式</div>
-        <div class="or-line"></div>
-      </div>
-      <div class="social-btns">
-        <button class="btn-social" onclick="handleGoogleLogin()">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path d="M14.5 9.2c0-.1 0-.2 0-.3H9v2.5h3.1c-.1.7-.6 1.8-1.6 2.5h0c-1 .7-2.3.9-3.5.5-1.7-.5-3-1.8-3.5-3.5-.9-2.9 1-5.9 3.9-6.8 1.3-.4 2.7-.3 3.9.3l1.9-1.9C11.6 1.4 9.1.7 6.6 1.2 2.8 2.2.3 5.8 1.3 9.6 2.1 13.1 5.4 15.5 9 15.5c2.1 0 4.1-.7 5.5-2.1 1.3-1.3 2-3.3 0-4.2z" fill="#4285F4"/>
-          </svg>
-          Google
-        </button>
-        <button class="btn-social" onclick="handleGoogleLogin()">
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path d="M13.2 9.1c0-2.2 1.8-3.3 1.9-3.3-1-1.5-2.6-1.7-3.2-1.8-1.4-.1-2.7.8-3.4.8-.7 0-1.8-.8-3-.8C3.9 4 2 5.3 2 8.3c0 1.8.7 3.7 1.6 5 .8 1.1 1.5 2.2 2.6 2.2 1 0 1.4-.7 2.7-.7 1.3 0 1.7.7 2.7.6 1.1 0 1.8-1.1 2.5-2.2.8-1.2 1.1-2.4 1.1-2.4s-2-.8-2-3.7zM11 3.2C11.6 2.5 12 1.5 11.8.5c-1 0-2.1.6-2.8 1.4-.6.7-1.1 1.8-.9 2.8 1 0 2.1-.6 2.9-1.5z" fill="#1A1F36"/>
-          </svg>
-          Apple
-        </button>
-      </div>
       <div class="login-footer" onclick="handleRegisterRedirect()">
         還沒有帳號？<strong>立即免費註冊</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 註冊 Modal（1024px+ 桌機用）-->
+<div class="login-modal-overlay" id="registerModalOverlay">
+  <div class="login-modal" id="registerModal">
+    <button class="login-modal__close" onclick="closeRegisterModal()" aria-label="關閉">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M1 1l12 12M13 1L1 13" stroke="#64748B" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div class="login-wrap">
+      <div class="login-hero">
+        <div class="login-logo-mark">
+          <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+            <path d="M20 6C13.4 6 8 11.4 8 18c0 4.4 2.3 8.3 5.7 10.6V32h12.6v-3.4C29.7 26.3 32 22.4 32 18c0-6.6-5.4-12-12-12z" fill="rgba(255,255,255,.9)"/>
+            <path d="M16 22h8M20 12v6" stroke="#4C7DFF" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="login-app-name">Aller<span>Sense</span></div>
+        <div class="login-tagline">建立帳號，開始你的個人化過敏管理</div>
+      </div>
+      <div class="login-section-title">建立帳號 ✨</div>
+      <div class="login-section-sub">填寫以下資訊，免費開始使用</div>
+      <div class="login-form">
+        <div class="input-group">
+          <label class="input-label">暱稱（選填）</label>
+          <div class="input-wrap">
+            <input type="text" id="register-name" class="input-field" placeholder="你想讓我們怎麼稱呼你？" autocomplete="nickname"/>
+            <div class="input-icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="7" r="3.5" stroke="#A0ADBF" stroke-width="1.5"/>
+                <path d="M2.5 16c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5" stroke="#A0ADBF" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">電子郵件</label>
+          <div class="input-wrap">
+            <input type="email" id="register-email" class="input-field" placeholder="your@email.com" autocomplete="email"/>
+            <div class="input-icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="2" y="4" width="14" height="10" rx="2" stroke="#A0ADBF" stroke-width="1.5"/>
+                <path d="M2 7l7 4.5L16 7" stroke="#A0ADBF" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">密碼（至少 6 位）</label>
+          <div class="input-wrap">
+            <input type="password" id="register-password" class="input-field" placeholder="設定密碼" autocomplete="new-password"/>
+            <div class="input-icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="4" y="8" width="10" height="8" rx="2" stroke="#A0ADBF" stroke-width="1.5"/>
+                <path d="M6 8V6a3 3 0 016 0v2" stroke="#A0ADBF" stroke-width="1.5" stroke-linecap="round"/>
+                <circle cx="9" cy="12" r="1.2" fill="#A0ADBF"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="input-group">
+          <label class="input-label">確認密碼</label>
+          <div class="input-wrap">
+            <input type="password" id="register-password-confirm" class="input-field" placeholder="再輸入一次密碼" autocomplete="new-password"/>
+            <div class="input-icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="4" y="8" width="10" height="8" rx="2" stroke="#A0ADBF" stroke-width="1.5"/>
+                <path d="M6 8V6a3 3 0 016 0v2" stroke="#A0ADBF" stroke-width="1.5" stroke-linecap="round"/>
+                <circle cx="9" cy="12" r="1.2" fill="#A0ADBF"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div id="register-error" style="display:none;padding:10px 14px;border-radius:12px;font-size:13px;color:#DC2626;background:#FEE2E2;"></div>
+        <div id="register-success" style="display:none;padding:10px 14px;border-radius:12px;font-size:13px;color:#15803D;background:#F0FDF4;"></div>
+        <button class="btn-primary" id="register-submit-btn" onclick="tryModalRegister();this.style.transform='scale(0.97)';setTimeout(()=>this.style.transform='',150)">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M9 2a7 7 0 100 14A7 7 0 009 2zm3.5 7.75h-2.75V12.5h-1.5V9.75H5.5v-1.5h2.75V5.5h1.5v2.75H12.5v1.5z" fill="white"/>
+          </svg>
+          建立帳號
+        </button>
+      </div>
+      <div class="login-footer" onclick="closeRegisterModal();openLoginModal()">
+        已有帳號？<strong>直接登入</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 忘記密碼 Modal -->
+<div class="login-modal-overlay" id="forgotModalOverlay">
+  <div class="login-modal" id="forgotModal" style="width:400px;">
+    <button class="login-modal__close" onclick="closeForgotModal()" aria-label="關閉">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M1 1l12 12M13 1L1 13" stroke="#64748B" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div class="login-wrap" style="padding-bottom:28px;">
+      <div class="login-hero" style="padding:32px 20px 20px;">
+        <div class="login-logo-mark" style="width:60px;height:60px;border-radius:18px;">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="14" width="24" height="16" rx="3.5" fill="rgba(255,255,255,.9)"/>
+            <path d="M10 14v-4a6 6 0 0112 0v4" stroke="rgba(255,255,255,.9)" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="16" cy="22" r="2" fill="#4C7DFF"/>
+          </svg>
+        </div>
+        <div class="login-app-name" style="font-size:22px;">重設密碼</div>
+        <div class="login-tagline">輸入你的 Email，我們會寄送重設連結</div>
+      </div>
+      <div class="login-form">
+        <div class="input-group">
+          <label class="input-label">電子郵件</label>
+          <div class="input-wrap">
+            <input type="email" id="forgot-email" class="input-field" placeholder="your@email.com" autocomplete="email"/>
+            <div class="input-icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <rect x="2" y="4" width="14" height="10" rx="2" stroke="#A0ADBF" stroke-width="1.5"/>
+                <path d="M2 7l7 4.5L16 7" stroke="#A0ADBF" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div id="forgot-error" style="display:none;padding:10px 14px;border-radius:12px;font-size:13px;color:#DC2626;background:#FEE2E2;"></div>
+        <div id="forgot-success" style="display:none;padding:10px 14px;border-radius:12px;font-size:13px;color:#15803D;background:#F0FDF4;line-height:1.6;"></div>
+        <button class="btn-primary" id="forgot-submit-btn" onclick="tryForgotPassword();this.style.transform='scale(0.97)';setTimeout(()=>this.style.transform='',150)">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M2 9l5 5L16 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+          寄送重設連結
+        </button>
+      </div>
+      <div class="login-footer" onclick="closeForgotModal()">
+        想起來了？<strong>返回登入</strong>
       </div>
     </div>
   </div>
@@ -5824,9 +5903,41 @@
   function closeLoginModal() {
     document.getElementById('loginModalOverlay').classList.remove('login-modal-overlay--visible');
   }
-  // 點擊遮罩關閉
   document.getElementById('loginModalOverlay').addEventListener('click', e => {
     if (!document.getElementById('loginModal').contains(e.target)) closeLoginModal();
+  });
+
+  function openRegisterModal() {
+    document.getElementById('registerModalOverlay').classList.add('login-modal-overlay--visible');
+  }
+  function closeRegisterModal() {
+    document.getElementById('registerModalOverlay').classList.remove('login-modal-overlay--visible');
+    // 清空欄位與訊息
+    ['register-name','register-email','register-password','register-password-confirm'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = '';
+    });
+    ['register-error','register-success'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.style.display = 'none';
+    });
+  }
+  document.getElementById('registerModalOverlay').addEventListener('click', e => {
+    if (!document.getElementById('registerModal').contains(e.target)) closeRegisterModal();
+  });
+
+  function openForgotModal() {
+    document.getElementById('forgotModalOverlay').classList.add('login-modal-overlay--visible');
+  }
+  function closeForgotModal() {
+    document.getElementById('forgotModalOverlay').classList.remove('login-modal-overlay--visible');
+    const el = document.getElementById('forgot-email'); if (el) el.value = '';
+    ['forgot-error','forgot-success'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.style.display = 'none';
+    });
+    const btn = document.getElementById('forgot-submit-btn');
+    if (btn) { btn.disabled = false; btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 9l5 5L16 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> 寄送重設連結'; }
+  }
+  document.getElementById('forgotModalOverlay').addEventListener('click', e => {
+    if (!document.getElementById('forgotModal').contains(e.target)) closeForgotModal();
   });
 
   function showScreen(targetId) {
@@ -6077,7 +6188,7 @@
   })();
 
   /* ─── Rec-check as checkbox（白勾勾） ─── */
-  const checkSvg = '<svg width="13" height="10" viewBox="0 0 11 8"><path d="M1 4L4 7L10 1" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const checkSvg = '<svg width="13" height="10" viewBox="0 0 11 8"><path d="M1 4L4 7L10 1" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   function toggleRecCheck(check) {
     if (check.classList.contains('rec-check--done')) {
       check.classList.remove('rec-check--done');
@@ -6089,7 +6200,6 @@
   }
 
   document.querySelectorAll('.rec-check').forEach(check => {
-    // 初始化已勾選者
     if (check.classList.contains('rec-check--done')) check.innerHTML = checkSvg;
   });
 
@@ -6307,7 +6417,7 @@
       badge.textContent = '訪客模式';
       badge.style.cssText = 'background:rgba(255,255,255,.2);color:rgba(255,255,255,.85)';
       const btn = card.querySelector('.profile-edit-btn');
-      btn.style.cssText = 'padding:6px 14px;width:auto;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;gap:0;';
+      btn.style.cssText = 'padding:6px 16px;width:auto;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;gap:0;background:#fff;color:var(--color-primary);border-color:transparent;box-shadow:0 2px 8px rgba(0,0,0,.12);';
       btn.onclick = () => showScreen('screen-login');
       btn.textContent = '登入';
     }
@@ -6564,6 +6674,7 @@
 <!-- Fallback：Supabase 未載入時這些函式仍存在，不會讓 onclick 報錯 -->
 <script>
   window.trySupabaseLogin   = function(){};
+  window.tryModalLogin      = function(){};
   window.handleGoogleLogin  = function(){ setLoginState(true); showScreen('screen-home'); };
   window.handleRegisterRedirect = function(){ showScreen('screen-login'); };
 </script>
@@ -6578,9 +6689,34 @@ window.trySupabaseLogin = async function() {
   if (!email || !password) { showErr('請填寫帳號和密碼'); return; }
   showErr('Supabase 尚未載入，請重新整理頁面');
 };
+window.tryModalLogin = async function() {
+  const email    = (document.getElementById('modal-login-email')?.value    || '').trim();
+  const password = (document.getElementById('modal-login-password')?.value || '');
+  const errEl    = document.getElementById('modal-login-error');
+  function showErr(msg) { if(errEl){ errEl.textContent=msg; errEl.style.display=msg?'block':'none'; } }
+  if (!email || !password) { showErr('請填寫帳號和密碼'); return; }
+  showErr('Supabase 尚未載入，請重新整理頁面');
+};
+window.tryModalRegister = async function() {
+  const errEl  = document.getElementById('register-error');
+  const okEl   = document.getElementById('register-success');
+  function showErr(msg) { if(errEl){ errEl.textContent=msg; errEl.style.display=msg?'block':'none'; } if(okEl) okEl.style.display='none'; }
+  showErr('Supabase 尚未載入，請重新整理頁面');
+};
+window.tryForgotPassword = async function() {
+  const errEl = document.getElementById('forgot-error');
+  const okEl  = document.getElementById('forgot-success');
+  function showErr(msg) { if(errEl){ errEl.textContent=msg; errEl.style.display=msg?'block':'none'; } if(okEl) okEl.style.display='none'; }
+  showErr('Supabase 尚未載入，請重新整理頁面');
+};
 window.handleGoogleLogin    = function() {};
 window.handleRegisterRedirect = function() {
-  if (typeof showScreen === 'function') showScreen('screen-login');
+  if (window.innerWidth >= 1024) {
+    if (typeof closeLoginModal   === 'function') closeLoginModal();
+    if (typeof openRegisterModal === 'function') openRegisterModal();
+  } else {
+    if (typeof showScreen === 'function') showScreen('screen-login');
+  }
 };
 
 (function() { try {
@@ -6721,6 +6857,62 @@ window.handleRegisterRedirect = function() {
     }
   };
 
+  /* ── 桌機 Modal 登入主流程 ── */
+  function showModalError(msg) {
+    const el = document.getElementById('modal-login-error');
+    if (!el) return;
+    el.textContent = msg;
+    el.style.display = msg ? 'block' : 'none';
+  }
+  function setModalLoading(on) {
+    const btn = document.getElementById('modal-login-submit-btn');
+    if (!btn) return;
+    btn.disabled = on;
+    btn.textContent = on ? '登入中…' : '🔒 登入';
+  }
+
+  window.tryModalLogin = async function () {
+    const email    = (document.getElementById('modal-login-email')?.value    || '').trim();
+    const password = (document.getElementById('modal-login-password')?.value || '');
+    showModalError('');
+
+    if (!email || !password) {
+      showModalError('請填寫帳號和密碼');
+      return;
+    }
+
+    setModalLoading(true);
+    try {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+      if (!error && data?.user) {
+        applyUserToUI(data.user);
+        await loadLogsFromSupabase(data.user.id);
+        closeLoginModal();
+        if (typeof showScreen === 'function') showScreen('screen-home');
+        return;
+      }
+
+      // 帳號不存在 → 自動註冊
+      if (error?.message?.includes('Invalid login credentials') ||
+          error?.message?.includes('Email not confirmed') ||
+          error?.status === 400) {
+        const { data: signUpData, error: signUpError } = await sb.auth.signUp({ email, password });
+        if (!signUpError) {
+          showModalError('已發送確認信至 ' + email + '，請收信後再登入。');
+        } else {
+          showModalError('登入失敗：' + (signUpError.message || '請再試一次'));
+        }
+      } else {
+        showModalError('登入失敗：' + (error?.message || '請再試一次'));
+      }
+    } catch(e) {
+      showModalError('連線錯誤，請稍後再試');
+    } finally {
+      setModalLoading(false);
+    }
+  };
+
   /* ── Google 登入 ── */
   window.handleGoogleLogin = function () {
     try {
@@ -6734,10 +6926,95 @@ window.handleRegisterRedirect = function() {
     }
   };
 
-  /* ── 立即免費註冊（跳到登入頁聚焦） ── */
+  /* ── 註冊 Modal 主流程 ── */
+  window.tryModalRegister = async function () {
+    const name     = (document.getElementById('register-name')?.value     || '').trim();
+    const email    = (document.getElementById('register-email')?.value    || '').trim();
+    const password = (document.getElementById('register-password')?.value || '');
+    const confirm  = (document.getElementById('register-password-confirm')?.value || '');
+    const errEl    = document.getElementById('register-error');
+    const okEl     = document.getElementById('register-success');
+    const btn      = document.getElementById('register-submit-btn');
+
+    function showErr(msg) {
+      if (errEl) { errEl.textContent = msg; errEl.style.display = msg ? 'block' : 'none'; }
+      if (okEl)  okEl.style.display = 'none';
+    }
+    function showOk(msg) {
+      if (okEl)  { okEl.textContent = msg;  okEl.style.display  = msg ? 'block' : 'none'; }
+      if (errEl) errEl.style.display = 'none';
+    }
+
+    if (!email || !password) { showErr('請填寫電子郵件和密碼'); return; }
+    if (password.length < 6) { showErr('密碼至少需要 6 位'); return; }
+    if (password !== confirm) { showErr('兩次密碼不一致，請重新輸入'); return; }
+
+    if (btn) { btn.disabled = true; btn.textContent = '建立中…'; }
+    showErr('');
+    try {
+      const { data, error } = await sb.auth.signUp({
+        email, password,
+        options: { data: { full_name: name || email.split('@')[0] } }
+      });
+      if (error) { showErr('註冊失敗：' + (error.message || '請再試一次')); return; }
+
+      if (data?.user?.identities?.length === 0) {
+        showErr('此 Email 已被註冊，請直接登入。');
+        return;
+      }
+
+      // 成功
+      showOk('🎉 帳號建立成功！請前往信箱點擊確認連結後再登入。');
+      setTimeout(() => {
+        closeRegisterModal();
+        if (typeof openLoginModal === 'function') openLoginModal();
+      }, 2800);
+    } catch(e) {
+      showErr('連線錯誤，請稍後再試');
+    } finally {
+      if (btn) { btn.disabled = false; btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2a7 7 0 100 14A7 7 0 009 2zm3.5 7.75h-2.75V12.5h-1.5V9.75H5.5v-1.5h2.75V5.5h1.5v2.75H12.5v1.5z" fill="white"/></svg> 建立帳號'; }
+    }
+  };
+
+  /* ── 忘記密碼 ── */
+  window.tryForgotPassword = async function () {
+    const email = (document.getElementById('forgot-email')?.value || '').trim();
+    const errEl = document.getElementById('forgot-error');
+    const okEl  = document.getElementById('forgot-success');
+    const btn   = document.getElementById('forgot-submit-btn');
+
+    function showErr(msg) { if(errEl){ errEl.textContent=msg; errEl.style.display=msg?'block':'none'; } if(okEl) okEl.style.display='none'; }
+    function showOk(msg)  { if(okEl){ okEl.textContent=msg;  okEl.style.display=msg?'block':'none';  } if(errEl) errEl.style.display='none'; }
+
+    if (!email) { showErr('請輸入電子郵件'); return; }
+
+    if (btn) { btn.disabled = true; btn.textContent = '寄送中…'; }
+    try {
+      const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + window.location.pathname
+      });
+      if (error) { showErr('寄送失敗：' + (error.message || '請再試一次')); return; }
+      showOk('✉️ 重設連結已寄出！\n請檢查 ' + email + ' 的信箱，點擊連結後即可設定新密碼。');
+      if (btn) btn.style.display = 'none';
+    } catch(e) {
+      showErr('連線錯誤，請稍後再試');
+    } finally {
+      if (btn && btn.style.display !== 'none') {
+        btn.disabled = false;
+        btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 9l5 5L16 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> 寄送重設連結';
+      }
+    }
+  };
+
+  /* ── 立即免費註冊 ── */
   window.handleRegisterRedirect = function () {
-    if (typeof showScreen === 'function') showScreen('screen-login');
-    setTimeout(() => document.getElementById('login-email')?.focus(), 300);
+    if (window.innerWidth >= 1024) {
+      if (typeof closeLoginModal   === 'function') closeLoginModal();
+      if (typeof openRegisterModal === 'function') openRegisterModal();
+    } else {
+      if (typeof showScreen === 'function') showScreen('screen-login');
+      setTimeout(() => document.getElementById('login-email')?.focus(), 300);
+    }
   };
 
   /* ── Hook: Modal 提交時同步存到 Supabase ── */
