@@ -3497,7 +3497,7 @@
           <div class="forgot-link">忘記密碼？</div>
 
           <div id="login-error" style="display:none;padding:10px 14px;border-radius:12px;font-size:13px;color:#DC2626;background:#FEE2E2;margin-bottom:4px;"></div>
-          <button class="btn-primary" id="login-submit-btn" data-nav-target="screen-home" onclick="trySupabaseLogin();setLoginState(true);this.style.transform='scale(0.97)';setTimeout(()=>this.style.transform='',150)">
+          <button class="btn-primary" id="login-submit-btn" onclick="trySupabaseLogin();this.style.transform='scale(0.97)';setTimeout(()=>this.style.transform='',150)">
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
               <path d="M9 2a5 5 0 00-5 5v1H3a1 1 0 00-1 1v6a1 1 0 001 1h12a1 1 0 001-1V9a1 1 0 00-1-1h-1V7a5 5 0 00-5-5zm3 6H6V7a3 3 0 016 0v1z" fill="white"/>
             </svg>
@@ -5562,6 +5562,9 @@
     if (idx >= 0) logs[idx] = entry; else logs.unshift(entry);
     localStorage.setItem('allersense_logs', JSON.stringify(logs));
 
+    // 通知 Supabase 層儲存
+    document.dispatchEvent(new CustomEvent('allersense:logSaved', { detail: entry }));
+
     // 只有填的是今天，才同步更新首頁今日症狀卡片
     const todayStr = new Date().toISOString().split('T')[0];
     if (selectedLogDate === todayStr) {
@@ -6567,60 +6570,143 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 (function() { try {
-  // ── 初始化 Supabase ──
   const SUPABASE_URL = 'https://fbuxcjaidshooygieiwf.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_TaqeEMC27bq42mpbDy5p6g_U5_2Mf1F';
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  // ── 取得今日日期字串 ──
-  function getToday() {
-    return new Date().toLocaleDateString('sv-SE'); // YYYY-MM-DD
+  const MOOD_DB  = { '舒適': 'good', '輕微': 'mild', '不適': 'bad' };
+  const MOOD_ZH  = { good: '舒適', mild: '輕微', bad: '不適' };
+
+  /* ── 顯示 / 隱藏登入錯誤 ── */
+  function showLoginError(msg) {
+    const el = document.getElementById('login-error');
+    if (!el) return;
+    el.textContent = msg;
+    el.style.display = msg ? 'block' : 'none';
   }
 
-  // ── 心情對應 DB 值 ──
-  const MOOD_MAP = { '舒適': 'good', '輕微': 'mild', '不適': 'bad' };
+  /* ── 登入按鈕 loading 狀態 ── */
+  function setLoginLoading(on) {
+    const btn = document.getElementById('login-submit-btn');
+    if (!btn) return;
+    btn.disabled = on;
+    btn.textContent = on ? '登入中…' : '🔒 登入';
+  }
 
-  // ── 更新 UI 顯示真實使用者資訊（只在成功登入時呼叫）──
+  /* ── 套用真實使用者資訊到 UI ── */
   function applyUserToUI(user) {
-    if (!user) return; // 未登入就不動 UI，讓 prototype 自己管
-    const name = user.user_metadata?.full_name
-      || user.user_metadata?.nickname
-      || user.email?.split('@')[0]
-      || '使用者';
+    if (!user) return;
+    const name  = user.user_metadata?.full_name
+               || user.user_metadata?.nickname
+               || user.email?.split('@')[0]
+               || '使用者';
     const email = user.email || '';
-
-    // 覆寫假資料
-    const card = document.getElementById('settingsProfileCard');
+    const card  = document.getElementById('settingsProfileCard');
     if (card) {
-      const nameEl = card.querySelector('.profile-name');
+      const nameEl  = card.querySelector('.profile-name');
       const emailEl = card.querySelector('.profile-email');
-      if (nameEl) nameEl.textContent = name;
+      const badge   = card.querySelector('.profile-badge');
+      if (nameEl)  nameEl.textContent  = name;
       if (emailEl) emailEl.textContent = email;
-      const badge = card.querySelector('.profile-badge');
-      if (badge) { badge.textContent = '✦ 正式會員'; badge.removeAttribute('style'); }
+      if (badge)   { badge.textContent = '✦ 正式會員'; badge.removeAttribute('style'); }
     }
-    // 更新首頁問候名字
     if (typeof updateGreetingName === 'function') updateGreetingName(name);
-    // 告知 prototype 已登入
-    if (typeof setLoginState === 'function') setLoginState(true);
+    if (typeof setLoginState      === 'function') setLoginState(true);
   }
 
-  // ── 背景登入（不阻擋 prototype 畫面切換）──
-  window.trySupabaseLogin = function () {
+  /* ── 從 Supabase 載入紀錄並合併 localStorage ── */
+  async function loadLogsFromSupabase(userId) {
     try {
-      const email    = (document.getElementById('login-email')?.value || '').trim();
-      const password = document.getElementById('login-password')?.value || '';
-      if (!email || !password) return;
-      sb.auth.signInWithPassword({ email, password }).then(({ data, error }) => {
-        if (error) {
-          // 帳號不存在時自動註冊
-          sb.auth.signUp({ email, password }).catch(() => {});
-        }
-      }).catch(() => {});
+      const { data, error } = await sb
+        .from('daily_logs')
+        .select('*')
+        .eq('user_id', userId)
+        .order('log_date', { ascending: false })
+        .limit(90);
+      if (error || !data?.length) return;
+
+      const existing = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
+      const existingKeys = new Set(existing.map(l => `${l.date}_${l.timeSlot}`));
+
+      const imported = data
+        .filter(r => !existingKeys.has(`${r.log_date}_${r.time_slot || '全天'}`))
+        .map(r => ({
+          date:      r.log_date,
+          timeSlot:  r.time_slot || '全天',
+          timestamp: r.created_at,
+          mood:      MOOD_ZH[r.mood] || '輕微',
+          severity:  r.severity || 1,
+          symptoms:  r.symptoms || [],
+        }));
+
+      if (imported.length) {
+        const merged = [...imported, ...existing]
+          .sort((a, b) => b.date.localeCompare(a.date));
+        localStorage.setItem('allersense_logs', JSON.stringify(merged));
+        // 重新渲染日誌頁
+        if (typeof renderLogPage === 'function') renderLogPage();
+      }
     } catch(e) {}
+  }
+
+  /* ── 儲存單筆紀錄到 Supabase ── */
+  async function saveLogToSupabase(entry, userId) {
+    try {
+      await sb.from('daily_logs').upsert({
+        user_id:   userId,
+        log_date:  entry.date,
+        mood:      MOOD_DB[entry.mood] || 'mild',
+        severity:  entry.severity || 1,
+        time_slot: entry.timeSlot || '全天',
+        symptoms:  entry.symptoms || [],
+      }, { onConflict: 'user_id,log_date,time_slot' });
+    } catch(e) {}
+  }
+
+  /* ── 登入主流程 ── */
+  window.trySupabaseLogin = async function () {
+    const email    = (document.getElementById('login-email')?.value    || '').trim();
+    const password = (document.getElementById('login-password')?.value || '');
+    showLoginError('');
+
+    if (!email || !password) {
+      showLoginError('請填寫帳號和密碼');
+      return;
+    }
+
+    setLoginLoading(true);
+    try {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+
+      if (!error && data?.user) {
+        // 登入成功
+        applyUserToUI(data.user);
+        await loadLogsFromSupabase(data.user.id);
+        if (typeof showScreen === 'function') showScreen('screen-home');
+        return;
+      }
+
+      // 帳號不存在 → 自動註冊
+      if (error?.message?.includes('Invalid login credentials') ||
+          error?.message?.includes('Email not confirmed') ||
+          error?.status === 400) {
+        const { data: signUpData, error: signUpError } = await sb.auth.signUp({ email, password });
+        if (!signUpError) {
+          showLoginError('已發送確認信至 ' + email + '，請收信後再登入。');
+        } else {
+          showLoginError('登入失敗：' + (signUpError.message || '請再試一次'));
+        }
+      } else {
+        showLoginError('登入失敗：' + (error?.message || '請再試一次'));
+      }
+    } catch(e) {
+      showLoginError('連線錯誤，請稍後再試');
+    } finally {
+      setLoginLoading(false);
+    }
   };
 
-  // ── Google 登入 ──
+  /* ── Google 登入 ── */
   window.handleGoogleLogin = function () {
     try {
       sb.auth.signInWithOAuth({
@@ -6628,74 +6714,52 @@
         options: { redirectTo: window.location.origin + window.location.pathname },
       });
     } catch(e) {
-      // OAuth 無法使用時 fallback
       if (typeof setLoginState === 'function') setLoginState(true);
-      if (typeof showScreen === 'function') showScreen('screen-home');
+      if (typeof showScreen    === 'function') showScreen('screen-home');
     }
   };
 
-  // ── 立即免費註冊 ──
+  /* ── 立即免費註冊（跳到登入頁聚焦） ── */
   window.handleRegisterRedirect = function () {
     if (typeof showScreen === 'function') showScreen('screen-login');
-    setTimeout(() => { document.getElementById('login-email')?.focus(); }, 300);
+    setTimeout(() => document.getElementById('login-email')?.focus(), 300);
   };
 
-  // ── 儲存今日心情紀錄 ──
-  const _origDismissMoodFloat = window.dismissMoodFloat;
-  window.dismissMoodFloat = async function (btn) {
-    // 先執行原本的 prototype 動作
-    if (typeof _origDismissMoodFloat === 'function') _origDismissMoodFloat(btn);
-
+  /* ── Hook: Modal 提交時同步存到 Supabase ── */
+  const _origSubmitClick = document.getElementById('mood-submit-btn');
+  document.addEventListener('allersense:logSaved', async (e) => {
     try {
       const { data: { user } } = await sb.auth.getUser();
-      if (!user) return; // 訪客不儲存
+      if (!user) return;
+      await saveLogToSupabase(e.detail, user.id);
+    } catch(err) {}
+  });
 
-      const moodZH = btn?.dataset?.mood || '舒適';
-      const mood   = MOOD_MAP[moodZH] || 'good';
-      const today  = getToday();
+  /* ── 監聽登入狀態 ── */
+  sb.auth.onAuthStateChange(async (_event, session) => {
+    if (session?.user) {
+      applyUserToUI(session.user);
+      await loadLogsFromSupabase(session.user.id);
+    }
+  });
 
-      await sb.from('daily_logs').upsert({
-        user_id:          user.id,
-        log_date:         today,
-        mood:             mood,
-        overall_severity: 0,
-        location_city:    localStorage.getItem('allersense_city') || '台中市',
-      }, { onConflict: 'user_id,log_date' });
-    } catch(e) {}
-  };
+  /* ── 頁面載入時確認 session ── */
+  sb.auth.getSession().then(async ({ data: { session } }) => {
+    if (session?.user) {
+      applyUserToUI(session.user);
+      await loadLogsFromSupabase(session.user.id);
+    }
+  }).catch(() => {});
 
-  // ── 登出按鈕綁定（直接找 Settings 頁的登出按鈕）──
+  /* ── 綁定登出按鈕 ── */
   function bindLogoutBtn() {
     const btn = document.getElementById('settingsActionBtn');
     if (!btn) return;
-    // 只在顯示「登出」文字時才觸發真實登出
-    const origClick = btn.onclick;
-    btn.addEventListener('click', function() {
+    btn.addEventListener('click', () => {
       if (btn.textContent?.includes('登出') || btn.dataset?.action === 'logout') {
         try { sb.auth.signOut().catch(() => {}); } catch(e) {}
       }
     });
-  }
-
-  // ── 監聽登入狀態變化（只在有 user 時更新 UI）──
-  sb.auth.onAuthStateChange((_event, session) => {
-    if (session?.user) {
-      applyUserToUI(session.user);
-    }
-    // 無 session 時不呼叫 setLoginState，避免無限迴圈
-  });
-
-  // ── 頁面載入時確認登入狀態 ──
-  sb.auth.getSession().then(({ data: { session } }) => {
-    if (session?.user) applyUserToUI(session.user);
-  }).catch(() => {});
-
-  // DOM 載入完畢後綁定登出按鈕
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => { bindLogoutBtn(); bindSidebarLogout(); });
-  } else {
-    bindLogoutBtn();
-    bindSidebarLogout();
   }
 
   function bindSidebarLogout() {
@@ -6706,6 +6770,13 @@
       setLoginState(false);
       showScreen('screen-login');
     });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => { bindLogoutBtn(); bindSidebarLogout(); });
+  } else {
+    bindLogoutBtn();
+    bindSidebarLogout();
   }
 
 } catch(e) { console.warn('[AllerSense Supabase] 初始化失敗，使用 prototype 模式', e); }
