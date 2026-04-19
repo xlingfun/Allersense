@@ -6569,9 +6569,24 @@
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
+/* ── 先定義 fallback，確保按鈕一定可用 ── */
+window.trySupabaseLogin = async function() {
+  const email    = (document.getElementById('login-email')?.value    || '').trim();
+  const password = (document.getElementById('login-password')?.value || '');
+  const errEl    = document.getElementById('login-error');
+  function showErr(msg) { if(errEl){ errEl.textContent=msg; errEl.style.display=msg?'block':'none'; } }
+  if (!email || !password) { showErr('請填寫帳號和密碼'); return; }
+  showErr('Supabase 尚未載入，請重新整理頁面');
+};
+window.handleGoogleLogin    = function() {};
+window.handleRegisterRedirect = function() {
+  if (typeof showScreen === 'function') showScreen('screen-login');
+};
+
 (function() { try {
   const SUPABASE_URL = 'https://fbuxcjaidshooygieiwf.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_TaqeEMC27bq42mpbDy5p6g_U5_2Mf1F';
+  if (typeof supabase === 'undefined') throw new Error('supabase CDN not loaded');
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   const MOOD_DB  = { '舒適': 'good', '輕微': 'mild', '不適': 'bad' };
