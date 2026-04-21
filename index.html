@@ -6156,7 +6156,19 @@
     const logs = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
     const idx = logs.findIndex(l => l.date === entry.date && l.timeSlot === entry.timeSlot);
     if (idx >= 0) logs[idx] = entry; else logs.unshift(entry);
-    localStorage.setItem('allersense_logs', JSON.stringify(logs));
+    localStorage.setItem('allersense_logs', JSON.stringify(logs)); // 保持本地儲存
+const { data: { user } } = await sb.auth.getUser();
+if (user) {
+    await sb.from('logs').insert([{
+        user_id: user.id,
+        log_date: entry.date,
+        time_slot: entry.timeSlot,
+        mood: entry.mood,
+        severity: entry.severity,
+        symptoms: entry.symptoms,
+        note: entry.note
+    }]);
+}
 
     // 通知 Supabase 層儲存
     document.dispatchEvent(new CustomEvent('allersense:logSaved', { detail: entry }));
@@ -7014,8 +7026,12 @@
     // 切換到分析頁時，依當前 active tab 渲染圖表，並載入真實數據
     if (targetId === 'screen-analysis') {
       const activeTab = document.querySelector('#analysisTabBar .tab--active');
-      const period = activeTab ? activeTab.dataset.period : '7d';
-      renderAnalysisChart(period);
+      if (activeTab && typeof switchAnalysisTab === 'function') {
+        switchAnalysisTab(activeTab);
+      } else {
+        const period = activeTab ? activeTab.dataset.period : '7d';
+        renderAnalysisChart(period);
+      }
       if (typeof renderInsights === 'function') renderInsights();
     }
   }
@@ -7509,6 +7525,49 @@
 
   function setLoginState(loggedIn) {
     window._isLoggedIn = loggedIn;
+    // 1. 先貼加強版的 setLoginState
+function setLoginState(loggedIn) {
+  window._isLoggedIn = loggedIn;
+
+  // --- 關鍵：如果是登入狀態，就自動同步雲端資料 ---
+  if (loggedIn && typeof syncFromCloud === 'function') {
+    syncFromCloud();
+  }
+
+  // 以下是你原本控制 Sidebar 和 Profile Card 的程式碼（請保留）
+  const sidebarLoginBtn  = document.getElementById('sidebar-login-btn');
+  const sidebarLogoutBtn = document.getElementById('sidebar-logout-btn');
+  if (sidebarLoginBtn)  sidebarLoginBtn.style.display  = loggedIn ? 'none' : '';
+  if (sidebarLogoutBtn) sidebarLogoutBtn.style.display = loggedIn ? '' : 'none';
+  // ...（後面省略，照舊即可）
+}
+
+// 2. 緊接著在 setLoginState 的大括號 } 結束後，貼上 handleLogin
+async function handleLogin() {
+  const email = document.getElementById('loginEmail').value;
+  const pass = document.getElementById('loginPass').value;
+
+  if (!email || !pass) {
+    alert("請輸入帳號密碼");
+    return;
+  }
+
+  // 向 Supabase 發起驗證
+  const { data, error } = await sb.auth.signInWithPassword({
+    email: email,
+    password: pass
+  });
+
+  if (!error) {
+    // 登入成功：先抓雲端資料 -> 更新 UI -> 回首頁
+    await syncFromCloud(); 
+    setLoginState(true);
+    showScreen('screen-home');
+    console.log("✅ 登入成功並同步資料");
+  } else {
+    alert("登入失敗：" + error.message);
+  }
+}
 
     // Sidebar 登入 / 登出按鈕切換
     const sidebarLoginBtn  = document.getElementById('sidebar-login-btn');
@@ -7665,8 +7724,12 @@
         if (subEl) subEl.textContent = '尚無資料';
       });
     }
-    // 登入後：重新執行 loadEnvData 填入即時數據
-    if (loggedIn && typeof loadEnvData === 'function') loadEnvData();
+    // 登入後：重新執行 loadEnvData 填入即時數據，並刷新分析頁 tab 數據
+    if (loggedIn) {
+      if (typeof loadEnvData === 'function') loadEnvData();
+      const activeTab = document.querySelector('#analysisTabBar .tab--active');
+      if (activeTab && typeof switchAnalysisTab === 'function') switchAnalysisTab(activeTab);
+    }
 
     // Insight blocks — 統一由 renderInsights() 處理登入/未登入狀態
     if (typeof renderInsights === 'function') renderInsights();
@@ -7910,7 +7973,29 @@
   window.handleRegisterRedirect = function(){ showScreen('screen-login'); };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
 <script>
+// 約第 2521 行插入
+const SUPABASE_URL = 'https://fbuxcjaidshooygieiwf.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZidXhjamFpZHNob295Z2llaXdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzMzIxMzYsImV4cCI6MjA5MTkwODEzNn0.ABE7OGmmvEEjlY9vgGykIdbMVTMbbRa4K1pMKGM4XaI';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// 定義雲端抓取函式
+async function syncFromCloud() {
+    const { data: cloudLogs, error } = await sb.from('logs').select('*').order('log_date', { ascending: false });
+    if (!error && cloudLogs) {
+        const formatted = cloudLogs.map(l => ({
+            date: l.log_date,
+            timeSlot: l.time_slot,
+            mood: l.mood,
+            severity: l.severity,
+            symptoms: l.symptoms,
+            note: l.note
+        }));
+        localStorage.setItem('allersense_logs', JSON.stringify(formatted));
+        if (window.renderLogPage) window.renderLogPage();
+    }
+}
 /* ── 先定義 fallback，確保按鈕一定可用 ── */
 window.trySupabaseLogin = async function() {
   const email    = (document.getElementById('login-email')?.value    || '').trim();
