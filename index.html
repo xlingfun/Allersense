@@ -47,6 +47,7 @@
        RESET + GLOBAL
     ═══════════════════════════════════════════ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scrollbar-gutter: stable; }
 
     body {
       background: #D8DCE8;
@@ -437,6 +438,16 @@
     .today-symptom-card__empty {
       font-size: 13px;
       color: var(--color-text-3);
+    }
+    #symptomCardEmpty {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+    }
+    #symptomCardEmpty button {
+      margin-left: auto;
+      flex-shrink: 0;
     }
     /* 手機版：wrapper 透明，子元件直接參與正常流排版 */
     .home-right-col { display: contents; }
@@ -1287,8 +1298,9 @@
       background: rgba(15,20,40,.52);
       z-index: 2000;
       display: none; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.22s ease;
     }
-    .login-modal-overlay--visible { display: flex; }
+    .login-modal-overlay--visible { display: flex; opacity: 1; }
     .login-modal {
       background: var(--color-bg);
       border-radius: 28px;
@@ -1310,17 +1322,15 @@
     .edit-profile-overlay {
       position: fixed; inset: 0; background: rgba(15,20,40,.5);
       z-index: 1000; display: none; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.22s ease;
     }
-    .edit-profile-overlay--visible { display: flex; }
+    .edit-profile-overlay--visible { display: flex; opacity: 1; }
     .edit-profile-sheet {
       background: var(--color-bg); border-radius: 24px;
       width: calc(100% - 32px); max-width: 420px;
       padding: 0 0 32px;
       box-shadow: 0 16px 48px rgba(0,0,0,.2);
-      animation: sheetSlideDown .28s cubic-bezier(.32,1,.6,1);
-    }
-    @keyframes sheetSlideDown {
-      from { transform: translateY(-100%); } to { transform: translateY(0); }
+      animation: dissolveIn .22s ease;
     }
     .edit-profile-handle {
       width: 36px; height: 4px; background: var(--color-border);
@@ -1432,14 +1442,19 @@
     .pref-overlay {
       position: fixed; inset: 0; background: rgba(15,20,40,.5);
       z-index: 1000; display: none; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity 0.22s ease;
     }
-    .pref-overlay--visible { display: flex; }
+    .pref-overlay--visible { display: flex; opacity: 1; }
     .pref-sheet {
       background: var(--color-bg); border-radius: 24px;
       width: calc(100% - 32px); max-width: 420px; padding: 0 0 32px;
       max-height: 88vh; overflow-y: auto;
       box-shadow: 0 16px 48px rgba(0,0,0,.2);
-      animation: sheetSlideDown .28s cubic-bezier(.32,1,.6,1);
+      animation: dissolveIn .22s ease;
+    }
+    @keyframes dissolveIn {
+      from { opacity: 0; transform: scale(.97); }
+      to   { opacity: 1; transform: scale(1); }
     }
     .pref-handle { width: 36px; height: 4px; background: var(--color-border); border-radius: 2px; margin: 0 auto 14px; }
     .pref-header {
@@ -1524,6 +1539,8 @@
       padding: 13px 16px; cursor: pointer;
       transition: background .1s ease; position: relative;
     }
+    .settings-item:hover { cursor: pointer; }
+    .settings-item:hover * { cursor: pointer; }
     .settings-item:active { background: #F1F5FC; }
     .settings-item + .settings-item::before {
       content: ''; position: absolute; top: 0; left: 58px; right: 16px;
@@ -1655,6 +1672,7 @@
         padding: 32px 24px 48px;
         min-height: 100vh;
         width: 100%;
+        overflow: visible;
       }
 
       .content {
@@ -1758,15 +1776,30 @@
       #screen-analysis .breakdown-card { flex: 1; display: flex; flex-direction: column; }
       #screen-analysis .factor-list { flex: 1; justify-content: space-around; }
       #screen-analysis .tod-chart { height: 220px; flex: 1; min-height: 220px; }
-      #screen-analysis .content > .px.section-gap:has(.insight-block) {
+      #screen-analysis .content > .px.section-gap:has(.insight-block),
+      #screen-analysis .content > .px.section-gap:has(#insightLoginPrompt[style*="flex"]) {
         grid-column: 1 / -1; margin-top: 0; padding: 0 !important;
       }
-      #screen-analysis .content > .px.section-gap:has(.insight-block) > div[style*="flex-direction:column"] {
+      #screen-analysis .content > .px.section-gap:has(.insight-block) > div[style*="flex-direction:column"],
+      #screen-analysis .content > .px.section-gap:has(#insightLoginPrompt[style*="flex"]) > div[style*="flex-direction:column"] {
         display: grid !important;
         grid-template-columns: repeat(3, 1fr);
         gap: 16px !important;
         flex-direction: initial !important;
       }
+      #insightLoginPrompt {
+        grid-column: 1 / -1;
+        flex-direction: row !important;
+        align-items: center !important;
+        text-align: left !important;
+        padding: 28px 32px !important;
+        gap: 20px !important;
+      }
+      #insightLoginPrompt .insight-login-icon { flex-shrink: 0; }
+      #insightLoginPrompt .insight-login-text { flex: 1; }
+      #insightLoginPrompt .insight-login-text .insight-login-title { font-size: 17px !important; }
+      #insightLoginPrompt .insight-login-text .insight-login-desc  { }
+      #insightLoginPrompt .insight-login-btn  { flex-shrink: 0; white-space: nowrap; }
 
       /* ═════ 歷史頁 ═════ */
       #screen-history .summary-chips-row { grid-column: 1 / -1; padding: 0 !important; gap: 16px; }
@@ -2023,7 +2056,7 @@
        今日狀況紀錄 MODAL
     ═══════════════════════════════════════════ */
     .mood-modal-overlay {
-      position: absolute;
+      position: fixed;
       inset: 0;
       z-index: 9000;
       opacity: 0;
@@ -2045,6 +2078,13 @@
     }
     .mood-modal-overlay--visible .mood-modal {
       transform: translateY(0);
+    }
+    #privacyModalOverlay { align-items: center; justify-content: center; }
+    #privacyModal { animation: dissolveIn .22s ease; }
+    @media (min-width: 1024px) {
+      .mood-modal-overlay { left: 240px; }
+      #privacyModalOverlay { left: 240px; align-items: center; justify-content: center; }
+      #privacyModal { border-radius: 20px !important; max-height: 80vh; overflow-y: auto; width: 480px; }
     }
 
     /* Back button */
@@ -2277,6 +2317,8 @@
     }
     .mood-modal__submit:active { transform: scale(0.98); }
     .mood-date-chips { display: flex; gap: 8px; margin-bottom: 16px; }
+    .mood-timeslot-chip { padding:5px 14px; border-radius:20px; border:1.5px solid var(--color-border); background:var(--color-card); font-size:12px; font-weight:600; color:var(--color-text-2); cursor:pointer; transition:all .15s ease; }
+    .mood-timeslot-chip--active { border-color:var(--color-primary); background:var(--color-primary-soft); color:var(--color-primary); }
     .mood-date-chip { flex: 1; padding: 8px 0; border-radius: 12px; border: 1.5px solid var(--color-border); background: var(--color-card); font-size: 13px; font-weight: 600; color: var(--color-text-2); cursor: pointer; text-align: center; transition: all 0.15s ease; }
     .mood-date-chip--active { border-color: var(--color-primary); background: var(--color-primary-soft); color: var(--color-primary); }
     .mood-date-chip__sub { font-size: 10px; font-weight: 400; color: var(--color-text-3); margin-top: 2px; }
@@ -2435,11 +2477,11 @@
 
     /* ── Chart Bar Tooltip ── */
     .chart-tooltip {
-      position: absolute; top: 0; left: 0;
+      position: fixed; top: 0; left: 0;
       background: var(--color-card);
       border-radius: 12px; padding: 10px 14px;
       box-shadow: 0 8px 24px rgba(26,31,54,.16);
-      z-index: 30; min-width: 148px;
+      z-index: 9999; min-width: 148px;
       border: 1px solid var(--color-border);
       pointer-events: none;
     }
@@ -2669,13 +2711,16 @@
         <div class="today-symptom-card__body" id="symptomCardBody" style="display:none">
           <span class="today-symptom-card__emoji" id="symptomCardEmoji"></span>
           <div class="today-symptom-card__info">
-            <div class="today-symptom-card__mood" id="symptomCardMood">輕微</div>
+            <div style="display:flex;align-items:center;gap:6px">
+              <div class="today-symptom-card__mood" id="symptomCardMood">輕微</div>
+              <span id="symptomCardTimeSlot" style="font-size:11px;font-weight:600;color:var(--color-primary);background:var(--color-primary-soft);padding:2px 8px;border-radius:100px;display:none"></span>
+            </div>
             <div class="today-symptom-card__severity" id="symptomCardSeverity">嚴重程度 2/5</div>
           </div>
           <button class="today-symptom-card__edit" onclick="openMoodModal()">編輯</button>
         </div>
         <!-- 沒有紀錄時顯示 -->
-        <div id="symptomCardEmpty" style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+        <div id="symptomCardEmpty">
           <span class="today-symptom-card__empty">嗨，今天身體還好嗎？✨</span>
           <button class="today-symptom-card__edit" onclick="openMoodModal()">記錄</button>
         </div>
@@ -2698,52 +2743,21 @@
             <div class="stat-chip__val" id="chip-pm25">48<span class="stat-chip__unit">μg</span></div>
             <div class="stat-chip__label">PM2.5</div>
           </div>
-          <div class="stat-chip">
-            <div class="stat-chip__val" style="color:#B45309">中</div>
-            <div class="stat-chip__label">花粉</div>
-          </div>
         </div>
       </div>
 
       <!-- ── TODAY'S RECOMMENDATIONS ── -->
       <div class="px section-gap">
         <div class="section-label">今日建議</div>
-        <div class="rec-list">
+        <div class="rec-list" id="recList">
+          <!-- 由 renderRecommendations() 動態填入 -->
           <div class="rec-item">
             <div class="rec-icon rec-icon--blue">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <path d="M9 2C5.1 2 2 5.1 2 9s3.1 7 7 7 7-3.1 7-7-3.1-7-7-7zm.75 10.5h-1.5V9h1.5v3.5zm0-5h-1.5V6h1.5v1.5z" fill="#4C7DFF"/>
               </svg>
             </div>
-            <div class="rec-text"><em>減少戶外活動</em>，尤其早上 7–9 時花粉濃度最高</div>
-            <div class="rec-check rec-check--done"></div>
-          </div>
-          <div class="rec-item">
-            <div class="rec-icon rec-icon--amber">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path d="M14.5 8C14.5 5 12.5 3 9 2 5.5 3 3.5 5 3.5 8c0 2.5 1.5 4.5 3 5.5V15h5v-1.5c1.5-1 3-3 3-5.5z" fill="#D97706"/>
-              </svg>
-            </div>
-            <div class="rec-text">室內開啟<em>除濕機</em>，目標濕度 55% 以下</div>
-            <div class="rec-check"></div>
-          </div>
-          <div class="rec-item">
-            <div class="rec-icon rec-icon--green">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <circle cx="9" cy="9" r="7" fill="#16A34A" fill-opacity=".15"/>
-                <path d="M9 5v4l3 2" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round"/>
-              </svg>
-            </div>
-            <div class="rec-text">記得<em>按時服藥</em>，抗組織胺建議飯後 30 分鐘</div>
-            <div class="rec-check"></div>
-          </div>
-          <div class="rec-item">
-            <div class="rec-icon rec-icon--blue">
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                <path d="M9 2a7 7 0 100 14A7 7 0 009 2zm0 2a1 1 0 110 2A1 1 0 019 4zm1 9H8V8h2v5z" fill="#4C7DFF"/>
-              </svg>
-            </div>
-            <div class="rec-text">外出時配戴<em>N95 口罩</em>，降低 PM2.5 吸入</div>
+            <div class="rec-text">載入個人化建議中…</div>
             <div class="rec-check"></div>
           </div>
         </div>
@@ -2757,42 +2771,13 @@
             <div class="tomorrow-card__title">未來 5 天風險趨勢</div>
             <span class="badge badge--blue" style="font-size:11px;">AI 預測</span>
           </div>
-          <div class="tomorrow-mini-row">
-            <div class="tomorrow-mini">
-              <div class="tomorrow-mini__day">今天</div>
-              <div class="tomorrow-mini__bar-wrap">
-                <div class="tomorrow-mini__bar" style="height:72%;background:linear-gradient(180deg,#FB923C,#FBBF24);width:100%;"></div>
-              </div>
-              <div class="tomorrow-mini__pct" style="color:#B45309">72%</div>
-            </div>
-            <div class="tomorrow-mini">
-              <div class="tomorrow-mini__day">明天</div>
-              <div class="tomorrow-mini__bar-wrap">
-                <div class="tomorrow-mini__bar" style="height:58%;background:linear-gradient(180deg,#FBBF24,#FDE68A);width:100%;"></div>
-              </div>
-              <div class="tomorrow-mini__pct" style="color:#CA8A04">58%</div>
-            </div>
-            <div class="tomorrow-mini">
-              <div class="tomorrow-mini__day">週日</div>
-              <div class="tomorrow-mini__bar-wrap">
-                <div class="tomorrow-mini__bar" style="height:38%;background:linear-gradient(180deg,#4ADE80,#86EFAC);width:100%;"></div>
-              </div>
-              <div class="tomorrow-mini__pct" style="color:#15803D">38%</div>
-            </div>
-            <div class="tomorrow-mini">
-              <div class="tomorrow-mini__day">週一</div>
-              <div class="tomorrow-mini__bar-wrap">
-                <div class="tomorrow-mini__bar" style="height:25%;background:linear-gradient(180deg,#4ADE80,#86EFAC);width:100%;"></div>
-              </div>
-              <div class="tomorrow-mini__pct" style="color:#15803D">25%</div>
-            </div>
-            <div class="tomorrow-mini">
-              <div class="tomorrow-mini__day">週二</div>
-              <div class="tomorrow-mini__bar-wrap">
-                <div class="tomorrow-mini__bar" style="height:81%;background:linear-gradient(180deg,#F87171,#FCA5A5);width:100%;"></div>
-              </div>
-              <div class="tomorrow-mini__pct" style="color:#DC2626">81%</div>
-            </div>
+          <div class="tomorrow-mini-row" id="forecastRow">
+            <!-- 由 renderForecast() 動態填入 -->
+            <div class="tomorrow-mini" style="opacity:.35"><div class="tomorrow-mini__day">—</div><div class="tomorrow-mini__bar-wrap"></div><div class="tomorrow-mini__pct">—</div></div>
+            <div class="tomorrow-mini" style="opacity:.35"><div class="tomorrow-mini__day">—</div><div class="tomorrow-mini__bar-wrap"></div><div class="tomorrow-mini__pct">—</div></div>
+            <div class="tomorrow-mini" style="opacity:.35"><div class="tomorrow-mini__day">—</div><div class="tomorrow-mini__bar-wrap"></div><div class="tomorrow-mini__pct">—</div></div>
+            <div class="tomorrow-mini" style="opacity:.35"><div class="tomorrow-mini__day">—</div><div class="tomorrow-mini__bar-wrap"></div><div class="tomorrow-mini__pct">—</div></div>
+            <div class="tomorrow-mini" style="opacity:.35"><div class="tomorrow-mini__day">—</div><div class="tomorrow-mini__bar-wrap"></div><div class="tomorrow-mini__pct">—</div></div>
           </div>
         </div>
       </div>
@@ -2854,143 +2839,6 @@
       </div>
     </div>
 
-    <!-- ── 今日狀況紀錄 Modal ── -->
-    <div class="mood-modal-overlay" id="mood-modal-overlay">
-      <div class="mood-modal" id="mood-modal">
-
-        <!-- Back button -->
-        <button class="mood-modal__close" id="mood-modal-close" aria-label="關閉">
-          <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
-            <path d="M7 1L1 7L7 13" stroke="#4C7DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          返回
-        </button>
-
-        <!-- Page header -->
-        <div class="mood-modal__page-header">
-          <div class="mood-modal__page-title">今日紀錄</div>
-          <div class="mood-modal__page-date" id="mood-modal-date"></div>
-        </div>
-
-        <!-- 日期選擇 -->
-        <div class="mood-date-chips" id="mood-date-chips">
-          <button class="mood-date-chip mood-date-chip--active" data-offset="0" onclick="selectMoodDate(this)">
-            <div>今天</div>
-            <div class="mood-date-chip__sub" id="mood-chip-date-0"></div>
-          </button>
-          <button class="mood-date-chip" data-offset="1" onclick="selectMoodDate(this)">
-            <div>昨天</div>
-            <div class="mood-date-chip__sub" id="mood-chip-date-1"></div>
-          </button>
-        </div>
-
-        <!-- Section 1：整體感覺 -->
-        <div class="mood-section-card">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-            <span class="mood-section-card__title" style="margin-bottom:0">現在感覺如何？</span>
-            <span id="mood-time-slot-label" style="font-size:12px;font-weight:600;color:var(--color-primary);background:var(--color-primary-soft);padding:4px 10px;border-radius:20px;"></span>
-          </div>
-          <div class="mood-modal__btns" id="mood-modal-btns">
-            <button class="mood-modal__btn" data-mood="舒適">
-              <span class="mood-modal__btn-emoji" data-face="舒適"></span>
-              <span>舒適</span>
-            </button>
-            <button class="mood-modal__btn" data-mood="輕微">
-              <span class="mood-modal__btn-emoji" data-face="輕微"></span>
-              <span>輕微</span>
-            </button>
-            <button class="mood-modal__btn" data-mood="不適">
-              <span class="mood-modal__btn-emoji" data-face="不適"></span>
-              <span>不適</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Section 2：症狀嚴重程度 -->
-        <div class="mood-section-card">
-          <div class="mood-section-card__header">
-            <span class="mood-section-card__title" style="margin-bottom:0">症狀嚴重程度</span>
-            <span class="mood-severity-score" id="mood-severity-val">0/5</span>
-          </div>
-          <div class="sev-slider" id="sev-slider">
-            <div class="sev-track-bg">
-              <div class="sev-track-fill" id="sev-track-fill"></div>
-            </div>
-            <div class="sev-nodes" id="sev-nodes">
-              <div class="sev-dot" data-val="1"></div>
-              <div class="sev-dot" data-val="2"></div>
-              <div class="sev-dot" data-val="3"></div>
-              <div class="sev-dot" data-val="4"></div>
-              <div class="sev-dot" data-val="5"></div>
-            </div>
-            <input type="range" id="mood-severity-slider" min="1" max="5" step="1" value="1">
-          </div>
-          <div class="mood-severity-labels">
-            <span>沒有症狀</span>
-            <span>非常嚴重</span>
-          </div>
-        </div>
-
-        <!-- Section 3：有哪些症狀 -->
-        <div class="mood-section-card">
-          <span class="mood-section-card__title">有哪些症狀？<span class="mood-section-card__sub">（可複選）</span></span>
-          <div class="mood-modal__symptoms">
-
-            <button class="mood-modal__symptom" data-symptom="打噴嚏">
-              <div class="symptom-icon"><i class="fa-solid fa-head-side-cough"></i></div>
-              打噴嚏
-            </button>
-
-            <button class="mood-modal__symptom" data-symptom="流鼻水">
-              <div class="symptom-icon"><i class="fa-solid fa-droplet"></i></div>
-              流鼻水
-            </button>
-
-            <button class="mood-modal__symptom" data-symptom="眼睛癢">
-              <div class="symptom-icon"><i class="fa-solid fa-eye"></i></div>
-              眼睛癢
-            </button>
-
-            <button class="mood-modal__symptom" data-symptom="咳嗽">
-              <div class="symptom-icon"><i class="fa-solid fa-lungs-virus"></i></div>
-              咳嗽
-            </button>
-
-            <button class="mood-modal__symptom" data-symptom="皮膚疹">
-              <div class="symptom-icon"><i class="fa-solid fa-hand-dots"></i></div>
-              皮膚疹
-            </button>
-
-            <button class="mood-modal__symptom" data-symptom="呼吸困難">
-              <div class="symptom-icon"><i class="fa-solid fa-lungs"></i></div>
-              呼吸困難
-            </button>
-
-            <button class="mood-modal__symptom" data-symptom="頭痛">
-              <div class="symptom-icon"><i class="fa-solid fa-head-side-virus"></i></div>
-              頭痛
-            </button>
-
-            <button class="mood-modal__symptom" data-symptom="疲勞">
-              <div class="symptom-icon"><i class="fa-solid fa-face-tired"></i></div>
-              疲勞
-            </button>
-
-          </div>
-        </div>
-
-        <!-- Section 4：備註 -->
-        <div class="mood-section-card">
-          <span class="mood-section-card__title">備註<span class="mood-section-card__sub">（選填）</span></span>
-          <textarea class="mood-notes" id="mood-notes" placeholder="今天吃了什麼？去了哪裡？有什麼特別的狀況..."></textarea>
-        </div>
-
-        <!-- Submit -->
-        <button class="mood-modal__submit" id="mood-modal-submit">更新紀錄</button>
-
-      </div>
-    </div><!-- /mood-modal -->
-
   </div>
 </div>
 
@@ -3045,10 +2893,11 @@
     </div>
 
     <!-- Scrollable content -->
-    <div class="content" style="max-height:calc(844px - 168px)">
+    <div class="content" id="analysisContent" style="max-height:calc(844px - 168px)">
+
 
       <!-- ── STAT CHIPS ── -->
-      <div class="px section-gap">
+      <div class="px section-gap" id="analysisStatChipsRow">
         <div class="stat-chips">
           <div class="stat-chip">
             <div class="stat-chip__val" id="analysisStatRisk">72<span class="stat-chip__unit">%</span></div>
@@ -3214,7 +3063,10 @@
       <div class="px section-gap">
         <div class="section-label">環境因子佔比</div>
         <div class="factor-card">
-          <div class="factor-card__title">影響你的主要因素</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
+            <div class="factor-card__title" style="margin-bottom:0">影響你的主要因素</div>
+            <span id="factorDataNote" style="font-size:10px;color:var(--color-text-3);font-weight:500">累積 30 天紀錄後更新</span>
+          </div>
           <div class="factor-list">
             <!-- Humidity -->
             <div class="factor-row">
@@ -3225,12 +3077,12 @@
                   </div>
                   <div>
                     <div class="factor-name">相對濕度</div>
-                    <div class="factor-sublabel" id="factorSubHumidity">今日 85% · 過去均值 72%</div>
+                    <div class="factor-sublabel" id="factorSubHumidity">尚無資料</div>
                   </div>
                 </div>
-                <div class="factor-pct" id="factorPctHumidity">85%</div>
+                <div class="factor-pct" id="factorPctHumidity" style="color:#C4CAD4">—</div>
               </div>
-              <div class="bar-track"><div class="bar-fill" id="factorBarHumidity" style="width:85%;background:linear-gradient(90deg,#38BDF8,#7DD3FC)"></div></div>
+              <div class="bar-track"><div class="bar-fill" id="factorBarHumidity" style="width:0%;background:linear-gradient(90deg,#38BDF8,#7DD3FC)"></div></div>
             </div>
             <!-- PM2.5 -->
             <div class="factor-row">
@@ -3241,12 +3093,12 @@
                   </div>
                   <div>
                     <div class="factor-name">PM2.5 細懸浮微粒</div>
-                    <div class="factor-sublabel" id="factorSubPm25">今日 48 μg/m³ · 標準 ≤35</div>
+                    <div class="factor-sublabel" id="factorSubPm25">尚無資料</div>
                   </div>
                 </div>
-                <div class="factor-pct" id="factorPctPm25" style="color:#EA580C">72%</div>
+                <div class="factor-pct" id="factorPctPm25" style="color:#C4CAD4">—</div>
               </div>
-              <div class="bar-track"><div class="bar-fill" id="factorBarPm25" style="width:72%;background:linear-gradient(90deg,#FB923C,#FED7AA)"></div></div>
+              <div class="bar-track"><div class="bar-fill" id="factorBarPm25" style="width:0%;background:linear-gradient(90deg,#FB923C,#FED7AA)"></div></div>
             </div>
             <!-- Time of day -->
             <div class="factor-row">
@@ -3257,12 +3109,12 @@
                   </div>
                   <div>
                     <div class="factor-name">敏感時段</div>
-                    <div class="factor-sublabel" id="factorSubTime">早晨 06–09 及深夜 22–02</div>
+                    <div class="factor-sublabel" id="factorSubTime">尚無資料</div>
                   </div>
                 </div>
-                <div class="factor-pct" id="factorPctTime" style="color:#7C3AED">61%</div>
+                <div class="factor-pct" id="factorPctTime" style="color:#C4CAD4">—</div>
               </div>
-              <div class="bar-track"><div class="bar-fill" id="factorBarTime" style="width:61%;background:linear-gradient(90deg,#A78BFA,#DDD6FE)"></div></div>
+              <div class="bar-track"><div class="bar-fill" id="factorBarTime" style="width:0%;background:linear-gradient(90deg,#A78BFA,#DDD6FE)"></div></div>
             </div>
             <!-- 日夜溫差 -->
             <div class="factor-row">
@@ -3273,12 +3125,12 @@
                   </div>
                   <div>
                     <div class="factor-name">日夜溫差</div>
-                    <div class="factor-sublabel" id="factorSubTemp">今日溫差 9°C · 警戒值 ≥7°C</div>
+                    <div class="factor-sublabel" id="factorSubTemp">尚無資料</div>
                   </div>
                 </div>
-                <div class="factor-pct" id="factorPctTemp" style="color:#16A34A">68%</div>
+                <div class="factor-pct" id="factorPctTemp" style="color:#C4CAD4">—</div>
               </div>
-              <div class="bar-track"><div class="bar-fill" id="factorBarTemp" style="width:68%;background:linear-gradient(90deg,#4ADE80,#BBF7D0)"></div></div>
+              <div class="bar-track"><div class="bar-fill" id="factorBarTemp" style="width:0%;background:linear-gradient(90deg,#4ADE80,#BBF7D0)"></div></div>
             </div>
           </div>
         </div>
@@ -3322,38 +3174,19 @@
         <div class="section-label">個人化洞察</div>
         <div style="display:flex;flex-direction:column;gap:12px;">
 
-          <div class="insight-block">
-            <div class="insight-block__icon">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M8 1L9.8 6H15L10.6 9L12.4 14L8 11L3.6 14L5.4 9L1 6H6.2L8 1Z" fill="white"/>
-              </svg>
+          <!-- 未登入佔位卡 -->
+          <div id="insightLoginPrompt" style="display:none;flex-direction:column;align-items:center;gap:10px;padding:24px 20px;background:linear-gradient(135deg,#EEF3FF 0%,#F5F0FF 100%);border-radius:16px;text-align:center;width:100%;box-sizing:border-box;">
+            <div class="insight-login-icon" style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#4C7DFF,#7C5CFC);display:flex;align-items:center;justify-content:center;">
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L13.5 8.5H20.5L14.8 12.5L17.3 19L11 15L4.7 19L7.2 12.5L1.5 8.5H8.5L11 2Z" fill="white"/></svg>
             </div>
-            <p class="insight-block__text">
-              你在<strong>週末早晨</strong>的發作頻率比平日高 <strong>40%</strong>，可能與週末外出習慣有關。建議週六日外出前查看風險預測。
-            </p>
+            <div class="insight-login-text" style="display:flex;flex-direction:column;gap:5px;">
+              <div class="insight-login-title" style="font-family:var(--font-head);font-size:15px;font-weight:800;color:var(--color-text-1);line-height:1.4;">登入後，AI 幫你找出專屬的過敏規律</div>
+              <div class="insight-login-desc" style="font-size:12px;color:var(--color-text-2);line-height:1.6;">累積 7 天日誌後，系統將自動分析你的環境觸發因子與敏感時段。</div>
+            </div>
+            <button class="insight-login-btn" onclick="showScreen('screen-login')" style="margin-top:4px;padding:10px 24px;border-radius:20px;background:linear-gradient(135deg,#4C7DFF,#7C5CFC);color:#fff;font-family:var(--font-head);font-size:13px;font-weight:700;border:none;cursor:pointer;box-shadow:0 4px 12px rgba(76,125,255,.3);">立即登入，解鎖個人洞察</button>
           </div>
 
-          <div class="insight-block" style="background:#FFF7ED;">
-            <div class="insight-block__icon" style="background:#FB923C;">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M8 2a6 6 0 100 12A6 6 0 008 2zm.75 9h-1.5V7h1.5v4zm0-5.5h-1.5V4h1.5v1.5z" fill="white"/>
-              </svg>
-            </div>
-            <p class="insight-block__text" style="--color-primary:#EA580C">
-              PM2.5 超過 <strong>40 μg/m³</strong> 時，你的症狀嚴重度上升顯著。今天已達 <strong>48 μg</strong>，建議配戴口罩。
-            </p>
-          </div>
-
-          <div class="insight-block" style="background:#F0FDF4;">
-            <div class="insight-block__icon" style="background:#16A34A;">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M13 4L6.5 11L3 7.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <p class="insight-block__text" style="--color-primary:#16A34A">
-              本月你按時服藥的天數達 <strong>24/30 天</strong>，比上月提升 20%。繼續保持，發作次數正在減少 ✓
-            </p>
-          </div>
+          <div id="insightBlocksContainer" style="display:contents"></div>
 
         </div>
       </div>
@@ -3573,10 +3406,24 @@
 
       <!-- 日誌回顧（左）-->
       <div class="log-records-section" id="logRecordsSection">
-        <div class="section-label">日誌回顧</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div class="section-label" style="margin-bottom:0">日誌回顧</div>
+          <button id="logEditBtn" onclick="toggleLogEditMode()" style="background:none;border:none;cursor:pointer;font-size:13px;font-weight:600;color:var(--color-primary);padding:4px 8px;border-radius:8px;display:none">編輯</button>
+        </div>
         <div class="log-detail-section">
           <div id="log-record-list">
-            <div class="log-empty-state">尚未有紀錄<br>快去首頁填寫今日狀況吧！</div>
+            <div class="log-empty-state" style="padding:28px 16px 32px;display:flex;flex-direction:column;align-items:center;">
+              <svg width="44" height="44" viewBox="0 0 44 44" fill="none" style="margin-bottom:12px;opacity:.35;flex-shrink:0;"><rect x="8" y="6" width="28" height="32" rx="4" stroke="#A0ADBF" stroke-width="2"/><path d="M14 14h16M14 20h16M14 26h10" stroke="#A0ADBF" stroke-width="1.8" stroke-linecap="round"/></svg>
+              <div style="font-size:14px;font-weight:700;color:var(--color-text-2);margin-bottom:6px;">還沒有日誌紀錄</div>
+              <div style="font-size:12px;color:var(--color-text-3);line-height:1.7;margin-bottom:20px;">每天記錄身體狀況，AI 才能分析你的過敏規律<br>累積 7 天後即可查看個人化分析報告</div>
+              <div style="background:#fff;border-radius:16px;padding:16px 18px;box-shadow:0 2px 12px rgba(0,0,0,.07);width:100%;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left">
+                <div>
+                  <div style="font-size:13px;font-weight:700;color:var(--color-text-1);margin-bottom:2px;">今日症狀紀錄</div>
+                  <div style="font-size:12px;color:var(--color-text-3);">嗨，今天身體還好嗎？✨</div>
+                </div>
+                <button onclick="openMoodModal()" style="flex-shrink:0;padding:8px 18px;border-radius:20px;background:var(--color-primary);color:#fff;font-size:13px;font-weight:700;border:none;cursor:pointer;">記錄</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -4181,7 +4028,7 @@
       <div class="settings-section">
         <div class="settings-section__title">過敏偏好設定</div>
         <div class="settings-group">
-          <div class="settings-item" id="settingsPrefAllergens" style="cursor:pointer;opacity:.6;" onclick="document.getElementById('loginPromptModal').style.display='flex'" data-require-login="arrow" data-orig-desc="花粉、塵蟎、PM2.5">
+          <div class="settings-item" id="settingsPrefAllergens" style="cursor:pointer;opacity:.6;" onclick="showLoginPrompt()" data-require-login="arrow" data-orig-desc="花粉、塵蟎、PM2.5">
             <div class="settings-item__icon" style="background:#EEF3FF">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <circle cx="9" cy="9" r="3" fill="#4C7DFF"/>
@@ -4199,7 +4046,7 @@
               <svg width="13" height="15" viewBox="0 0 13 15" fill="none"><rect x="1" y="6" width="11" height="8" rx="2" stroke="#C4CAD4" stroke-width="1.4"/><path d="M3.5 6V4.5a3 3 0 016 0V6" stroke="#C4CAD4" stroke-width="1.4" stroke-linecap="round"/></svg>
             </div>
           </div>
-          <div class="settings-item" id="settingsPrefTime" style="cursor:pointer;opacity:.6;" onclick="document.getElementById('loginPromptModal').style.display='flex'" data-require-login="arrow" data-orig-desc="早晨 06:00–09:00，深夜 22:00–02:00">
+          <div class="settings-item" id="settingsPrefTime" style="cursor:pointer;opacity:.6;" onclick="showLoginPrompt()" data-require-login="arrow" data-orig-desc="早晨 06:00–09:00，深夜 22:00–02:00">
             <div class="settings-item__icon" style="background:#F3F0FF">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <circle cx="9" cy="9" r="6" stroke="#A78BFA" stroke-width="1.5"/>
@@ -4214,7 +4061,7 @@
               <svg width="13" height="15" viewBox="0 0 13 15" fill="none"><rect x="1" y="6" width="11" height="8" rx="2" stroke="#C4CAD4" stroke-width="1.4"/><path d="M3.5 6V4.5a3 3 0 016 0V6" stroke="#C4CAD4" stroke-width="1.4" stroke-linecap="round"/></svg>
             </div>
           </div>
-          <div class="settings-item" id="settingsPrefLocation" style="cursor:pointer;opacity:.6;" onclick="document.getElementById('loginPromptModal').style.display='flex'" data-require-login="arrow" data-orig-desc="台中市，台灣">
+          <div class="settings-item" id="settingsPrefLocation" style="cursor:pointer;opacity:.6;" onclick="showLoginPrompt()" data-require-login="arrow" data-orig-desc="台中市，台灣">
             <div class="settings-item__icon" style="background:#F0FDF4">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <path d="M9 2C5.7 2 3 4.7 3 8c0 4.5 6 10 6 10s6-5.5 6-10c0-3.3-2.7-6-6-6zm0 8a2 2 0 110-4 2 2 0 010 4z" fill="#16A34A"/>
@@ -4235,7 +4082,7 @@
       <div class="settings-section">
         <div class="settings-section__title">通知設定</div>
         <div class="settings-group">
-          <div class="settings-item" style="cursor:pointer;opacity:.6;" onclick="document.getElementById('loginPromptModal').style.display='flex'" data-require-login="toggle-on" data-orig-desc="每天早上 7:00 發送預測">
+          <div class="settings-item" style="cursor:pointer;opacity:.6;" onclick="showLoginPrompt()" data-require-login="toggle-on" data-orig-desc="每天早上 7:00 發送預測">
             <div class="settings-item__icon" style="background:#FFF7ED">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <path d="M9 2a5 5 0 00-5 5v2.5L2.5 11v1h13v-1L14 9.5V7a5 5 0 00-5-5zM7 13h4a2 2 0 01-4 0z" fill="#F97316"/>
@@ -4249,7 +4096,7 @@
               <svg width="13" height="15" viewBox="0 0 13 15" fill="none"><rect x="1" y="6" width="11" height="8" rx="2" stroke="#C4CAD4" stroke-width="1.4"/><path d="M3.5 6V4.5a3 3 0 016 0V6" stroke="#C4CAD4" stroke-width="1.4" stroke-linecap="round"/></svg>
             </div>
           </div>
-          <div class="settings-item" style="cursor:pointer;opacity:.6;" onclick="document.getElementById('loginPromptModal').style.display='flex'" data-require-login="toggle-on" data-orig-desc="風險超過 70% 時即時提醒">
+          <div class="settings-item" style="cursor:pointer;opacity:.6;" onclick="showLoginPrompt()" data-require-login="toggle-on" data-orig-desc="風險超過 70% 時即時提醒">
             <div class="settings-item__icon" style="background:#FEF2F2">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <path d="M9 2L10.5 6.5H15.5L11.5 9.5L13 14L9 11L5 14L6.5 9.5L2.5 6.5H7.5L9 2Z" fill="#EF4444"/>
@@ -4263,7 +4110,7 @@
               <svg width="13" height="15" viewBox="0 0 13 15" fill="none"><rect x="1" y="6" width="11" height="8" rx="2" stroke="#C4CAD4" stroke-width="1.4"/><path d="M3.5 6V4.5a3 3 0 016 0V6" stroke="#C4CAD4" stroke-width="1.4" stroke-linecap="round"/></svg>
             </div>
           </div>
-          <div class="settings-item" style="cursor:pointer;opacity:.6;" onclick="document.getElementById('loginPromptModal').style.display='flex'" data-require-login="toggle-off" data-orig-desc="飯後 30 分鐘提醒服藥">
+          <div class="settings-item" style="cursor:pointer;opacity:.6;" onclick="showLoginPrompt()" data-require-login="toggle-off" data-orig-desc="飯後 30 分鐘提醒服藥">
             <div class="settings-item__icon" style="background:#F0FDF4">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <circle cx="9" cy="9" r="6" stroke="#16A34A" stroke-width="1.5" fill="none"/>
@@ -4285,7 +4132,7 @@
       <div class="settings-section">
         <div class="settings-section__title">資料與隱私</div>
         <div class="settings-group">
-          <div class="settings-item" style="cursor:pointer;opacity:.6;" onclick="document.getElementById('loginPromptModal').style.display='flex'" data-require-login="arrow" data-orig-desc="下載 CSV / PDF 格式">
+          <div class="settings-item" id="settingsExportBtn" style="cursor:pointer;opacity:.6;" onclick="showLoginPrompt()" data-require-login="arrow" data-orig-desc="下載 CSV 格式">
             <div class="settings-item__icon" style="background:#EEF3FF">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <path d="M9 2v10m-4-4l4 4 4-4" stroke="#4C7DFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -4300,7 +4147,7 @@
               <svg width="13" height="15" viewBox="0 0 13 15" fill="none"><rect x="1" y="6" width="11" height="8" rx="2" stroke="#C4CAD4" stroke-width="1.4"/><path d="M3.5 6V4.5a3 3 0 016 0V6" stroke="#C4CAD4" stroke-width="1.4" stroke-linecap="round"/></svg>
             </div>
           </div>
-          <div class="settings-item" style="cursor:pointer;opacity:.6;" onclick="document.getElementById('loginPromptModal').style.display='flex'" data-require-login="arrow" data-orig-desc="資料收集與使用授權">
+          <div class="settings-item" id="settingsPrivacyBtn" style="cursor:pointer;opacity:.6;" onclick="showLoginPrompt()" data-require-login="arrow" data-orig-desc="資料收集與使用授權">
             <div class="settings-item__icon" style="background:#F3F0FF">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <path d="M9 2l5 2v5c0 3.5-5 7-5 7S4 12.5 4 9V4L9 2z" stroke="#A78BFA" stroke-width="1.5" stroke-linejoin="round"/>
@@ -4336,7 +4183,7 @@
               <span class="badge badge--ok" style="font-size:10px;padding:2px 8px;">最新</span>
             </div>
           </div>
-          <div class="settings-item">
+          <div class="settings-item" style="cursor:pointer" onclick="openTermsModal()">
             <div class="settings-item__icon" style="background:#F6F8FC">
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                 <rect x="2" y="3" width="14" height="12" rx="2" stroke="#64748B" stroke-width="1.5"/>
@@ -4404,7 +4251,194 @@
 
 </div><!-- /proto-stage -->
 
+<!-- ── 今日狀況紀錄 Modal（全局）── -->
+    <!-- ── 今日狀況紀錄 Modal ── -->
+<div class="mood-modal-overlay" id="mood-modal-overlay">
+      <div class="mood-modal" id="mood-modal">
+
+        <!-- Back button -->
+        <button class="mood-modal__close" id="mood-modal-close" aria-label="關閉">
+          <svg width="8" height="14" viewBox="0 0 8 14" fill="none">
+            <path d="M7 1L1 7L7 13" stroke="#4C7DFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          返回
+        </button>
+
+        <!-- Page header -->
+        <div class="mood-modal__page-header">
+          <div class="mood-modal__page-title">今日紀錄</div>
+          <div class="mood-modal__page-date" id="mood-modal-date"></div>
+        </div>
+
+        <!-- 日期選擇 -->
+        <div class="mood-date-chips" id="mood-date-chips">
+          <button class="mood-date-chip mood-date-chip--active" data-offset="0" onclick="selectMoodDate(this)">
+            <div>今天</div>
+            <div class="mood-date-chip__sub" id="mood-chip-date-0"></div>
+          </button>
+          <button class="mood-date-chip" data-offset="1" onclick="selectMoodDate(this)">
+            <div>昨天</div>
+            <div class="mood-date-chip__sub" id="mood-chip-date-1"></div>
+          </button>
+        </div>
+
+        <!-- Section 1：整體感覺 -->
+        <div class="mood-section-card">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+            <span class="mood-section-card__title" style="margin-bottom:0;flex-shrink:0">現在感覺如何？</span>
+            <select id="mood-timeslot-select" style="margin-left:auto;padding:5px 10px;border-radius:20px;border:1.5px solid var(--color-primary);background:var(--color-primary-soft);font-family:var(--font-body);font-size:12px;font-weight:600;color:var(--color-primary);cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2210%22 height=%226%22 viewBox=%220 0 10 6%22><path d=%22M1 1l4 4 4-4%22 stroke=%22%234C7DFF%22 stroke-width=%221.5%22 stroke-linecap=%22round%22 fill=%22none%22/></svg>');background-repeat:no-repeat;background-position:right 8px center;padding-right:24px;">
+              <option value="早上">早上</option>
+              <option value="下午">下午</option>
+              <option value="晚上">晚上</option>
+              <option value="深夜">深夜</option>
+            </select>
+          </div>
+          <div class="mood-modal__btns" id="mood-modal-btns">
+            <button class="mood-modal__btn" data-mood="舒適">
+              <span class="mood-modal__btn-emoji" data-face="舒適"></span>
+              <span>舒適</span>
+            </button>
+            <button class="mood-modal__btn" data-mood="輕微">
+              <span class="mood-modal__btn-emoji" data-face="輕微"></span>
+              <span>輕微</span>
+            </button>
+            <button class="mood-modal__btn" data-mood="不適">
+              <span class="mood-modal__btn-emoji" data-face="不適"></span>
+              <span>不適</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Section 2：症狀嚴重程度 -->
+        <div class="mood-section-card">
+          <div class="mood-section-card__header">
+            <span class="mood-section-card__title" style="margin-bottom:0">症狀嚴重程度</span>
+            <span class="mood-severity-score" id="mood-severity-val">0/5</span>
+          </div>
+          <div class="sev-slider" id="sev-slider">
+            <div class="sev-track-bg">
+              <div class="sev-track-fill" id="sev-track-fill"></div>
+            </div>
+            <div class="sev-nodes" id="sev-nodes">
+              <div class="sev-dot" data-val="1"></div>
+              <div class="sev-dot" data-val="2"></div>
+              <div class="sev-dot" data-val="3"></div>
+              <div class="sev-dot" data-val="4"></div>
+              <div class="sev-dot" data-val="5"></div>
+            </div>
+            <input type="range" id="mood-severity-slider" min="1" max="5" step="1" value="1">
+          </div>
+          <div class="mood-severity-labels">
+            <span>沒有症狀</span>
+            <span>非常嚴重</span>
+          </div>
+        </div>
+
+        <!-- Section 3：有哪些症狀 -->
+        <div class="mood-section-card">
+          <span class="mood-section-card__title">有哪些症狀？<span class="mood-section-card__sub">（可複選）</span></span>
+          <div class="mood-modal__symptoms">
+
+            <button class="mood-modal__symptom" data-symptom="打噴嚏">
+              <div class="symptom-icon"><i class="fa-solid fa-head-side-cough"></i></div>
+              打噴嚏
+            </button>
+
+            <button class="mood-modal__symptom" data-symptom="流鼻水">
+              <div class="symptom-icon"><i class="fa-solid fa-droplet"></i></div>
+              流鼻水
+            </button>
+
+            <button class="mood-modal__symptom" data-symptom="眼睛癢">
+              <div class="symptom-icon"><i class="fa-solid fa-eye"></i></div>
+              眼睛癢
+            </button>
+
+            <button class="mood-modal__symptom" data-symptom="咳嗽">
+              <div class="symptom-icon"><i class="fa-solid fa-lungs-virus"></i></div>
+              咳嗽
+            </button>
+
+            <button class="mood-modal__symptom" data-symptom="皮膚疹">
+              <div class="symptom-icon"><i class="fa-solid fa-hand-dots"></i></div>
+              皮膚疹
+            </button>
+
+            <button class="mood-modal__symptom" data-symptom="呼吸困難">
+              <div class="symptom-icon"><i class="fa-solid fa-lungs"></i></div>
+              呼吸困難
+            </button>
+
+            <button class="mood-modal__symptom" data-symptom="頭痛">
+              <div class="symptom-icon"><i class="fa-solid fa-head-side-virus"></i></div>
+              頭痛
+            </button>
+
+            <button class="mood-modal__symptom" data-symptom="疲勞">
+              <div class="symptom-icon"><i class="fa-solid fa-face-tired"></i></div>
+              疲勞
+            </button>
+
+          </div>
+        </div>
+
+        <!-- Section 4：備註 -->
+        <div class="mood-section-card">
+          <span class="mood-section-card__title">備註<span class="mood-section-card__sub">（選填）</span></span>
+          <textarea class="mood-notes" id="mood-notes" placeholder="今天吃了什麼？去了哪裡？有什麼特別的狀況..."></textarea>
+        </div>
+
+        <!-- Submit -->
+        <button class="mood-modal__submit" id="mood-modal-submit">更新紀錄</button>
+
+      </div>
+</div><!-- /mood-modal -->
+
+
 <!-- ══ 全域 Modal（放在 proto-stage 外，position:fixed 才能在所有頁面正常顯示）══ -->
+
+
+<!-- 隱私設定 Modal -->
+<div id="privacyModalOverlay" style="display:none;position:fixed;inset:0;background:rgba(15,20,40,.48);z-index:3000">
+  <div id="privacyModal" style="background:#fff;border-radius:24px;width:100%;max-width:480px;padding:24px 20px 40px;box-sizing:border-box">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div style="font-family:var(--font-head);font-size:17px;font-weight:800;color:var(--color-text-1)">隱私設定</div>
+      <button onclick="closePrivacyModal()" style="background:none;border:none;cursor:pointer;width:32px;height:32px;border-radius:50%;background:#F1F5F9;display:flex;align-items:center;justify-content:center">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="#64748B" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:0;background:#F8FAFC;border-radius:16px;overflow:hidden">
+      <!-- 匿名使用分析 -->
+      <div style="display:flex;align-items:center;gap:14px;padding:16px;border-bottom:1px solid var(--color-border)">
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:700;color:var(--color-text-1);margin-bottom:2px">匿名使用分析</div>
+          <div style="font-size:12px;color:var(--color-text-3);line-height:1.5">協助改善 AllerSense 功能，不包含個人資料</div>
+        </div>
+        <div class="toggle toggle--on" id="privacyToggleAnalytics" onclick="this.classList.toggle('toggle--on');savePrivacy()" style="cursor:pointer;flex-shrink:0"></div>
+      </div>
+      <!-- 個人化分析 -->
+      <div style="display:flex;align-items:center;gap:14px;padding:16px;border-bottom:1px solid var(--color-border)">
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:700;color:var(--color-text-1);margin-bottom:2px">個人化 AI 分析</div>
+          <div style="font-size:12px;color:var(--color-text-3);line-height:1.5">根據你的日誌生成專屬過敏規律報告</div>
+        </div>
+        <div class="toggle toggle--on" id="privacyToggleAI" onclick="this.classList.toggle('toggle--on');savePrivacy()" style="cursor:pointer;flex-shrink:0"></div>
+      </div>
+      <!-- 環境資料整合 -->
+      <div style="display:flex;align-items:center;gap:14px;padding:16px">
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:700;color:var(--color-text-1);margin-bottom:2px">環境資料整合</div>
+          <div style="font-size:12px;color:var(--color-text-3);line-height:1.5">結合天氣、AQI 自動標記可能誘因</div>
+        </div>
+        <div class="toggle toggle--on" id="privacyToggleEnv" onclick="this.classList.toggle('toggle--on');savePrivacy()" style="cursor:pointer;flex-shrink:0"></div>
+      </div>
+    </div>
+    <div style="margin-top:12px;font-size:11px;color:var(--color-text-3);text-align:center;line-height:1.6">
+      你的所有資料僅存於裝置或加密雲端，不會販售或分享給第三方。<br>
+      <span style="color:var(--color-primary);cursor:pointer">閱讀完整隱私政策</span>
+    </div>
+  </div>
+</div>
 
 <!-- 登入 Modal（1024px+ 桌機用）-->
 <div class="login-modal-overlay" id="loginModalOverlay">
@@ -4607,7 +4641,91 @@
 </div>
 
 <!-- 登入提示 Modal -->
-<div id="loginPromptModal" style="display:none;position:fixed;inset:0;background:rgba(15,20,40,.45);z-index:999;align-items:center;justify-content:center;">
+<!-- 匯出確認 Modal -->
+<div id="exportConfirmModal" style="display:none;opacity:0;position:fixed;inset:0;background:rgba(15,20,40,.45);z-index:999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:24px;width:calc(100% - 32px);max-width:360px;padding:28px 24px 28px;box-shadow:0 16px 48px rgba(0,0,0,.2);">
+    <div style="width:52px;height:52px;border-radius:16px;background:#EEF3FF;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+      <svg width="24" height="24" viewBox="0 0 18 18" fill="none">
+        <path d="M9 2v10m-4-4l4 4 4-4" stroke="#4C7DFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M3 14h12" stroke="#4C7DFF" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div style="text-align:center;margin-bottom:24px;">
+      <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;color:#1A1F36;letter-spacing:-.3px;margin-bottom:8px;">匯出我的紀錄</div>
+      <div style="font-size:13px;color:#64748B;line-height:1.7;">將下載所有日誌紀錄的 CSV 檔案，<br>可使用 Excel 或 Numbers 開啟。</div>
+    </div>
+    <button onclick="hideExportConfirm();exportLogsCSV();" style="width:100%;height:50px;border-radius:14px;background:#4C7DFF;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;border:none;cursor:pointer;margin-bottom:10px;">確認匯出</button>
+    <button onclick="hideExportConfirm()" style="width:100%;height:44px;border-radius:14px;background:#F1F5F9;color:#64748B;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;border:none;cursor:pointer;">取消</button>
+  </div>
+</div>
+
+<!-- 使用條款與隱私政策 Modal -->
+<div id="termsModalOverlay" style="display:none;opacity:0;position:fixed;inset:0;background:rgba(15,20,40,.48);z-index:3000;align-items:center;justify-content:center;padding:24px 16px;box-sizing:border-box;">
+  <div id="termsModal" style="background:#fff;border-radius:24px;width:100%;max-width:540px;max-height:82vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.2);animation:dissolveIn .22s ease;">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 22px 16px;border-bottom:1px solid #E8EDF5;flex-shrink:0;">
+      <div style="font-family:var(--font-head);font-size:17px;font-weight:800;color:#1A1F36;letter-spacing:-.3px;">使用條款與隱私政策</div>
+      <button onclick="closeTermsModal()" style="background:#F1F5F9;border:none;cursor:pointer;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="#64748B" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <!-- 捲動內容 -->
+    <div style="overflow-y:auto;padding:20px 22px 28px;font-family:var(--font-body);font-size:13.5px;line-height:1.8;color:#1A1F36;">
+
+      <!-- Tab 切換 -->
+      <div style="display:flex;gap:8px;margin-bottom:20px;background:#F6F8FC;border-radius:12px;padding:4px;">
+        <button id="termsTabTerms" onclick="switchTermsTab('terms')" style="flex:1;padding:8px;border-radius:9px;border:none;cursor:pointer;font-family:var(--font-head);font-size:13px;font-weight:700;background:#fff;color:#1A1F36;box-shadow:0 1px 4px rgba(0,0,0,.08);">使用條款</button>
+        <button id="termsTabPrivacy" onclick="switchTermsTab('privacy')" style="flex:1;padding:8px;border-radius:9px;border:none;cursor:pointer;font-family:var(--font-head);font-size:13px;font-weight:600;background:transparent;color:#64748B;">隱私政策</button>
+      </div>
+
+      <!-- 使用條款內容 -->
+      <div id="termsContentTerms">
+        <p style="color:#64748B;font-size:12px;margin-bottom:16px;">最後更新：2026 年 4 月 21 日　版本 1.0</p>
+
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px;">1. 服務範圍</div>
+        <p style="color:#475569;margin-bottom:16px;">AllerSense（以下稱「本服務」）提供個人化過敏風險預測、症狀日誌記錄及環境資料分析功能。本服務僅供參考，<strong>不構成醫療建議或診斷</strong>，如有健康疑慮請諮詢醫師。</p>
+
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px;">2. 帳號與資料安全</div>
+        <p style="color:#475569;margin-bottom:16px;">您需自行保管帳號密碼，並對帳號內的所有操作負責。若發現帳號遭到未授權使用，請立即通知我們。您的健康資料會加密儲存，不會以明文形式傳輸。</p>
+
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px;">3. 資料所有權</div>
+        <p style="color:#475569;margin-bottom:16px;">您所填寫的症狀日誌、過敏偏好等個人資料，所有權歸屬於您本人。AllerSense 僅於提供服務所必要的範圍內使用您的資料，不會在未獲同意的情況下販售或出借給第三方。</p>
+
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px;">4. 服務中斷與變更</div>
+        <p style="color:#475569;margin-bottom:16px;">我們保留隨時調整、暫停或終止服務的權利，並將盡可能提前通知用戶。因不可抗力或系統維護導致的服務中斷，AllerSense 不承擔相關損失責任。</p>
+
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px;">5. 免責聲明</div>
+        <p style="color:#475569;margin-bottom:0;">本服務所提供的過敏風險預測係基於環境資料與統計模型，實際反應因人而異。AllerSense 不對任何因依賴本服務預測而產生的健康後果負責。</p>
+      </div>
+
+      <!-- 隱私政策內容 -->
+      <div id="termsContentPrivacy" style="display:none;">
+        <p style="color:#64748B;font-size:12px;margin-bottom:16px;">最後更新：2026 年 4 月 21 日　版本 1.0</p>
+
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px;">1. 收集的資料類型</div>
+        <p style="color:#475569;margin-bottom:16px;">我們收集您主動提供的資料（症狀日誌、過敏偏好、位置設定），以及服務運作自動產生的技術資料（裝置型號、App 版本、錯誤紀錄）。<strong>我們不收集精確 GPS 位置</strong>，僅使用您設定的城市名稱進行天氣查詢。</p>
+
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px;">2. 資料使用目的</div>
+        <p style="color:#475569;margin-bottom:16px;">您的資料用於：個人化過敏預測、AI 分析報告生成、提供天氣與 AQI 環境資訊、改善服務品質（匿名統計）。我們不會將個人可識別資料用於廣告投放。</p>
+
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px;">3. 資料儲存與安全</div>
+        <p style="color:#475569;margin-bottom:16px;">所有資料採 AES-256 加密後儲存於安全雲端伺服器，傳輸過程使用 TLS 1.3 加密。員工存取健康資料須通過多重身份驗證，並受嚴格的存取權限控管。</p>
+
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px;">4. 資料分享</div>
+        <p style="color:#475569;margin-bottom:16px;">我們不販售您的個人資料。我們僅在以下情況分享資料：您明確授權的整合服務（如健康 App 匯出）、法律要求或法院命令、匿名化的學術研究合作。</p>
+
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px;">5. 您的權利</div>
+        <p style="color:#475569;margin-bottom:16px;">您有權隨時查閱、更正或刪除您的個人資料。您也可以透過「匯出我的紀錄」功能下載完整的資料副本。如需行使上述權利，請聯繫 <span style="color:var(--color-primary)">support@allersense.app</span>。</p>
+
+        <div style="font-weight:700;font-size:14px;margin-bottom:6px;">6. Cookie 與追蹤</div>
+        <p style="color:#475569;margin-bottom:0;">本服務使用必要性 Cookie 維持登入狀態，以及匿名分析 Cookie 改善使用體驗。您可在設定中關閉「匿名使用分析」以停止非必要的資料收集。</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="loginPromptModal" style="display:none;opacity:0;position:fixed;inset:0;background:rgba(15,20,40,.45);z-index:999;align-items:center;justify-content:center;">
   <div style="background:#fff;border-radius:24px;width:calc(100% - 32px);max-width:380px;padding:28px 24px 32px;box-shadow:0 16px 48px rgba(0,0,0,.2);">
     <div style="width:36px;height:4px;background:#E2E8F0;border-radius:2px;margin:0 auto 20px;"></div>
     <div style="width:52px;height:52px;border-radius:16px;background:#EEF3FF;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
@@ -4620,10 +4738,10 @@
       <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;color:#1A1F36;letter-spacing:-.3px;margin-bottom:6px;">需要登入才能使用</div>
       <div style="font-size:13px;color:#64748B;line-height:1.6;">登入後才能儲存個人設定、<br>同步日誌紀錄，並讓 AI 學習你的過敏模式。</div>
     </div>
-    <button onclick="document.getElementById('loginPromptModal').style.display='none';setLoginState(true);showScreen('screen-login')" style="width:100%;height:50px;border-radius:14px;background:#4C7DFF;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;border:none;cursor:pointer;margin-bottom:10px;">
+    <button onclick="hideLoginPrompt();setLoginState(true);showScreen('screen-login')" style="width:100%;height:50px;border-radius:14px;background:#4C7DFF;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;border:none;cursor:pointer;margin-bottom:10px;">
       登入帳號
     </button>
-    <button onclick="document.getElementById('loginPromptModal').style.display='none'" style="width:100%;height:44px;border-radius:14px;background:#F1F5F9;color:#64748B;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;border:none;cursor:pointer;">
+    <button onclick="hideLoginPrompt()" style="width:100%;height:44px;border-radius:14px;background:#F1F5F9;color:#64748B;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;font-weight:600;border:none;cursor:pointer;">
       稍後再說
     </button>
   </div>
@@ -4843,8 +4961,10 @@
       </button>
     </div>
     <div class="edit-profile-avatar-wrap">
-      <div class="edit-profile-avatar">
-        🧑
+      <input type="file" id="avatarFileInput" accept="image/*" style="display:none" onchange="handleAvatarChange(this)">
+      <div class="edit-profile-avatar" id="editProfileAvatar" onclick="document.getElementById('avatarFileInput').click()">
+        <span id="editProfileAvatarEmoji">🧑</span>
+        <img id="editProfileAvatarImg" style="display:none;width:100%;height:100%;object-fit:cover;border-radius:22px;" alt="大頭照">
         <div class="edit-profile-avatar__cam">
           <svg width="13" height="12" viewBox="0 0 13 12" fill="none">
             <path d="M4.5 1h4l1 2h2a1 1 0 011 1v6a1 1 0 01-1 1h-10a1 1 0 01-1-1V4a1 1 0 011-1h2L4.5 1z" stroke="white" stroke-width="1.2" stroke-linejoin="round"/>
@@ -4866,7 +4986,7 @@
           </div>
           <div class="edit-profile-field__body">
             <div class="edit-profile-field__label">顯示名稱</div>
-            <input class="edit-profile-field__input" type="text" value="陳怡君" id="editProfileName"/>
+            <input class="edit-profile-field__input" type="text" value="" id="editProfileName"/>
           </div>
         </div>
         <div class="edit-profile-field">
@@ -4908,7 +5028,7 @@
             </svg>
           </div>
           <div class="edit-profile-badge-text">會員方案</div>
-          <div class="edit-profile-badge-tag">✦ 進階會員</div>
+          <div class="edit-profile-badge-tag" id="editProfileBadgeTag">✦ 一般會員</div>
         </div>
       </div>
     </div>
@@ -4939,6 +5059,58 @@
   function revealCol(col) {
     col.classList.add('screen-col--active');
     col.style.setProperty('display', 'block', 'important');
+  }
+
+  /* ─── 登入提示 Modal ─── */
+  function showLoginPrompt() {
+    modalShow(document.getElementById('loginPromptModal'));
+  }
+  function hideLoginPrompt() {
+    modalHide(document.getElementById('loginPromptModal'));
+  }
+  function showExportConfirm() {
+    modalShow(document.getElementById('exportConfirmModal'));
+  }
+  function hideExportConfirm() {
+    modalHide(document.getElementById('exportConfirmModal'));
+  }
+
+  function openTermsModal() {
+    switchTermsTab('terms');
+    modalShow(document.getElementById('termsModalOverlay'));
+  }
+  function closeTermsModal() {
+    modalHide(document.getElementById('termsModalOverlay'));
+  }
+  function switchTermsTab(tab) {
+    const isTerms = tab === 'terms';
+    document.getElementById('termsContentTerms').style.display  = isTerms ? '' : 'none';
+    document.getElementById('termsContentPrivacy').style.display = isTerms ? 'none' : '';
+    const btnT = document.getElementById('termsTabTerms');
+    const btnP = document.getElementById('termsTabPrivacy');
+    if (btnT) { btnT.style.background = isTerms ? '#fff' : 'transparent'; btnT.style.color = isTerms ? '#1A1F36' : '#64748B'; btnT.style.fontWeight = isTerms ? '700' : '600'; btnT.style.boxShadow = isTerms ? '0 1px 4px rgba(0,0,0,.08)' : 'none'; }
+    if (btnP) { btnP.style.background = isTerms ? 'transparent' : '#fff'; btnP.style.color = isTerms ? '#64748B' : '#1A1F36'; btnP.style.fontWeight = isTerms ? '600' : '700'; btnP.style.boxShadow = isTerms ? 'none' : '0 1px 4px rgba(0,0,0,.08)'; }
+  }
+
+  /* ─── Modal dissolve 工具函式 ─── */
+  function modalShow(el, visibleClass) {
+    if (!el) return;
+    el.style.display = 'flex';
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (visibleClass) el.classList.add(visibleClass);
+      else { el.style.transition = 'opacity 0.22s ease'; el.style.opacity = '1'; }
+    }));
+  }
+  function modalHide(el, visibleClass) {
+    if (!el) return;
+    if (visibleClass) {
+      el.classList.remove(visibleClass);
+      setTimeout(() => { if (!el.classList.contains(visibleClass)) el.style.display = 'none'; }, 230);
+    } else {
+      el.style.transition = 'opacity 0.2s ease';
+      el.style.opacity = '0';
+      setTimeout(() => { el.style.display = 'none'; el.style.opacity = ''; el.style.transition = ''; }, 220);
+    }
   }
 
   /* ─── 今日狀況紀錄 Modal ─── */
@@ -4985,6 +5157,51 @@
 
   const CACHE_KEY = 'allersense_env_cache';
   const CACHE_TTL = 30 * 60 * 1000; // 30 分鐘
+  const WEATHER_HISTORY_KEY = 'allersense_weather_history';
+
+  // 撈過去 90 天歷史氣象（Open-Meteo archive，免費不需 API Key）
+  async function fetchWeatherHistory(city) {
+    const cityKey = (city || '').replace('市','').replace('縣','');
+    const c = CITY_DATA[cityKey];
+    if (!c) return;
+
+    // 檢查快取：今天已撈過就略過
+    const cached = JSON.parse(localStorage.getItem(WEATHER_HISTORY_KEY) || '{}');
+    const todayStr = new Date().toISOString().split('T')[0];
+    if (cached._fetchedDate === todayStr && Object.keys(cached).length > 10) return;
+
+    try {
+      const endDate   = todayStr;
+      const startDate = (() => { const d = new Date(); d.setDate(d.getDate() - 89); return d.toISOString().split('T')[0]; })();
+
+      // 同時撈氣象 + 空品歷史
+      const [wRes, aqRes] = await Promise.all([
+        fetch(`https://archive-api.open-meteo.com/v1/archive?latitude=${c.lat}&longitude=${c.lon}&start_date=${startDate}&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,relative_humidity_2m_mean&timezone=Asia%2FTaipei`),
+        fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${c.lat}&longitude=${c.lon}&start_date=${startDate}&end_date=${endDate}&daily=pm2_5&timezone=Asia%2FTaipei`)
+      ]);
+      const wData  = await wRes.json();
+      const aqData = await aqRes.json();
+
+      const result = { _fetchedDate: todayStr };
+      const dates = wData.daily?.time || [];
+      dates.forEach((date, i) => {
+        const tMax = wData.daily.temperature_2m_max[i];
+        const tMin = wData.daily.temperature_2m_min[i];
+        const hum  = wData.daily.relative_humidity_2m_mean[i];
+        const pm25 = aqData.daily?.pm2_5?.[i] ?? null;
+        if (tMax != null && tMin != null) {
+          result[date] = {
+            humidity: Math.round(hum ?? 0),
+            tempDiff: parseFloat((tMax - tMin).toFixed(1)),
+            pm25:     pm25 != null ? Math.round(pm25) : null,
+          };
+        }
+      });
+      localStorage.setItem(WEATHER_HISTORY_KEY, JSON.stringify(result));
+    } catch(e) {
+      // 撈失敗不影響主流程
+    }
+  }
 
   // 抓氣象資料（Open-Meteo，免費不需 API Key）
   async function fetchWeather(city) {
@@ -5007,11 +5224,11 @@
     };
   }
 
-  // 抓空品資料（WAQI 公開 demo token）
+  // 抓空品資料（WAQI Real-time API）
   async function fetchAQI(city) {
     const c = CITY_DATA[city];
     if (!c) return null;
-    const url = `https://api.waqi.info/feed/${c.waqi}/?token=demo`;
+    const url = `https://api.waqi.info/feed/${c.waqi}/?token=d3032dc80ae97a6693231ec14eeea771967661c5`;
     const res  = await fetch(url);
     const data = await res.json();
     if (data.status !== 'ok') return null;
@@ -5033,6 +5250,7 @@
   // 把真實數據更新到畫面（今日 tab 用）
   function applyRealDataToUI(weather, aqi) {
     if (!weather) return;
+    if (!window._isLoggedIn) return; // 未登入不更新
 
     const humidity  = weather.humidity;
     const tempDiff  = weather.tempDiff;
@@ -5080,6 +5298,62 @@
     if (elTitle) elTitle.textContent = `${now.getMonth()+1} 月身體狀況 × 環境分析`;
   }
 
+  // 未來 5 天風險預測（Open-Meteo 5日預報，免費）
+  async function renderForecast(city) {
+    const row = document.getElementById('forecastRow');
+    if (!row) return;
+    const cityKey = (city || '').replace('市','').replace('縣','');
+    const c = CITY_DATA[cityKey];
+    if (!c) return;
+
+    try {
+      const [wRes, aqRes] = await Promise.all([
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&daily=temperature_2m_max,temperature_2m_min,relative_humidity_2m_mean&forecast_days=5&timezone=Asia%2FTaipei`),
+        fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${c.lat}&longitude=${c.lon}&daily=pm2_5&forecast_days=5&timezone=Asia%2FTaipei`)
+      ]);
+      const wData  = await wRes.json();
+      const aqData = await aqRes.json();
+
+      const dates    = wData.daily?.time || [];
+      const humArr   = wData.daily?.relative_humidity_2m_mean || [];
+      const tMaxArr  = wData.daily?.temperature_2m_max || [];
+      const tMinArr  = wData.daily?.temperature_2m_min || [];
+      const pm25Arr  = aqData.daily?.pm2_5 || [];
+
+      const dayNames = ['週日','週一','週二','週三','週四','週五','週六'];
+
+      row.innerHTML = dates.slice(0,5).map((dateStr, i) => {
+        const hum      = humArr[i]  ?? 65;
+        const tempDiff = (tMaxArr[i] ?? 30) - (tMinArr[i] ?? 22);
+        const pm25     = pm25Arr[i] ?? null;
+        const score    = calcRiskScore(hum, pm25, tempDiff);
+
+        const d = new Date(dateStr);
+        let label;
+        if (i === 0) label = '今天';
+        else if (i === 1) label = '明天';
+        else label = dayNames[d.getDay()];
+
+        // 顏色
+        let barGrad, txtColor;
+        if (score >= 70)      { barGrad = 'linear-gradient(180deg,#F87171,#FCA5A5)'; txtColor = '#DC2626'; }
+        else if (score >= 50) { barGrad = 'linear-gradient(180deg,#FB923C,#FBBF24)'; txtColor = '#B45309'; }
+        else if (score >= 30) { barGrad = 'linear-gradient(180deg,#FBBF24,#FDE68A)'; txtColor = '#CA8A04'; }
+        else                  { barGrad = 'linear-gradient(180deg,#4ADE80,#86EFAC)'; txtColor = '#15803D'; }
+
+        return `<div class="tomorrow-mini">
+          <div class="tomorrow-mini__day">${label}</div>
+          <div class="tomorrow-mini__bar-wrap">
+            <div class="tomorrow-mini__bar" style="height:${score}%;background:${barGrad};width:100%;transition:height .4s ease;"></div>
+          </div>
+          <div class="tomorrow-mini__pct" style="color:${txtColor}">${score}%</div>
+        </div>`;
+      }).join('');
+    } catch(e) {
+      // API 失敗保持原狀
+    }
+  }
+
   // 主要載入函式（含 localStorage 快取）
   async function loadRealData(city) {
     const statusEl = document.getElementById('cityDataStatus');
@@ -5125,6 +5399,56 @@
     loadRealData(city);
   }
 
+  /* ── 分析頁：從 localStorage 計算真實統計 ── */
+  function calcRealAnalysisStats(period) {
+    const logs = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
+    const today = new Date(); today.setHours(23, 59, 59, 999);
+
+    function startOf(daysBack) {
+      const d = new Date(today); d.setDate(d.getDate() - daysBack); d.setHours(0, 0, 0, 0); return d;
+    }
+    function logsInRange(start, end) {
+      return logs.filter(l => { const d = new Date(l.date); return d >= start && d <= end; });
+    }
+    function avgRisk(entries) {
+      if (!entries.length) return null;
+      const avg = entries.reduce((s, l) => s + (Number(l.severity) || 0), 0) / entries.length;
+      return Math.round((avg / 5) * 100);
+    }
+    function uniqueDays(entries) { return new Set(entries.map(l => l.date)).size; }
+
+    const ranges = {
+      '7d':  { cur: [startOf(6),  today],       prev: [startOf(13), startOf(7)],  label: '7 天均值',  daysLabel: '發作天數', compareLabel: '比上週' },
+      '30d': { cur: [startOf(29), today],        prev: [startOf(59), startOf(30)], label: '30 天均值', daysLabel: '發作天數', compareLabel: '比上月' },
+    };
+    const r = ranges[period];
+    if (!r) return null;
+
+    const curLogs  = logsInRange(r.cur[0],  r.cur[1]);
+    const prevLogs = logsInRange(r.prev[0], r.prev[1]);
+    const curRisk  = avgRisk(curLogs);
+    const prevRisk = avgRisk(prevLogs);
+    const days     = uniqueDays(curLogs);
+
+    let deltaText = '—', deltaColor = '#94A3B8';
+    if (curRisk !== null && prevRisk !== null) {
+      const diff = curRisk - prevRisk;
+      deltaText  = diff === 0 ? '持平' : (diff > 0 ? '↑' : '↓') + Math.abs(diff) + '%';
+      deltaColor = diff > 0 ? '#DC2626' : diff < 0 ? '#16A34A' : '#64748B';
+    } else if (curRisk !== null) {
+      deltaText = '初始紀錄'; deltaColor = '#64748B';
+    }
+
+    return {
+      riskVal:    curRisk !== null ? curRisk + '%' : '—',
+      riskLabel:  r.label,
+      daysVal:    days > 0 ? String(days) : '0',
+      daysLabel:  r.daysLabel,
+      delta:      deltaText,
+      deltaColor: deltaColor,
+    };
+  }
+
   /* ── 分析頁 Tab 切換 ── */
   const ANALYSIS_TAB_DATA = {
     '7d': {
@@ -5152,9 +5476,9 @@
       }
     },
     trend: {
-      riskVal: '#1',  riskLabel: '主因排名',
-      daysVal: '3',   daysLabel: '持續月份',
-      delta: '溫差↑', deltaColor: '#EA580C',
+      riskVal: '—',  riskLabel: '季度趨勢',
+      daysVal: '—',  daysLabel: '累積紀錄',
+      delta: '—', deltaColor: '#94A3B8',
       chartTitle: '3 個月趨勢分析',
       factors: {
         humidity: { pct: '69%', pctColor: '#0284C7', sub: '3 個月均值 69%，趨勢持平', width: '69' },
@@ -5172,56 +5496,129 @@
 
     const today = new Date();
 
-    // 固定偽隨機（不同 mult → 不同因子）
+    // 固定偽隨機（fallback 用，有真實資料時不會用到）
     function sr(seed, mult) {
       const x = Math.sin(seed * mult + 311.7) * 43758.5453;
       return x - Math.floor(x);
     }
 
+    // 讀 weather history 快取
+    const wh = JSON.parse(localStorage.getItem('allersense_weather_history') || '{}');
+    function envFromCache(key, base) {
+      const d = wh[key];
+      return {
+        humidity: d ? d.humidity : Math.round(50 + sr(base, 93.7) * 40),
+        pm25:     d?.pm25 != null ? Math.min(100, Math.round(d.pm25 / 75 * 100)) : Math.round(15 + sr(base, 187.3) * 65),
+        temp:     d ? Math.min(100, Math.round(d.tempDiff / 20 * 100)) : Math.round(15 + sr(base, 251.9) * 65),
+      };
+    }
+
     let dataPoints = [];
 
     if (period === '7d') {
+      // 7d：symptom 高度優先使用真實日誌 severity
+      const logs7 = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
+      const logMap7 = {};
+      logs7.forEach(l => {
+        const key = new Date(l.date).toISOString().split('T')[0];
+        if (!logMap7[key] || (Number(l.severity) > Number(logMap7[key].severity))) logMap7[key] = l;
+      });
       for (let i = 6; i >= 0; i--) {
         const d = new Date(today); d.setDate(today.getDate() - i);
+        const key  = d.toISOString().split('T')[0];
         const base = d.getFullYear() * 10000 + (d.getMonth()+1) * 100 + d.getDate();
+        const entry = logMap7[key];
+        const symptom = entry ? Math.round((Number(entry.severity) / 5) * 88 + 8) : 0;
+        const env = envFromCache(key, base);
         dataPoints.push({
           label:    `${d.getMonth()+1}/${d.getDate()}`,
           dateStr:  `${d.getMonth()+1}月${d.getDate()}日`,
-          symptom:  Math.round(20 + sr(base, 127.1) * 68),
-          humidity: Math.round(50 + sr(base, 93.7)  * 40),
-          pm25:     Math.round(15 + sr(base, 187.3)  * 65),
-          temp:     Math.round(15 + sr(base, 251.9)  * 65),
-          isNow:    i === 0
+          symptom,
+          humidity: env.humidity,
+          pm25:     env.pm25,
+          temp:     env.temp,
+          isNow:    i === 0,
+          mood:     entry?.mood,
+          severity: entry?.severity
         });
       }
     } else if (period === '30d') {
+      const logs30 = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
+      const logMap30 = {};
+      logs30.forEach(l => {
+        const key = new Date(l.date).toISOString().split('T')[0];
+        if (!logMap30[key] || (Number(l.severity) > Number(logMap30[key].severity))) logMap30[key] = l;
+      });
       for (let i = 29; i >= 0; i--) {
         const d = new Date(today); d.setDate(today.getDate() - i);
+        const key  = d.toISOString().split('T')[0];
         const base = d.getFullYear() * 10000 + (d.getMonth()+1) * 100 + d.getDate();
         const showLabel = [29, 23, 17, 11, 5, 0].includes(i);
+        const entry = logMap30[key];
+        const symptom = entry ? Math.round((Number(entry.severity) / 5) * 88 + 8) : 0;
+        const env = envFromCache(key, base);
         dataPoints.push({
           label:    showLabel ? `${d.getMonth()+1}/${d.getDate()}` : null,
           dateStr:  `${d.getMonth()+1}月${d.getDate()}日`,
-          symptom:  Math.round(20 + sr(base, 127.1) * 68),
-          humidity: Math.round(50 + sr(base, 93.7)  * 40),
-          pm25:     Math.round(15 + sr(base, 187.3)  * 65),
-          temp:     Math.round(15 + sr(base, 251.9)  * 65),
-          isNow:    i === 0
+          symptom,
+          humidity: env.humidity,
+          pm25:     env.pm25,
+          temp:     env.temp,
+          isNow:    i === 0,
+          mood:     entry?.mood,
+          severity: entry?.severity
         });
       }
     } else {
+      // trend：近 12 週，每週取最高 severity 的那筆作為代表
+      const logs90 = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
+      const weatherHistory = JSON.parse(localStorage.getItem('allersense_weather_history') || '{}');
+      // 建 date → 最高嚴重度 entry 的 map
+      const logMap90 = {};
+      logs90.forEach(l => {
+        const key = new Date(l.date).toISOString().split('T')[0];
+        if (!logMap90[key] || Number(l.severity) > Number(logMap90[key].severity)) logMap90[key] = l;
+      });
       for (let w = 11; w >= 0; w--) {
-        const d = new Date(today); d.setDate(today.getDate() - w * 7);
-        const base = d.getFullYear() * 10000 + (d.getMonth()+1) * 100 + d.getDate();
+        const weekEnd = new Date(today); weekEnd.setDate(today.getDate() - w * 7);
         const showLabel = w % 3 === 0 || w === 0;
+        const base = weekEnd.getFullYear() * 10000 + (weekEnd.getMonth()+1) * 100 + weekEnd.getDate();
+        // 收集這週 7 天的日誌 + 氣象平均
+        const weekEntries = [];
+        let humSum = 0, pm25Sum = 0, tempSum = 0, envCount = 0;
+        for (let d2 = 0; d2 < 7; d2++) {
+          const day = new Date(weekEnd); day.setDate(weekEnd.getDate() - d2);
+          const key = day.toISOString().split('T')[0];
+          if (logMap90[key]) weekEntries.push(logMap90[key]);
+          const wh = weatherHistory[key];
+          if (wh) {
+            humSum  += wh.humidity  || 0;
+            pm25Sum += wh.pm25      || 0;
+            tempSum += wh.tempDiff  || 0;
+            envCount++;
+          }
+        }
+        let symptom = 0, mood, severity;
+        if (weekEntries.length) {
+          const worst = weekEntries.reduce((a, b) => Number(b.severity) > Number(a.severity) ? b : a);
+          symptom  = Math.round((Number(worst.severity) / 5) * 88 + 8);
+          mood     = worst.mood;
+          severity = worst.severity;
+        }
+        // 有歷史氣象就用真實均值，否則 fallback 亂數
+        const humidity = envCount ? Math.round(humSum / envCount) : Math.round(50 + sr(base, 93.7) * 40);
+        const pm25     = envCount ? Math.min(100, Math.round((pm25Sum / envCount / 75) * 100)) : Math.round(15 + sr(base, 187.3) * 65);
+        const temp     = envCount ? Math.min(100, Math.round((tempSum / envCount / 20) * 100)) : Math.round(15 + sr(base, 251.9) * 65);
         dataPoints.push({
-          label:    showLabel ? `${d.getMonth()+1}/${d.getDate()}` : null,
-          dateStr:  `${d.getMonth()+1}/${d.getDate()} 週`,
-          symptom:  Math.round(20 + sr(base, 127.1) * 68),
-          humidity: Math.round(50 + sr(base, 93.7)  * 40),
-          pm25:     Math.round(15 + sr(base, 187.3)  * 65),
-          temp:     Math.round(15 + sr(base, 251.9)  * 65),
-          isNow:    w === 0
+          label:    showLabel ? `${weekEnd.getMonth()+1}/${weekEnd.getDate()}` : null,
+          dateStr:  `${weekEnd.getMonth()+1}/${weekEnd.getDate()} 當週`,
+          symptom,
+          humidity,
+          pm25,
+          temp,
+          isNow:    w === 0,
+          mood,
+          severity
         });
       }
     }
@@ -5299,6 +5696,18 @@
       `<rect x="${(p.cx - spacing/2).toFixed(1)}" y="${padT}" width="${spacing.toFixed(1)}" height="${chartH}" fill="transparent" style="cursor:pointer" onclick="showBarTooltip(${i})"/>`
     ).join('');
 
+    // 未登入：只顯示格線與 x 軸標籤，不渲染數據
+    if (!window._isLoggedIn) {
+      svg.innerHTML = `${grid}${xLabels}${sideLabel}`;
+      const elBad2  = document.getElementById('trendStatBad');
+      const elMild2 = document.getElementById('trendStatMild');
+      const elGood2 = document.getElementById('trendStatGood');
+      if (elBad2)  elBad2.innerHTML  = '<span style="color:#C4CAD4">—</span>';
+      if (elMild2) elMild2.innerHTML = '<span style="color:#C4CAD4">—</span>';
+      if (elGood2) elGood2.innerHTML = '<span style="color:#C4CAD4">—</span>';
+      return;
+    }
+
     svg.innerHTML = `
       ${grid}
       <g id="overlayHumidity"><path d="${lineHumid}" fill="none" stroke="#38BDF8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/></g>
@@ -5369,35 +5778,26 @@
     document.getElementById('tooltipPm25').textContent     = p.pm25 + ' μg';
     document.getElementById('tooltipTemp').textContent     = Math.round(p.temp / 10) + '°C';
 
-    // ── 動態定位：固定在 SVG 範圍內，顯示在長條圖右方 ──
-    const card    = tooltip.parentElement;
+    // ── 動態定位（position:fixed → 使用 viewport 座標，不影響 layout）──
     const svgRect = svg.getBoundingClientRect();
-    const cardRect= card.getBoundingClientRect();
     const scaleX  = svgRect.width  / 620;
     const scaleY  = svgRect.height / 180;
 
-    // SVG 在 card 內的邊界
-    const svgL = svgRect.left - cardRect.left;
-    const svgR = svgRect.right - cardRect.left;
-    const svgT = svgRect.top  - cardRect.top;
-    const svgB = svgRect.bottom - cardRect.top;
-
-    const barW   = Math.max(3, Math.min((svgRect.width / (window._chartPts?.length || 7)) * 0.62, 36));
-    const barRightX = svgL + (p.cx + barW / 2) * scaleX + 8;  // bar 右邊 + 間距
-    const barMidY   = svgT + (p.barTop + p.barH / 2) * scaleY; // bar 垂直中心
+    const barW      = Math.max(3, Math.min((svgRect.width / (window._chartPts?.length || 7)) * 0.62, 36));
+    const barRightX = svgRect.left + (p.cx + barW / 2) * scaleX + 8;
+    const barMidY   = svgRect.top  + (p.barTop + p.barH / 2) * scaleY;
 
     const TIP_W = 156, TIP_H = 128;
 
     // 水平：優先顯示在 bar 右方，超出 SVG 右邊界則改到左方
     let tx = barRightX;
-    if (tx + TIP_W > svgR) tx = svgL + (p.cx - barW / 2) * scaleX - TIP_W - 8;
-    // 確保不超出 SVG 左邊界
-    if (tx < svgL) tx = svgL + 4;
+    if (tx + TIP_W > svgRect.right) tx = svgRect.left + (p.cx - barW / 2) * scaleX - TIP_W - 8;
+    if (tx < svgRect.left) tx = svgRect.left + 4;
 
     // 垂直：置中於 bar，確保不超出 SVG 上下邊界
     let ty = barMidY - TIP_H / 2;
-    if (ty < svgT) ty = svgT;
-    if (ty + TIP_H > svgB) ty = svgB - TIP_H;
+    if (ty < svgRect.top) ty = svgRect.top;
+    if (ty + TIP_H > svgRect.bottom) ty = svgRect.bottom - TIP_H;
 
     tooltip.style.left    = tx + 'px';
     tooltip.style.top     = ty + 'px';
@@ -5414,40 +5814,125 @@
     tab.classList.add('tab--active');
 
     const period = tab.dataset.period;
+
+    // 圖表先渲染（內部有 login guard）
+    renderAnalysisChart(period);
+
+    // 環境因子右上角說明文字隨 tab 切換
+    const noteEl = document.getElementById('factorDataNote');
+    if (noteEl) {
+      const noteMap = { '7d': '7 天', '30d': '30 天', 'trend': '90 天' };
+      noteEl.textContent = `累積 ${noteMap[period] || '30 天'} 紀錄後更新`;
+    }
+
+    // 未登入：只渲染空圖表，不更新數據
+    if (!window._isLoggedIn) return;
+
     const d = ANALYSIS_TAB_DATA[period];
     if (!d) return;
 
-    // stat chips
+    // stat chips：7d / 30d 用真實計算，trend 顯示 — 但累積紀錄填真實筆數
+    const real = calcRealAnalysisStats(period);
+    let stats = real ? { ...d, ...real } : d;
+    if (period === 'trend') {
+      const totalLogs = JSON.parse(localStorage.getItem('allersense_logs') || '[]').length;
+      stats = { ...stats, daysVal: String(totalLogs), daysLabel: '累積紀錄' };
+    }
+
     const elRisk  = document.getElementById('analysisStatRisk');
     const elRiskL = document.getElementById('analysisStatRiskLabel');
     const elDays  = document.getElementById('analysisStatDays');
     const elDaysL = document.getElementById('analysisStatDaysLabel');
     const elDelta = document.getElementById('analysisStatDelta');
-    if (elRisk)  elRisk.innerHTML  = d.riskVal;
-    if (elRiskL) elRiskL.textContent = d.riskLabel;
-    if (elDays)  elDays.textContent  = d.daysVal;
-    if (elDaysL) elDaysL.textContent = d.daysLabel;
-    if (elDelta) { elDelta.textContent = d.delta; elDelta.style.color = d.deltaColor; }
+    if (elRisk)  elRisk.innerHTML    = stats.riskVal;
+    if (elRiskL) elRiskL.textContent = stats.riskLabel;
+    if (elDays)  elDays.textContent  = stats.daysVal;
+    if (elDaysL) elDaysL.textContent = stats.daysLabel;
+    if (elDelta) { elDelta.textContent = stats.delta; elDelta.style.color = stats.deltaColor; }
 
     // chart title
     const elTitle = document.getElementById('analysisChartTitle');
     if (elTitle) elTitle.textContent = d.chartTitle;
 
-    // factor bars（width 動畫靠 CSS transition）
-    const fKeys = ['Humidity', 'Pm25', 'Time', 'Temp'];
-    const fData = [d.factors.humidity, d.factors.pm25, d.factors.time, d.factors.temp];
-    fKeys.forEach((k, i) => {
-      const f = fData[i];
-      const bar = document.getElementById('factorBar' + k);
-      const pct = document.getElementById('factorPct' + k);
-      const sub = document.getElementById('factorSub' + k);
-      if (bar) bar.style.width = f.width + '%';
-      if (pct) { pct.textContent = f.pct; pct.style.color = f.pctColor; }
-      if (sub) sub.textContent = f.sub;
-    });
+    // factor bars：7d / 30d 從 weather history 計算真實均值；trend 用靜態
+    const wh = JSON.parse(localStorage.getItem('allersense_weather_history') || '{}');
+    const today = new Date();
+    const daysBack = period === '7d' ? 7 : period === '30d' ? 30 : 90;
+    const periodLabel = period === '7d' ? '7 天' : period === '30d' ? '30 天' : '3 個月';
 
-    // 圖表依期間重新渲染
-    renderAnalysisChart(period);
+    const humVals = [], pm25Vals = [], tempVals = [];
+    for (let i = 0; i < daysBack; i++) {
+      const dt = new Date(today); dt.setDate(dt.getDate() - i);
+      const key = dt.toISOString().split('T')[0];
+      const e = wh[key];
+      if (e) {
+        if (e.humidity != null) humVals.push(e.humidity);
+        if (e.pm25 != null)     pm25Vals.push(e.pm25);
+        if (e.tempDiff != null) tempVals.push(e.tempDiff);
+      }
+    }
+    const avg = arr => arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : null;
+    const avgHum  = avg(humVals);
+    const avgPm25 = avg(pm25Vals);
+    const avgTemp = avg(tempVals);
+
+    // Humidity bar
+    const humBar = document.getElementById('factorBarHumidity');
+    const humPct = document.getElementById('factorPctHumidity');
+    const humSub = document.getElementById('factorSubHumidity');
+    if (avgHum !== null) {
+      if (humBar) humBar.style.width = avgHum + '%';
+      if (humPct) { humPct.textContent = avgHum + '%'; humPct.style.color = avgHum >= 75 ? '#0284C7' : '#16A34A'; }
+      if (humSub) humSub.textContent = `${periodLabel}均值 ${avgHum}% · 警戒值 ≥75%`;
+    } else {
+      // 無資料時用靜態 fallback
+      const f = d.factors.humidity;
+      if (humBar) humBar.style.width = f.width + '%';
+      if (humPct) { humPct.textContent = f.pct; humPct.style.color = f.pctColor; }
+      if (humSub) humSub.textContent = f.sub;
+    }
+
+    // PM2.5 bar
+    const pm25Bar = document.getElementById('factorBarPm25');
+    const pm25Pct = document.getElementById('factorPctPm25');
+    const pm25Sub = document.getElementById('factorSubPm25');
+    if (avgPm25 !== null) {
+      const pm25PctVal = Math.min(Math.round(avgPm25 / 75 * 100), 100);
+      if (pm25Bar) pm25Bar.style.width = pm25PctVal + '%';
+      if (pm25Pct) { pm25Pct.textContent = pm25PctVal + '%'; pm25Pct.style.color = avgPm25 > 35 ? '#EA580C' : '#16A34A'; }
+      if (pm25Sub) pm25Sub.textContent = `${periodLabel}均值 ${avgPm25} μg/m³ · 標準 ≤35`;
+    } else {
+      const f = d.factors.pm25;
+      if (pm25Bar) pm25Bar.style.width = f.width + '%';
+      if (pm25Pct) { pm25Pct.textContent = f.pct; pm25Pct.style.color = f.pctColor; }
+      if (pm25Sub) pm25Sub.textContent = f.sub;
+    }
+
+    // Time bar（固定靜態，無法從天氣資料推算）
+    const timeBar = document.getElementById('factorBarTime');
+    const timePct = document.getElementById('factorPctTime');
+    const timeSub = document.getElementById('factorSubTime');
+    const tf = d.factors.time;
+    if (timeBar) timeBar.style.width = tf.width + '%';
+    if (timePct) { timePct.textContent = tf.pct; timePct.style.color = tf.pctColor; }
+    if (timeSub) timeSub.textContent = tf.sub;
+
+    // Temp bar
+    const tempBar = document.getElementById('factorBarTemp');
+    const tempPct = document.getElementById('factorPctTemp');
+    const tempSub = document.getElementById('factorSubTemp');
+    if (avgTemp !== null) {
+      const tempPctVal = Math.min(Math.round(avgTemp / 15 * 100), 100);
+      if (tempBar) tempBar.style.width = tempPctVal + '%';
+      if (tempPct) { tempPct.textContent = tempPctVal + '%'; tempPct.style.color = avgTemp >= 7 ? '#EA580C' : '#16A34A'; }
+      if (tempSub) tempSub.textContent = `${periodLabel}均溫差 ${avgTemp}°C · 警戒值 ≥7°C`;
+    } else {
+      const f = d.factors.temp;
+      if (tempBar) tempBar.style.width = f.width + '%';
+      if (tempPct) { tempPct.textContent = f.pct; tempPct.style.color = f.pctColor; }
+      if (tempSub) tempSub.textContent = f.sub;
+    }
+
   }
 
   function initMoodDateChips() {
@@ -5466,11 +5951,16 @@
   function openMoodModal() {
     moodDoneToday = false;
     initMoodDateChips();
-    const slotLabel = document.getElementById('mood-time-slot-label');
-    if (slotLabel) slotLabel.textContent = getTimeSlot();
+    initTimeSlotChips();
     resetSeverityNodes();
     document.querySelectorAll('.mood-modal__btn').forEach(b => b.classList.remove('mood-modal__btn--selected-good','mood-modal__btn--selected-mild','mood-modal__btn--selected-bad'));
+    // 清除上次的症狀選取
+    document.querySelectorAll('.mood-modal__symptom--selected').forEach(b => b.classList.remove('mood-modal__symptom--selected'));
+    // 清除備註欄
+    const notesEl = document.getElementById('mood-notes');
+    if (notesEl) notesEl.value = '';
     moodOverlay.classList.add('mood-modal-overlay--visible');
+    if (window.innerWidth < 1024) document.body.style.overflow = 'hidden';
   }
 
   /* ── Figma 向量臉孔 SVG ── */
@@ -5494,36 +5984,51 @@
   function initTodaySymptomCard() {
     const todayStr = new Date().toISOString().split('T')[0];
     const logs = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
-    const todayLog = logs.find(l => l.date === todayStr);
+    const todayLogs = logs.filter(l => l.date === todayStr);
+    // 取最新一筆（timestamp 最大）
+    const todayLog = todayLogs.length
+      ? todayLogs.reduce((a, b) => (new Date(b.timestamp) > new Date(a.timestamp) ? b : a))
+      : null;
     if (todayLog) {
-      // 有今日紀錄 → 顯示數據
       const body  = document.getElementById('symptomCardBody');
       const empty = document.getElementById('symptomCardEmpty');
       const elEmoji    = document.getElementById('symptomCardEmoji');
       const elMood     = document.getElementById('symptomCardMood');
       const elSeverity = document.getElementById('symptomCardSeverity');
+      const elSlot     = document.getElementById('symptomCardTimeSlot');
       if (body)  body.style.display  = 'flex';
       if (empty) empty.style.display = 'none';
       if (elEmoji)    elEmoji.innerHTML    = FACE_SVG[todayLog.mood] || FACE_SVG['輕微'];
-      if (elMood)     elMood.textContent     = todayLog.mood;
+      if (elMood)     elMood.textContent   = todayLog.mood;
       if (elSeverity) elSeverity.textContent = `嚴重程度 ${todayLog.severity}/5`;
+      if (elSlot) {
+        elSlot.textContent = todayLog.timeSlot || '';
+        elSlot.style.display = todayLog.timeSlot ? 'inline-block' : 'none';
+      }
+    } else {
+      const body  = document.getElementById('symptomCardBody');
+      const empty = document.getElementById('symptomCardEmpty');
+      if (body)  body.style.display  = 'none';
+      if (empty) empty.style.display = '';
     }
-    // 沒有今日紀錄 → 空狀態（HTML 預設就是空狀態，不需要額外操作）
   }
 
-  function updateSymptomCard(mood) {
-    const map = MOOD_MAP[mood] || MOOD_MAP['輕微'];
+  function updateSymptomCard(mood, timeSlot, severity) {
     const body  = document.getElementById('symptomCardBody');
     const empty = document.getElementById('symptomCardEmpty');
     const elEmoji    = document.getElementById('symptomCardEmoji');
     const elMood     = document.getElementById('symptomCardMood');
     const elSeverity = document.getElementById('symptomCardSeverity');
-    // 切換到已填寫狀態
+    const elSlot     = document.getElementById('symptomCardTimeSlot');
     if (body)  body.style.display  = 'flex';
     if (empty) empty.style.display = 'none';
-    if (elEmoji)    elEmoji.innerHTML    = FACE_SVG[mood] || FACE_SVG['輕微'];
+    if (elEmoji)    elEmoji.innerHTML      = FACE_SVG[mood] || FACE_SVG['輕微'];
     if (elMood)     elMood.textContent     = mood;
-    if (elSeverity) elSeverity.textContent = map.severity;
+    if (elSeverity && severity) elSeverity.textContent = `嚴重程度 ${severity}/5`;
+    if (elSlot) {
+      elSlot.textContent = timeSlot || '';
+      elSlot.style.display = timeSlot ? 'inline-block' : 'none';
+    }
   }
   function dismissMoodFloat(btn) {
     // 點選後卡片淡出消失
@@ -5536,6 +6041,7 @@
   }
   function closeMoodModal() {
     moodOverlay.classList.remove('mood-modal-overlay--visible');
+    if (window.innerWidth < 1024) document.body.style.overflow = '';
   }
 
   // 心情選擇（點選後聯動嚴重度 slider 預設值＋各自顏色）
@@ -5614,6 +6120,15 @@
     return '深夜';
   }
 
+  function getSelectedTimeSlot() {
+    const sel = document.getElementById('mood-timeslot-select');
+    return sel ? sel.value : getTimeSlot();
+  }
+  function initTimeSlotChips() {
+    const sel = document.getElementById('mood-timeslot-select');
+    if (sel) sel.value = getTimeSlot();
+  }
+
   // 提交
   moodSubmitBtn.addEventListener('click', () => {
     moodDoneToday = true;
@@ -5623,8 +6138,9 @@
     const MOOD_EMOJI = { '舒適': '😊', '輕微': '😐', '不適': '😩' };
     const selectedSymptoms = [...document.querySelectorAll('.mood-modal__symptom--selected')].map(b => b.dataset.symptom);
     const now = new Date();
-    const timeSlot = getTimeSlot();
+    const timeSlot = getSelectedTimeSlot();
 
+    const noteValue = (document.getElementById('mood-notes')?.value || '').trim();
     const entry = {
       date: selectedLogDate,
       timeSlot,
@@ -5633,6 +6149,7 @@
       emoji: MOOD_EMOJI[selectedMood] || '😐',
       severity: window._currentSeverity || 1,
       symptoms: selectedSymptoms,
+      note: noteValue,
     };
 
     // 同一天同一時段 → 覆蓋；不同時段 → 新增
@@ -5647,33 +6164,105 @@
     // 只有填的是今天，才同步更新首頁今日症狀卡片
     const todayStr = new Date().toISOString().split('T')[0];
     if (selectedLogDate === todayStr) {
-      updateSymptomCard(selectedMood);
+      updateSymptomCard(selectedMood, entry.timeSlot, entry.severity);
       const elSeverity = document.getElementById('symptomCardSeverity');
       if (elSeverity) elSeverity.textContent = '嚴重程度 ' + entry.severity + '/5';
     }
 
     closeMoodModal();
+
+    // 若目前在日誌頁，立即重新渲染列表
+    if (typeof renderLogPage === 'function') renderLogPage();
+    if (typeof renderInsights === 'function') renderInsights();
   });
+
+  /* ── 日誌頁：未登入空狀態 ── */
+  function applyLogGuestState() {
+    // 統計數字歸零
+    const statsMap = { logStatTotal: '0', logStatGood: '0', logStatBad: '0', logSeverityVal: '0/5' };
+    Object.entries(statsMap).forEach(([id, v]) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = v;
+    });
+    const sevBar = document.getElementById('logSeverityBar');
+    if (sevBar) sevBar.style.width = '0%';
+
+    // 編輯按鈕隱藏
+    const editBtn = document.getElementById('logEditBtn');
+    if (editBtn) editBtn.style.display = 'none';
+
+    // 日誌列表：虛線藍框「新增」列 + 空狀態圖示說明
+    const list = document.getElementById('log-record-list');
+    if (list) {
+      list.innerHTML = `
+        <div id="logAddRow" onclick="showLoginPrompt()" style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:#fff;border-radius:14px;cursor:pointer;border:1.5px dashed var(--color-primary);margin-bottom:4px;">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--color-primary-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <span style="font-size:13px;font-weight:700;color:var(--color-primary)">新增今日紀錄</span>
+        </div>
+        <div class="log-empty-state" style="padding:28px 16px 32px;display:flex;flex-direction:column;align-items:center;">
+          <svg width="44" height="44" viewBox="0 0 44 44" fill="none" style="margin-bottom:12px;opacity:.35;flex-shrink:0;"><rect x="8" y="6" width="28" height="32" rx="4" stroke="#A0ADBF" stroke-width="2"/><path d="M14 14h16M14 20h16M14 26h10" stroke="#A0ADBF" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <div style="font-size:14px;font-weight:700;color:var(--color-text-2);margin-bottom:6px;">還沒有日誌紀錄</div>
+          <div style="font-size:12px;color:var(--color-text-3);line-height:1.7;">每天記錄身體狀況，AI 才能分析你的過敏規律<br>累積 7 天後即可查看個人化分析報告</div>
+        </div>`;
+    }
+
+    // 本月身體狀況：顯示空月曆/長條圖（無資料狀態）
+    const logMonthly = document.getElementById('logMonthlySection');
+    if (logMonthly) logMonthly.style.display = 'block';
+    if (typeof renderMonthlyChart === 'function') renderMonthlyChart();
+  }
 
   /* ── 日誌頁：從 localStorage 渲染紀錄明細 ── */
   function renderLogPage() {
+    const list = document.getElementById('log-record-list');
+    if (!list) return;
+
+    // 未登入：交由 setLoginState(false) 處理，避免顯示 localStorage 資料
+    if (!window._isLoggedIn) {
+      applyLogGuestState();
+      return;
+    }
+
     const logs = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
     const now = new Date();
     const cutoff = new Date(now);
     cutoff.setDate(cutoff.getDate() - 30);
     const recent = logs.filter(l => new Date(l.date) >= cutoff);
 
-    const list = document.getElementById('log-record-list');
-    if (!list) return;
+    // 今天是否已有紀錄
+    const todayStr = new Date().toISOString().split('T')[0];
+    const hasTodayEntry = recent.some(l => l.date === todayStr);
+
+    // 編輯按鈕：有資料才顯示（僅負責刪除）
+    const editBtn = document.getElementById('logEditBtn');
+    if (editBtn) editBtn.style.display = recent.length > 0 ? 'block' : 'none';
+
+    // 虛線新增列 HTML（永遠顯示，文字依是否已有紀錄切換）
+    const addRowLabel = hasTodayEntry ? '新增另一筆今日紀錄' : '新增今日紀錄';
+    const addRowHtml = `
+      <div id="logAddRow" onclick="window._isLoggedIn ? openMoodModal() : (showLoginPrompt())" style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:#fff;border-radius:14px;cursor:pointer;border:1.5px dashed var(--color-primary);margin-bottom:4px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--color-primary-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <span style="font-size:13px;font-weight:700;color:var(--color-primary)">${addRowLabel}</span>
+      </div>`;
 
     if (recent.length === 0) {
-      // 沒有紀錄時保持 0 數值，顯示空狀態提示
+      window._logEditMode = false;
       document.getElementById('logStatTotal').textContent = 0;
       document.getElementById('logStatGood').textContent  = 0;
       document.getElementById('logStatBad').textContent   = 0;
       document.getElementById('logSeverityVal').textContent = '0/5';
       document.getElementById('logSeverityBar').style.width = '0%';
-      list.innerHTML = '<div class="log-empty-state">尚未有紀錄<br>快去首頁填寫今日狀況吧！</div>';
+      list.innerHTML = `${addRowHtml}
+        <div class="log-empty-state" style="padding:20px 16px 28px;display:flex;flex-direction:column;align-items:center;">
+          <svg width="44" height="44" viewBox="0 0 44 44" fill="none" style="margin-bottom:12px;opacity:.35;flex-shrink:0;"><rect x="8" y="6" width="28" height="32" rx="4" stroke="#A0ADBF" stroke-width="2"/><path d="M14 14h16M14 20h16M14 26h10" stroke="#A0ADBF" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <div style="font-size:14px;font-weight:700;color:var(--color-text-2);margin-bottom:6px;">還沒有日誌紀錄</div>
+          <div style="font-size:12px;color:var(--color-text-3);line-height:1.7;">每天記錄身體狀況，AI 才能分析你的過敏規律<br>累積 7 天後即可查看個人化分析報告</div>
+        </div>`;
+      renderMonthlyChart();
       return;
     }
 
@@ -5690,7 +6279,7 @@
 
     const MOOD_LABEL = { '舒適': '感覺舒適', '輕微': '輕微不適', '不適': '感覺不適' };
     const SEV_BG     = { 1: '#4ADE80', 2: '#4ADE80', 3: '#FBBF24', 4: '#F97316', 5: '#EF4444' };
-    const SEV_COLOR  = { 1: '#166534', 2: '#166534', 3: '#78350F', 4: '#fff',    5: '#fff'    };
+    const SEV_COLOR  = { 1: '#166534', 2: '#166534', 3: '#78350F', 4: '#DC2626', 5: '#B91C1C' };
     const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
     const today = new Date().toISOString().split('T')[0];
 
@@ -5702,7 +6291,7 @@
     });
     const dates = Object.keys(byDate).sort((a, b) => b.localeCompare(a));
 
-    list.innerHTML = dates.map(date => {
+    list.innerHTML = addRowHtml + dates.map(date => {
       const entries = byDate[date];
       // 代表那筆 = 嚴重程度最高
       const rep = entries.reduce((a, b) => b.severity > a.severity ? b : a);
@@ -5722,26 +6311,38 @@
         5: { bg: 'rgba(220,38,38,.12)',  c: '#DC2626' },
       };
       const stc = SEV_TAG_COLOR[rep.severity] || SEV_TAG_COLOR[3];
-      // 環境因子 tag（seeded random 依日期）
+      // 環境因子 tag（優先讀 weather history 真實資料，無資料才 fallback 亂數）
       function envTagsFor(dateStr) {
+        const logWeatherHistory = JSON.parse(localStorage.getItem('allersense_weather_history') || '{}');
+        const real = logWeatherHistory[dateStr];
+        if (real) {
+          const tags = [];
+          if (real.humidity != null) tags.push({ val: real.humidity, cls:'tag--humidity', label: `濕度 ${real.humidity}%` });
+          if (real.pm25 != null)     tags.push({ val: real.pm25,     cls:'tag--pm25',    label: `PM2.5 ${real.pm25>75?'極高':real.pm25>50?'高':real.pm25>35?'中':'低'}` });
+          if (real.tempDiff != null) tags.push({ val: real.tempDiff, cls:'tag--teal',    label: `溫差 ${real.tempDiff}°C` });
+          tags.sort((a,b) => b.val - a.val);
+          return tags.slice(0,2).map(t=>`<span class="tag ${t.cls}">${t.label}</span>`).join('');
+        }
+        // fallback
         const dv = new Date(dateStr);
         const s = dv.getFullYear() * 10000 + (dv.getMonth()+1) * 100 + dv.getDate();
         function sr(seed, m) { const x = Math.sin(seed * m + 311.7) * 43758.5453; return x - Math.floor(x); }
         const factors = [
-          { val: sr(s,1.7), cls:'tag--humidity',
-            label: v => `濕度 ${Math.round(55 + v*40)}%` },
-          { val: sr(s,2.3), cls:'tag--pm25',
-            label: v => `PM2.5 ${v>0.75?'極高':v>0.5?'高':'中'}` },
-          { val: sr(s,3.1), cls:'tag--teal',
-            label: v => `溫差 ${Math.round(3 + v*11)}°C` },
+          { val: sr(s,1.7), cls:'tag--humidity', label: v => `濕度 ${Math.round(55 + v*40)}%` },
+          { val: sr(s,2.3), cls:'tag--pm25',     label: v => `PM2.5 ${v>0.75?'極高':v>0.5?'高':'中'}` },
+          { val: sr(s,3.1), cls:'tag--teal',      label: v => `溫差 ${Math.round(3 + v*11)}°C` },
         ];
         factors.sort((a,b) => b.val - a.val);
         return factors.slice(0,2).map(f=>`<span class="tag ${f.cls}">${f.label(f.val)}</span>`).join('');
       }
       const tagsHtml = envTagsFor(date);
 
-      // 展開的時段明細
-      const detailRows = entries.length > 1 ? entries.map(e => {
+      // 展開的時段明細（兩筆以上才展開）
+      const SLOT_ORDER = { '早上': 0, '中午': 1, '下午': 2, '晚上': 3, '深夜': 4 };
+      const sortedEntries = [...entries].sort((a, b) =>
+        (SLOT_ORDER[a.timeSlot] ?? 99) - (SLOT_ORDER[b.timeSlot] ?? 99)
+      );
+      const detailRows = entries.length > 1 ? sortedEntries.map(e => {
         const sc = SEV_COLOR[e.severity] || '#B45309';
         const sym = (e.symptoms||[]).length ? (e.symptoms||[]).map(s=>`<span class="tag" style="background:rgba(76,125,255,.12);color:#3B5BDB;font-size:10px;padding:2px 7px;border-radius:100px">${s}</span>`).join('') : '';
         return `<div class="log-timeslot-row">
@@ -5753,8 +6354,11 @@
       }).join('') : '';
 
       const detailId = `detail-${date}`;
-      return `<div class="history-record log-day-record" onclick="this.querySelector('.log-day-detail-wrap')?.classList.toggle('log-day-detail-wrap--open')" style="flex-direction:column;align-items:stretch;cursor:${entries.length>1?'pointer':'default'}">
-        <div style="display:flex;align-items:center;gap:12px">
+      return `<div class="history-record log-day-record" data-log-date="${date}" style="flex-direction:column;align-items:stretch;cursor:${entries.length>1?'pointer':'default'};position:relative;overflow:hidden;transition:padding-left .2s ease">
+        <button class="log-delete-btn" onclick="deleteLogEntry('${date}',event)" style="display:none;position:absolute;left:12px;top:50%;transform:translateY(-50%);width:26px;height:26px;border-radius:50%;background:#EF4444;border:none;cursor:pointer;align-items:center;justify-content:center;flex-shrink:0;z-index:2">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <div class="log-day-inner" onclick="if(!window._logEditMode)this.closest('.log-day-record').querySelector('.log-day-detail-wrap')?.classList.toggle('log-day-detail-wrap--open')" style="display:flex;align-items:center;gap:12px">
           <div class="history-record__date-col">
             <div class="history-record__day">${day}</div>
             <div class="history-record__month">${mon}</div>
@@ -5775,6 +6379,404 @@
 
     // 渲染本月趨勢圖
     renderMonthlyChart();
+
+    // 若處於編輯模式，重新套用
+    if (window._logEditMode) _applyLogEditMode(true);
+  }
+
+  window._logEditMode = false;
+
+  function _applyLogEditMode(on) {
+    const btn = document.getElementById('logEditBtn');
+    if (btn) btn.textContent = on ? '完成' : '編輯';
+
+    // 刪除圓圈 + 條目左縮
+    document.querySelectorAll('.log-delete-btn').forEach(el => {
+      el.style.display = on ? 'flex' : 'none';
+    });
+    document.querySelectorAll('.log-day-record').forEach(el => {
+      el.style.paddingLeft = on ? '52px' : '';
+    });
+  }
+
+  function toggleLogEditMode() {
+    window._logEditMode = !window._logEditMode;
+    _applyLogEditMode(window._logEditMode);
+  }
+
+  /* ── 匯出 CSV ── */
+  function exportLogsCSV() {
+    const logs = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
+    if (!logs.length) {
+      alert('目前沒有日誌紀錄可以匯出。');
+      return;
+    }
+    const headers = ['日期', '時段', '感覺', '嚴重程度', '症狀', '備註', '記錄時間'];
+    const rows = logs.map(l => [
+      l.date || '',
+      l.timeSlot || '',
+      l.mood || '',
+      l.severity || '',
+      (l.symptoms || []).join('、'),
+      (l.note || '').replace(/,/g, '，'),
+      l.timestamp ? new Date(l.timestamp).toLocaleString('zh-TW') : ''
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const bom = '\uFEFF'; // 讓 Excel 正確顯示中文
+    const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const today = new Date().toISOString().split('T')[0];
+    a.href = url; a.download = `AllerSense_日誌_${today}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  /* ── 隱私設定 Modal ── */
+  function openPrivacyModal() {
+    // 讀取已儲存的偏好
+    const prefs = JSON.parse(localStorage.getItem('allersense_privacy') || '{}');
+    ['Analytics','AI','Env'].forEach(key => {
+      const el = document.getElementById('privacyToggle' + key);
+      if (el) {
+        const val = prefs[key] !== undefined ? prefs[key] : true;
+        el.classList.toggle('toggle--on', val);
+      }
+    });
+    const overlay = document.getElementById('privacyModalOverlay');
+    modalShow(overlay);
+  }
+  function closePrivacyModal() {
+    modalHide(document.getElementById('privacyModalOverlay'));
+  }
+  function savePrivacy() {
+    const prefs = {
+      Analytics: document.getElementById('privacyToggleAnalytics')?.classList.contains('toggle--on') ?? true,
+      AI:        document.getElementById('privacyToggleAI')?.classList.contains('toggle--on') ?? true,
+      Env:       document.getElementById('privacyToggleEnv')?.classList.contains('toggle--on') ?? true,
+    };
+    localStorage.setItem('allersense_privacy', JSON.stringify(prefs));
+  }
+  // 點背景關閉
+  document.getElementById('privacyModalOverlay')?.addEventListener('click', e => {
+    const _pm = document.getElementById('privacyModal'); if (_pm && !_pm.contains(e.target)) closePrivacyModal();
+  });
+  document.getElementById('termsModalOverlay')?.addEventListener('click', e => {
+    const _tm = document.getElementById('termsModal'); if (_tm && !_tm.contains(e.target)) closeTermsModal();
+  });
+
+  /* ── 個人化洞察（規則式，從真實資料計算）── */
+  function renderInsights() {
+    const container = document.getElementById('insightBlocksContainer');
+    if (!container) return;
+
+    const insightPrompt = document.getElementById('insightLoginPrompt');
+    if (!window._isLoggedIn) {
+      container.innerHTML = '';
+      if (insightPrompt) insightPrompt.style.display = 'flex';
+      return;
+    }
+    if (insightPrompt) insightPrompt.style.display = 'none';
+
+    const logs = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
+    const envCache = JSON.parse(localStorage.getItem('allersense_env_cache') || '{}');
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    function insightBlock(bg, iconBg, iconSvg, html) {
+      return `<div class="insight-block insight-block--data" style="background:${bg}">
+        <div class="insight-block__icon" style="background:${iconBg}">${iconSvg}</div>
+        <p class="insight-block__text">${html}</p>
+      </div>`;
+    }
+    const starSvg  = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L9.8 6H15L10.6 9L12.4 14L8 11L3.6 14L5.4 9L1 6H6.2L8 1Z" fill="white"/></svg>`;
+    const infoSvg  = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2a6 6 0 100 12A6 6 0 008 2zm.75 9h-1.5V7h1.5v4zm0-5.5h-1.5V4h1.5v1.5z" fill="white"/></svg>`;
+    const checkSvg = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M13 4L6.5 11L3 7.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+    const blocks = [];
+
+    // ── 洞察 1：發作規律（日期/時段）──
+    if (logs.length >= 5) {
+      // 依星期幾分組，算平均嚴重度
+      const byDow = Array.from({length:7}, () => []);
+      logs.forEach(l => { const dow = new Date(l.date).getDay(); byDow[dow].push(Number(l.severity)||0); });
+      const dowAvg = byDow.map(arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : null);
+      const dowNames = ['週日','週一','週二','週三','週四','週五','週六'];
+      const validDows = dowAvg.map((v,i) => ({v,i})).filter(x => x.v !== null);
+      if (validDows.length >= 3) {
+        const worst = validDows.reduce((a,b) => b.v > a.v ? b : a);
+        const overall = validDows.reduce((s,x) => s+x.v, 0) / validDows.length;
+        const pct = Math.round(((worst.v - overall) / overall) * 100);
+        const isWeekend = worst.i === 0 || worst.i === 6;
+        if (pct > 10) {
+          blocks.push(insightBlock('#EEF3FF','#4C7DFF', starSvg,
+            `你在<strong>${dowNames[worst.i]}</strong>的症狀嚴重度比平均高 <strong>${pct}%</strong>。${isWeekend ? '可能與週末外出習慣有關，出門前建議查看風險預測。' : '留意這天的環境變化。'}`
+          ));
+        } else {
+          // 改看時段
+          const bySlot = {};
+          logs.forEach(l => { const s = l.timeSlot||'全天'; if(!bySlot[s]) bySlot[s]=[]; bySlot[s].push(Number(l.severity)||0); });
+          const slotEntries = Object.entries(bySlot).filter(([,v])=>v.length>=2).map(([k,v])=>({k, avg: v.reduce((a,b)=>a+b,0)/v.length}));
+          if (slotEntries.length >= 2) {
+            const worstSlot = slotEntries.reduce((a,b) => b.avg>a.avg ? b : a);
+            const slotPct = Math.round(((worstSlot.avg - (slotEntries.reduce((s,x)=>s+x.avg,0)/slotEntries.length)) / (slotEntries.reduce((s,x)=>s+x.avg,0)/slotEntries.length)) * 100);
+            blocks.push(insightBlock('#EEF3FF','#4C7DFF', starSvg,
+              `你在<strong>${worstSlot.k}</strong>時段的症狀嚴重度比其他時段高 <strong>${Math.max(slotPct,5)}%</strong>，建議這個時段特別留意戴口罩或減少外出。`
+            ));
+          } else {
+            blocks.push(insightBlock('#EEF3FF','#4C7DFF', starSvg,
+              `目前各天症狀分佈平均，暫無明顯高風險日。繼續累積紀錄，AI 將找出你的規律。`
+            ));
+          }
+        }
+      }
+    } else {
+      const need = 5 - logs.length;
+      blocks.push(insightBlock('#EEF3FF','#4C7DFF', starSvg,
+        `再累積 <strong>${need} 筆</strong>紀錄，即可分析你的發作規律與高風險時段。`
+      ));
+    }
+
+    // ── 洞察 2：今日環境警示 ──
+    const pm25Today = envCache?.pm25 ?? null;
+    const humToday  = envCache?.humidity ?? null;
+    if (pm25Today !== null && pm25Today > 35) {
+      blocks.push(insightBlock('#FFF7ED','#FB923C', infoSvg,
+        `今天 PM2.5 已達 <strong>${pm25Today} μg/m³</strong>，超過 WHO 標準（35 μg）。根據你的紀錄，高 PM2.5 時症狀較嚴重，建議外出配戴口罩。`
+      ));
+    } else if (humToday !== null && humToday > 80) {
+      blocks.push(insightBlock('#FFF7ED','#FB923C', infoSvg,
+        `今天濕度達 <strong>${humToday}%</strong>，高濕環境容易誘發過敏。建議開除濕機、避免長時間待在潮濕空間。`
+      ));
+    } else if (pm25Today !== null) {
+      blocks.push(insightBlock('#FFF7ED','#FB923C', infoSvg,
+        `今天 PM2.5 為 <strong>${pm25Today} μg/m³</strong>，空氣品質良好，過敏風險相對較低。`
+      ));
+    } else {
+      blocks.push(insightBlock('#FFF7ED','#FB923C', infoSvg,
+        `環境資料載入中，稍後將顯示今日 PM2.5 與濕度狀況。`
+      ));
+    }
+
+    // ── 洞察 3：近期趨勢 ──
+    if (logs.length >= 7) {
+      const now = new Date();
+      function avgSevInRange(daysAgo, days) {
+        const end = new Date(now); end.setDate(now.getDate() - daysAgo);
+        const start = new Date(end); start.setDate(end.getDate() - days + 1);
+        const arr = logs.filter(l => { const d = new Date(l.date); return d >= start && d <= end; }).map(l => Number(l.severity)||0);
+        return arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : null;
+      }
+      const cur  = avgSevInRange(0, 7);
+      const prev = avgSevInRange(7, 7);
+      if (cur !== null && prev !== null && prev > 0) {
+        const diff = Math.round(((cur - prev) / prev) * 100);
+        if (diff <= -10) {
+          blocks.push(insightBlock('#F0FDF4','#16A34A', checkSvg,
+            `近 7 天症狀嚴重度比前 7 天<strong>改善 ${Math.abs(diff)}%</strong>，繼續保持！發作次數正在下降 ✓`
+          ));
+        } else if (diff >= 10) {
+          blocks.push(insightBlock('#FFF7ED','#FB923C', infoSvg,
+            `近 7 天症狀嚴重度比前 7 天<strong>上升 ${diff}%</strong>，建議回顧這週的環境記錄，找出可能的誘發因子。`
+          ));
+        } else {
+          blocks.push(insightBlock('#F0FDF4','#16A34A', checkSvg,
+            `近 7 天症狀與前 7 天<strong>持平</strong>，整體狀況穩定。繼續累積紀錄有助於找出更細緻的規律。`
+          ));
+        }
+      } else if (cur !== null) {
+        const avgSev = cur.toFixed(1);
+        blocks.push(insightBlock('#F0FDF4','#16A34A', checkSvg,
+          `近 7 天平均嚴重程度為 <strong>${avgSev}/5</strong>。累積更多歷史紀錄後，即可比較前後期趨勢。`
+        ));
+      }
+    } else {
+      const total = logs.length;
+      blocks.push(insightBlock('#F0FDF4','#16A34A', checkSvg,
+        `目前已有 <strong>${total} 筆</strong>紀錄。累積 7 天後即可查看症狀趨勢，判斷是否在改善中。`
+      ));
+    }
+
+    container.innerHTML = blocks.join('');
+  }
+
+  /* ── 今日建議（動態化）── */
+  function renderRecommendations() {
+    const el = document.getElementById('recList');
+    if (!el) return;
+
+    // 讀取環境資料（cache 結構：{ weather: { humidity, temp }, aqi: { pm25 } }）
+    const envRaw = localStorage.getItem('allersense_env_cache');
+    let pm25 = 35, humidity = 60;
+    if (envRaw) {
+      try {
+        const env = JSON.parse(envRaw);
+        if (env.weather?.humidity != null) humidity = Number(env.weather.humidity);
+        if (env.aqi?.pm25 != null)         pm25     = Number(env.aqi.pm25);
+      } catch(e) {}
+    }
+
+    // 讀取使用者過敏原
+    const allergens = JSON.parse(localStorage.getItem('allersense_allergens') || '[]');
+
+    // 建立建議候選池
+    const REC = {
+      // 圖示色系：blue / amber / green / red
+      outdoor: {
+        color: 'blue',
+        icon: `<path d="M9 2C5.1 2 2 5.1 2 9s3.1 7 7 7 7-3.1 7-7-3.1-7-7-7zm.75 10.5h-1.5V9h1.5v3.5zm0-5h-1.5V6h1.5v1.5z" fill="#4C7DFF"/>`,
+        text: '<em>減少戶外活動</em>，建議待在室內或縮短外出時間'
+      },
+      mask: {
+        color: 'blue',
+        icon: `<path d="M9 2a7 7 0 100 14A7 7 0 009 2zm0 2a1 1 0 110 2A1 1 0 019 4zm1 9H8V8h2v5z" fill="#4C7DFF"/>`,
+        text: '外出時配戴 <em>N95 口罩</em>，降低 PM2.5 與空污吸入'
+      },
+      dehumid: {
+        color: 'amber',
+        icon: `<path d="M14.5 8C14.5 5 12.5 3 9 2 5.5 3 3.5 5 3.5 8c0 2.5 1.5 4.5 3 5.5V15h5v-1.5c1.5-1 3-3 3-5.5z" fill="#D97706"/>`,
+        text: '室內開啟 <em>除濕機</em>，目標濕度維持 55% 以下，抑制塵蟎與黴菌'
+      },
+      ventilate: {
+        color: 'green',
+        icon: `<path d="M3 9h12M9 3v12" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round"/>`,
+        text: '空氣品質佳，適合<em>開窗通風</em>換氣，保持室內空氣清新'
+      },
+      medicine: {
+        color: 'green',
+        icon: `<circle cx="9" cy="9" r="7" fill="#16A34A" fill-opacity=".15"/><path d="M9 5v4l3 2" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round"/>`,
+        text: '記得<em>按時服藥</em>，抗組織胺建議飯後 30 分鐘服用'
+      },
+      dustmite: {
+        color: 'amber',
+        icon: `<path d="M14.5 8C14.5 5 12.5 3 9 2 5.5 3 3.5 5 3.5 8c0 2.5 1.5 4.5 3 5.5V15h5v-1.5c1.5-1 3-3 3-5.5z" fill="#D97706"/>`,
+        text: '今日高濕，<em>塵蟎</em>活躍期，建議清洗寢具或使用防蟎套'
+      },
+      mold: {
+        color: 'amber',
+        icon: `<path d="M14.5 8C14.5 5 12.5 3 9 2 5.5 3 3.5 5 3.5 8c0 2.5 1.5 4.5 3 5.5V15h5v-1.5c1.5-1 3-3 3-5.5z" fill="#D97706"/>`,
+        text: '濕度偏高容易滋生<em>黴菌孢子</em>，浴室通風廁所保持乾燥'
+      },
+      cold: {
+        color: 'blue',
+        icon: `<path d="M9 2C5.1 2 2 5.1 2 9s3.1 7 7 7 7-3.1 7-7-3.1-7-7-7zm.75 10.5h-1.5V9h1.5v3.5zm0-5h-1.5V6h1.5v1.5z" fill="#4C7DFF"/>`,
+        text: '今日溫差較大，對<em>冷空氣</em>敏感者外出前先做好保暖'
+      },
+      pet: {
+        color: 'amber',
+        icon: `<path d="M14.5 8C14.5 5 12.5 3 9 2 5.5 3 3.5 5 3.5 8c0 2.5 1.5 4.5 3 5.5V15h5v-1.5c1.5-1 3-3 3-5.5z" fill="#D97706"/>`,
+        text: '有飼養動物時，建議定期梳毛並使用空氣清淨機，減少<em>動物毛髮</em>飄散'
+      },
+      chemical: {
+        color: 'blue',
+        icon: `<path d="M9 2a7 7 0 100 14A7 7 0 009 2zm0 2a1 1 0 110 2A1 1 0 019 4zm1 9H8V8h2v5z" fill="#4C7DFF"/>`,
+        text: '避免使用含強烈氣味的<em>香水或清潔化學品</em>，保持室內空氣通暢'
+      },
+      dust: {
+        color: 'blue',
+        icon: `<path d="M9 2a7 7 0 100 14A7 7 0 009 2zm0 2a1 1 0 110 2A1 1 0 019 4zm1 9H8V8h2v5z" fill="#4C7DFF"/>`,
+        text: '工業或施工環境請全程配戴<em>防塵口罩</em>，下班後更換衣物'
+      },
+      food: {
+        color: 'green',
+        icon: `<circle cx="9" cy="9" r="7" fill="#16A34A" fill-opacity=".15"/><path d="M9 5v4l3 2" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round"/>`,
+        text: '飲食留意<em>過敏原食材</em>，外食前確認成分，隨身攜帶急救藥物'
+      },
+      airpurifier: {
+        color: 'green',
+        icon: `<circle cx="9" cy="9" r="7" fill="#16A34A" fill-opacity=".15"/><path d="M9 5v4l3 2" stroke="#16A34A" stroke-width="1.5" stroke-linecap="round"/>`,
+        text: 'PM2.5 偏高，建議室內開啟<em>空氣清淨機</em>（HEPA 濾網），減少顆粒吸入'
+      },
+    };
+
+    // 根據條件選出建議
+    const selected = [];
+
+    // — PM2.5 邏輯 —
+    if (pm25 >= 55) {
+      selected.push('outdoor');
+      selected.push('mask');
+      selected.push('airpurifier');
+    } else if (pm25 >= 35) {
+      selected.push('mask');
+      selected.push('airpurifier');
+    } else {
+      // 空氣好 → 可開窗
+      selected.push('ventilate');
+    }
+
+    // — 濕度邏輯 —
+    if (humidity >= 70) {
+      if (allergens.includes('塵蟎')) selected.push('dustmite');
+      else if (allergens.includes('黴菌孢子')) selected.push('mold');
+      else selected.push('dehumid');
+    } else if (humidity >= 55) {
+      selected.push('dehumid');
+    }
+
+    // — 過敏原客製邏輯 —
+    if (allergens.includes('冷空氣')) selected.push('cold');
+    if (allergens.includes('動物毛髮')) selected.push('pet');
+    if (allergens.includes('香水化學品')) selected.push('chemical');
+    if (allergens.includes('工業粉塵')) selected.push('dust');
+    if (allergens.includes('食物過敏')) selected.push('food');
+
+    // 永遠建議服藥（若有紀錄過敏原）
+    if (allergens.length > 0 && !selected.includes('medicine')) {
+      selected.push('medicine');
+    }
+
+    // 去重、最多顯示 4 條
+    const shown = [...new Set(selected)].slice(0, 4);
+
+    // — 萬用 fallback（完全無設定、無資料）—
+    if (!shown.length) {
+      shown.push('medicine', 'dehumid', 'mask');
+    }
+
+    // 產生 HTML
+    const COLOR_MAP = {
+      blue:  { bg: 'rec-icon--blue',  },
+      amber: { bg: 'rec-icon--amber', },
+      green: { bg: 'rec-icon--green', },
+      red:   { bg: 'rec-icon--red',   },
+    };
+
+    el.innerHTML = shown.map((key) => {
+      const r = REC[key];
+      if (!r) return '';
+      const cls = (COLOR_MAP[r.color] || COLOR_MAP.blue).bg;
+      return `
+        <div class="rec-item">
+          <div class="rec-icon ${cls}">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">${r.icon}</svg>
+          </div>
+          <div class="rec-text">${r.text}</div>
+          <div class="rec-check"></div>
+        </div>`;
+    }).join('');
+
+    // 重新綁定 click（動態產生的元素需要重新掛載）
+    const _checkSvg = '<svg width="13" height="10" viewBox="0 0 11 8"><path d="M1 4L4 7L10 1" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    el.querySelectorAll('.rec-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const check = item.querySelector('.rec-check');
+        if (!check) return;
+        if (check.classList.contains('rec-check--done')) {
+          check.classList.remove('rec-check--done');
+          check.innerHTML = '';
+        } else {
+          check.classList.add('rec-check--done');
+          check.innerHTML = _checkSvg;
+        }
+      });
+    });
+  }
+
+  function deleteLogEntry(date, event) {
+    event.stopPropagation();
+    const logs = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
+    localStorage.setItem('allersense_logs', JSON.stringify(logs.filter(l => l.date !== date)));
+    renderLogPage(); // 重新渲染（會自動重套編輯模式）
   }
 
   /* ── 本月趨勢圖 ── */
@@ -5796,8 +6798,9 @@
     const todayDate = isThisMonth ? today.getDate() : -1;
     const todayMs   = new Date(year, month, todayDate > 0 ? todayDate : 32).getTime();
     const firstWeekday = new Date(year, month, 1).getDay();
-    const SEV_DOT = { 1:'log-cal-sdot--good', 2:'log-cal-sdot--good',
-                      3:'log-cal-sdot--mild', 4:'log-cal-sdot--bad', 5:'log-cal-sdot--severe' };
+    const SEV_DOT  = { 1:'log-cal-sdot--good', 2:'log-cal-sdot--good',
+                       3:'log-cal-sdot--mild', 4:'log-cal-sdot--bad', 5:'log-cal-sdot--severe' };
+    const MOOD_DOT = { '舒適':'log-cal-sdot--good', '輕微':'log-cal-sdot--mild', '不適':'log-cal-sdot--bad' };
     let html = '';
     // 空白補位
     for (let i = 0; i < firstWeekday; i++) {
@@ -5810,8 +6813,8 @@
       const entry   = dateMap[d];
       const cellCls = isToday ? 'log-cal-cell--today' : isFuture ? 'log-cal-cell--future' : '';
       let dotCls = 'log-cal-sdot--none';
-      if (isToday)       dotCls = 'log-cal-sdot--today';
-      if (entry)         dotCls = SEV_DOT[entry.severity] || 'log-cal-sdot--mild';
+      if (isToday) dotCls = 'log-cal-sdot--today';
+      if (entry)   dotCls = MOOD_DOT[entry.mood] || SEV_DOT[entry.severity] || 'log-cal-sdot--mild';
       html += `<div class="log-cal-cell ${cellCls}">
         <span class="log-cal-num">${d}</span>
         <div class="log-cal-sdot ${dotCls}"></div>
@@ -5821,7 +6824,10 @@
   }
 
   function renderMonthlyChart() {
-    const logs = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
+    // 未登入：強制用空陣列，不讀取 localStorage 資料
+    const logs = window._isLoggedIn
+      ? JSON.parse(localStorage.getItem('allersense_logs') || '[]')
+      : [];
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth();
@@ -5833,7 +6839,11 @@
     logs.forEach(l => {
       const d = new Date(l.date);
       if (d.getFullYear() === year && d.getMonth() === month) {
-        dateMap[d.getDate()] = l;
+        const key = d.getDate();
+        // 同天多筆取嚴重程度最高的那筆
+        if (!dateMap[key] || (Number(l.severity) || 0) > (Number(dateMap[key].severity) || 0)) {
+          dateMap[key] = l;
+        }
       }
     });
 
@@ -5845,8 +6855,38 @@
     if (!section) return;
 
     const entries = Object.values(dateMap);
-    if (entries.length === 0) { section.style.display = 'none'; return; }
     section.style.display = 'block';
+
+    if (entries.length === 0) {
+      // 無資料時：顯示空白月曆 + insight 顯示 —
+      subtitleEl.textContent = `${MONTH_NAMES[month]}・尚無紀錄`;
+      renderLogCal({}, year, month, daysInMonth);
+      if (insightEl) insightEl.innerHTML = `
+        <div class="log-monthly-insight-row">
+          <span class="log-monthly-insight-label"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#F97316;margin-right:5px;vertical-align:middle;flex-shrink:0"></span>最嚴重日</span>
+          <span class="log-monthly-insight-val" style="color:#C4CAD4">—</span>
+        </div>
+        <div class="log-monthly-insight-row">
+          <span class="log-monthly-insight-label"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--color-primary);margin-right:5px;vertical-align:middle;flex-shrink:0"></span>平均嚴重程度</span>
+          <span class="log-monthly-insight-val" style="color:#C4CAD4">—</span>
+        </div>
+        <div class="log-monthly-insight-row">
+          <span class="log-monthly-insight-label" style="display:flex;align-items:center;gap:5px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#4ADE80;flex-shrink:0"></span>舒適 <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#F97316;flex-shrink:0"></span>不適</span>
+          <span class="log-monthly-insight-val" style="color:#C4CAD4">— 天 / — 天</span>
+        </div>`;
+      // 長條圖也清空
+      if (chartEl) {
+        let barsHtml = '', labelsHtml = '';
+        for (let d = 1; d <= daysInMonth; d++) {
+          barsHtml += `<div class="log-monthly-bar log-monthly-bar--empty"></div>`;
+          const showLabel = d === 1 || d % 5 === 1 || d === daysInMonth;
+          labelsHtml += `<div class="log-monthly-label">${showLabel ? d : ''}</div>`;
+        }
+        chartEl.innerHTML = barsHtml;
+        if (labelsEl) labelsEl.innerHTML = labelsHtml;
+      }
+      return;
+    }
 
     subtitleEl.textContent = `${MONTH_NAMES[month]}・共記錄 ${entries.length} 天`;
 
@@ -5898,20 +6938,20 @@
 
   /* ── 登入 Modal（1024px+）── */
   function openLoginModal() {
-    document.getElementById('loginModalOverlay').classList.add('login-modal-overlay--visible');
+    modalShow(document.getElementById('loginModalOverlay'), 'login-modal-overlay--visible');
   }
   function closeLoginModal() {
-    document.getElementById('loginModalOverlay').classList.remove('login-modal-overlay--visible');
+    modalHide(document.getElementById('loginModalOverlay'), 'login-modal-overlay--visible');
   }
   document.getElementById('loginModalOverlay').addEventListener('click', e => {
     if (!document.getElementById('loginModal').contains(e.target)) closeLoginModal();
   });
 
   function openRegisterModal() {
-    document.getElementById('registerModalOverlay').classList.add('login-modal-overlay--visible');
+    modalShow(document.getElementById('registerModalOverlay'), 'login-modal-overlay--visible');
   }
   function closeRegisterModal() {
-    document.getElementById('registerModalOverlay').classList.remove('login-modal-overlay--visible');
+    modalHide(document.getElementById('registerModalOverlay'), 'login-modal-overlay--visible');
     // 清空欄位與訊息
     ['register-name','register-email','register-password','register-password-confirm'].forEach(id => {
       const el = document.getElementById(id); if (el) el.value = '';
@@ -5925,10 +6965,10 @@
   });
 
   function openForgotModal() {
-    document.getElementById('forgotModalOverlay').classList.add('login-modal-overlay--visible');
+    modalShow(document.getElementById('forgotModalOverlay'), 'login-modal-overlay--visible');
   }
   function closeForgotModal() {
-    document.getElementById('forgotModalOverlay').classList.remove('login-modal-overlay--visible');
+    modalHide(document.getElementById('forgotModalOverlay'), 'login-modal-overlay--visible');
     const el = document.getElementById('forgot-email'); if (el) el.value = '';
     ['forgot-error','forgot-success'].forEach(id => {
       const el = document.getElementById(id); if (el) el.style.display = 'none';
@@ -5968,6 +7008,7 @@
     }
     // 切換到日誌頁時，渲染紀錄明細
     if (targetId === 'screen-history') {
+      window._logEditMode = false; // 切換過來時重置編輯模式
       renderLogPage();
     }
     // 切換到分析頁時，依當前 active tab 渲染圖表，並載入真實數據
@@ -5975,6 +7016,7 @@
       const activeTab = document.querySelector('#analysisTabBar .tab--active');
       const period = activeTab ? activeTab.dataset.period : '7d';
       renderAnalysisChart(period);
+      if (typeof renderInsights === 'function') renderInsights();
     }
   }
 
@@ -6004,6 +7046,23 @@
 
     // 初始化日誌頁紀錄明細
     renderLogPage();
+
+    // 同步過敏原 desc 顯示
+    const savedAllergens = JSON.parse(localStorage.getItem('allersense_allergens') || '[]');
+    const allergenItem = document.getElementById('settingsPrefAllergens');
+    if (allergenItem) {
+      allergenItem.querySelector('.settings-item__desc').textContent =
+        savedAllergens.length ? savedAllergens.join('、') : '尚未設定';
+    }
+
+    // 同步城市 label 顯示
+    const savedCity = localStorage.getItem('allersense_city') || '台中市';
+    const cityItem = document.getElementById('settingsPrefLocation');
+    if (cityItem) {
+      cityItem.querySelector('.settings-item__desc').textContent = savedCity + '，台灣';
+    }
+    const cityLabelEl = document.querySelector('.top-nav__city');
+    if (cityLabelEl) cityLabelEl.textContent = savedCity + '，台灣';
   });
 
   // 把所有 bottom-nav 內的 active 狀態同步到目前頁面
@@ -6239,11 +7298,11 @@
     },
     '趨勢': {
       chips: [
-        { val: '↓15', unit: '%', label: '季度下降', color: '#15803D' },
-        { val: '92', unit: '', label: '日誌記錄', color: '' },
-        { val: '3.2', unit: 'x', label: '改善倍數', color: '#15803D' }
+        { val: '—', unit: '', label: '季度趨勢', color: '#94A3B8' },
+        { val: '—', unit: '', label: '累積紀錄', color: '' },
+        { val: '—', unit: '', label: '改善倍數', color: '#94A3B8' }
       ],
-      factors: [68, 55, 62, 45]
+      factors: [0, 0, 0, 0]
     }
   };
 
@@ -6279,9 +7338,7 @@
       tab.addEventListener('click', () => {
         bar.querySelectorAll('.tab').forEach(t => t.classList.remove('tab--active'));
         tab.classList.add('tab--active');
-        if (bar.closest('#screen-analysis')) {
-          applyAnalysisTab(tab.textContent.trim());
-        }
+        // 分析頁由 switchAnalysisTab (onclick) 處理，不重複呼叫
       });
     });
   });
@@ -6306,18 +7363,37 @@
   /* ─── 偏好設定 Modal 共用開關 ─── */
   function openPrefModal(id) {
     const el = document.getElementById(id);
-    el.style.display = 'flex';
-    el.classList.add('pref-overlay--visible');
+    modalShow(el, 'pref-overlay--visible');
     // 重新綁定 toggle 事件（動態插入的 toggle 需要重綁）
     el.querySelectorAll('[data-toggle]').forEach(t => {
       t.style.cursor = 'pointer';
       t.onclick = () => t.classList.toggle('toggle--on');
     });
+    // 過敏原 overlay：從 localStorage 還原 chip 選取狀態
+    if (id === 'allergenOverlay') {
+      const saved = JSON.parse(localStorage.getItem('allersense_allergens') || '[]');
+      el.querySelectorAll('.allergen-chip').forEach(chip => {
+        const label = chip.querySelector('.allergen-chip__label')?.textContent?.trim();
+        if (saved.includes(label)) chip.classList.add('allergen-chip--active');
+        else chip.classList.remove('allergen-chip--active');
+      });
+    }
+    // 地點 overlay：還原已儲存的城市選取
+    if (id === 'locationOverlay') {
+      const savedCity = localStorage.getItem('allersense_city') || '台中市';
+      el.querySelectorAll('.city-item').forEach(item => {
+        const radio = item.querySelector('.city-item__radio');
+        const cityName = item.querySelector('.city-item__name')?.textContent?.trim();
+        if (radio) {
+          if (cityName === savedCity) radio.classList.add('city-item__radio--active');
+          else radio.classList.remove('city-item__radio--active');
+        }
+      });
+    }
   }
   function closePrefModal(id) {
     const el = document.getElementById(id);
-    el.style.display = 'none';
-    el.classList.remove('pref-overlay--visible');
+    modalHide(el, 'pref-overlay--visible');
   }
   // 點遮罩關閉
   ['allergenOverlay','timeSlotOverlay','locationOverlay'].forEach(id => {
@@ -6340,6 +7416,10 @@
     const desc = active.length ? active.join('、') : '尚未設定';
     const item = document.getElementById('settingsPrefAllergens');
     if (item) item.querySelector('.settings-item__desc').textContent = desc;
+    // 儲存到 localStorage
+    localStorage.setItem('allersense_allergens', JSON.stringify(active));
+    // 重新產生今日建議
+    if (typeof renderRecommendations === 'function') renderRecommendations();
     closePrefModal('allergenOverlay');
   }
 
@@ -6353,20 +7433,63 @@
   function saveLocation() {
     const item = document.getElementById('settingsPrefLocation');
     if (item) item.querySelector('.settings-item__desc').textContent = _selectedCity + '，台灣';
+    // 同步更新 top-nav 城市顯示
+    const cityLabelEl = document.querySelector('.top-nav__city');
+    if (cityLabelEl) cityLabelEl.textContent = _selectedCity + '，台灣';
+    // 儲存並重新抓取天氣環境數據
+    if (typeof onCityChange === 'function') onCityChange(_selectedCity);
     closePrefModal('locationOverlay');
   }
 
   /* ─── 編輯個人資料 Modal ─── */
+  /* ── 大頭照處理 ── */
+  function handleAvatarChange(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target.result;
+      localStorage.setItem('allersense_avatar', dataUrl);
+      applyAvatar(dataUrl);
+    };
+    reader.readAsDataURL(file);
+    input.value = ''; // 允許重複選同一張
+  }
+
+  function applyAvatar(dataUrl) {
+    // 編輯頁頭像
+    const img   = document.getElementById('editProfileAvatarImg');
+    const emoji = document.getElementById('editProfileAvatarEmoji');
+    if (img && emoji) {
+      img.src = dataUrl;
+      img.style.display = 'block';
+      emoji.style.display = 'none';
+    }
+    // 設定頁 profile card 頭像
+    const card = document.getElementById('settingsProfileCard');
+    if (card) {
+      const av = card.querySelector('.profile-avatar');
+      if (av) {
+        av.innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" alt="大頭照">`;
+        av.style.fontSize = '0';
+      }
+    }
+  }
+
+  function loadSavedAvatar() {
+    const saved = localStorage.getItem('allersense_avatar');
+    if (saved) applyAvatar(saved);
+  }
+
   function openEditProfile() {
-    document.getElementById('editProfileOverlay').classList.add('edit-profile-overlay--visible');
-    document.getElementById('editProfileOverlay').style.display = 'flex';
+    loadSavedAvatar(); // 打開時載入已儲存的大頭照
+    modalShow(document.getElementById('editProfileOverlay'), 'edit-profile-overlay--visible');
   }
   function closeEditProfile() {
-    const overlay = document.getElementById('editProfileOverlay');
-    overlay.style.display = 'none';
-    overlay.classList.remove('edit-profile-overlay--visible');
+    modalHide(document.getElementById('editProfileOverlay'), 'edit-profile-overlay--visible');
   }
   document.addEventListener('DOMContentLoaded', () => {
+    loadSavedAvatar(); // 頁面載入時還原已儲存的大頭照
     document.getElementById('editProfileClose').addEventListener('click', closeEditProfile);
     document.getElementById('editProfileCancel').addEventListener('click', closeEditProfile);
     document.getElementById('editProfileOverlay').addEventListener('click', (e) => {
@@ -6374,7 +7497,7 @@
     });
     document.getElementById('editProfileSave').addEventListener('click', () => {
       // 同步名字回 Profile Card
-      const newName = document.getElementById('editProfileName').value.trim() || '陳怡君';
+      const newName = document.getElementById('editProfileName').value.trim() || document.getElementById('settingsProfileCard')?.querySelector('.profile-name')?.textContent || '使用者';
       const card = document.getElementById('settingsProfileCard');
       if (card) card.querySelector('.profile-name').textContent = newName;
       closeEditProfile();
@@ -6398,10 +7521,18 @@
     if (loggedIn) {
       card.querySelector('.profile-avatar').innerHTML = '🧑';
       card.querySelector('.profile-avatar').removeAttribute('style');
-      card.querySelector('.profile-name').textContent = '陳怡君';
-      card.querySelector('.profile-email').textContent = 'yijun@allersense.app';
+      // 名字和 email 由 applyUserToUI 填入，這裡不覆蓋（避免蓋掉真實資料）
+      if (!card.querySelector('.profile-name').textContent || card.querySelector('.profile-name').textContent === '訪客') {
+        card.querySelector('.profile-name').textContent = '使用者';
+      }
+      if (!card.querySelector('.profile-email').textContent || card.querySelector('.profile-email').textContent === '尚未登入') {
+        card.querySelector('.profile-email').textContent = '';
+      }
       const badge = card.querySelector('.profile-badge');
-      badge.textContent = '✦ 進階會員';
+      // badge 由 applyUserToUI 填入，setLoginState 只在還沒設定時給預設值
+      if (!badge.textContent || badge.textContent === '訪客模式') {
+        badge.textContent = '✦ 一般會員';
+      }
       badge.removeAttribute('style');
       const btn = card.querySelector('.profile-edit-btn');
       btn.removeAttribute('style');
@@ -6428,7 +7559,8 @@
       const rightEl = item.querySelector('.settings-item__right');
       if (loggedIn) {
         item.style.opacity = '';
-        item.style.cursor = '';
+        item.style.cursor = 'default';
+        item.onclick = null;
         item.removeAttribute('onclick');
         const desc = item.querySelector('.settings-item__desc');
         if (desc) desc.textContent = item.dataset.origDesc || '';
@@ -6439,14 +7571,20 @@
         } else if (type === 'toggle-off' && rightEl) {
           rightEl.outerHTML = `<div class="toggle" data-toggle style="cursor:pointer"></div>`;
         }
-        // 重新綁定 toggle 事件
+        // 重新綁定 toggle 事件（用 onclick 確保不重複）
         item.querySelectorAll('[data-toggle]').forEach(t => {
-          t.addEventListener('click', () => t.classList.toggle('toggle--on'));
+          t.onclick = (e) => { e.stopPropagation(); t.classList.toggle('toggle--on'); };
         });
+        // 特定功能按鈕綁 onclick
+        if (item.id === 'settingsExportBtn') {
+          item.onclick = () => showExportConfirm();
+        } else if (item.id === 'settingsPrivacyBtn') {
+          item.onclick = () => openPrivacyModal();
+        }
       } else {
         item.style.opacity = '.6';
         item.style.cursor = 'pointer';
-        item.onclick = () => { document.getElementById('loginPromptModal').style.display = 'flex'; };
+        item.onclick = () => { showLoginPrompt(); };
         const desc = item.querySelector('.settings-item__desc');
         if (desc) desc.textContent = (type === 'arrow') ? '登入後可設定' : '登入後可開啟';
         // 把 toggle 或 arrow 換成鎖頭
@@ -6471,10 +7609,7 @@
     const actionBtn = document.getElementById('settingsActionBtn');
     if (loggedIn) {
       actionBtn.style.cssText = '';
-      actionBtn.onclick = function() {
-        this.style.transform = 'scale(0.97)';
-        setTimeout(() => { this.style.transform = ''; setLoginState(false); showScreen('screen-login'); }, 150);
-      };
+      actionBtn.onclick = null; // 登出邏輯由 bindLogoutBtn 的 addEventListener 統一處理
       actionBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M7 15H4a1 1 0 01-1-1V4a1 1 0 011-1h3" stroke="#DC2626" stroke-width="1.5" stroke-linecap="round"/><path d="M12 12l4-3-4-3M8 9h8" stroke="#DC2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> 登出帳號`;
     } else {
       actionBtn.style.cssText = 'background:#EEF3FF;border-color:#C7D7FF;color:#4C7DFF;';
@@ -6483,6 +7618,86 @@
         setTimeout(() => { this.style.transform = ''; showScreen('screen-login'); }, 150);
       };
       actionBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M7 3H4a1 1 0 00-1 1v10a1 1 0 001 1h3" stroke="#4C7DFF" stroke-width="1.5" stroke-linecap="round"/><path d="M11 12l4-3-4-3M7 9h8" stroke="#4C7DFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> 登入 / 建立帳號`;
+    }
+
+    // 4. 分析頁 empty state（未登入時顯示骨架但清空數據）
+    // Tab bar + Stat chips row：未登入時隱藏
+    const tabBarEl       = document.getElementById('analysisTabBar');
+    const statChipsRowEl = document.getElementById('analysisStatChipsRow');
+    if (tabBarEl)       tabBarEl.style.display       = loggedIn ? '' : 'none';
+    if (statChipsRowEl) statChipsRowEl.style.display = loggedIn ? '' : 'none';
+
+    // Stat chips
+    const statRisk  = document.getElementById('analysisStatRisk');
+    const statDays  = document.getElementById('analysisStatDays');
+    const statDelta = document.getElementById('analysisStatDelta');
+    if (!loggedIn) {
+      if (statRisk)  statRisk.innerHTML  = '<span style="color:#C4CAD4">—</span>';
+      if (statDays)  statDays.innerHTML  = '<span style="color:#C4CAD4">—</span>';
+      if (statDelta) { statDelta.innerHTML = '<span style="color:#C4CAD4">—</span>'; statDelta.style.color = ''; }
+    } else {
+      // 從真實資料取得目前 active tab 的統計
+      const activeTabEl = document.querySelector('#analysisTabBar .tab--active');
+      const activePeriod = activeTabEl ? (activeTabEl.dataset.period || '7d') : '7d';
+      const real = typeof calcRealAnalysisStats === 'function' ? calcRealAnalysisStats(activePeriod) : null;
+      const fallback = ANALYSIS_TAB_DATA[activePeriod] || ANALYSIS_TAB_DATA['7d'];
+      const s = real ? { ...fallback, ...real } : fallback;
+      if (statRisk)  statRisk.innerHTML  = s.riskVal;
+      if (statDays)  statDays.innerHTML  = s.daysVal;
+      if (statDelta) { statDelta.innerHTML = s.delta; statDelta.style.color = s.deltaColor || '#15803D'; }
+    }
+
+    // Chart：重新渲染（renderAnalysisChart 內部依 _isLoggedIn 決定是否顯示數據）
+    if (typeof renderAnalysisChart === 'function') {
+      const activeTab = document.querySelector('#analysisTabBar .tab--active');
+      const period = activeTab ? (activeTab.dataset.period || '7d') : '7d';
+      renderAnalysisChart(period);
+    }
+
+    // Factor bars — 未登入時清空；登入後交由 applyRealDataToUI / switchAnalysisTab 填入真實數據
+    if (!loggedIn) {
+      ['Humidity','Pm25','Time','Temp'].forEach(k => {
+        const barEl = document.getElementById('factorBar' + k);
+        const pctEl = document.getElementById('factorPct' + k);
+        const subEl = document.getElementById('factorSub' + k);
+        if (barEl) barEl.style.width = '0%';
+        if (pctEl) { pctEl.textContent = '—'; pctEl.style.color = '#C4CAD4'; }
+        if (subEl) subEl.textContent = '尚無資料';
+      });
+    }
+    // 登入後：重新執行 loadEnvData 填入即時數據
+    if (loggedIn && typeof loadEnvData === 'function') loadEnvData();
+
+    // Insight blocks — 統一由 renderInsights() 處理登入/未登入狀態
+    if (typeof renderInsights === 'function') renderInsights();
+
+    // 5. 今日症狀卡片：登入 / 未登入狀態切換
+    const bodyEl  = document.getElementById('symptomCardBody');
+    const emptyEl = document.getElementById('symptomCardEmpty');
+    if (loggedIn) {
+      // 登入後：交由 initTodaySymptomCard 決定顯示 body 或 empty
+      if (typeof initTodaySymptomCard === 'function') initTodaySymptomCard();
+    } else {
+      // 未登入：強制隱藏資料層，顯示空白提示
+      if (bodyEl)  bodyEl.style.display  = 'none';
+      if (emptyEl) emptyEl.style.display = '';
+      if (emptyEl) {
+        const hintEl   = emptyEl.querySelector('span');
+        const recordBtn = emptyEl.querySelector('button');
+        if (hintEl) hintEl.textContent = '記錄每日症狀，讓 AI 找出你的過敏規律';
+        if (recordBtn) {
+          recordBtn.textContent = '立即登入';
+          recordBtn.style.cssText = '';
+          recordBtn.onclick = () => showLoginPrompt();
+        }
+      }
+    }
+
+    // 6. 日誌頁：登入 / 未登入狀態切換
+    if (loggedIn) {
+      if (typeof renderLogPage === 'function') renderLogPage();
+    } else {
+      if (typeof applyLogGuestState === 'function') applyLogGuestState();
     }
   }
 </script>
@@ -6605,15 +7820,28 @@
         insight.innerHTML = text;
       }
 
+      // 今日建議動態化
+      if (typeof renderRecommendations === 'function') renderRecommendations();
+
     } catch (err) {
       console.warn('[AllerSense] 環境資料載入失敗，顯示預設值', err);
     }
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadEnvData);
+    document.addEventListener('DOMContentLoaded', () => {
+      loadEnvData();
+      const city = localStorage.getItem('allersense_city') || '台中市';
+      if (typeof fetchWeatherHistory === 'function') fetchWeatherHistory(city);
+      if (typeof renderForecast === 'function') renderForecast(city);
+      if (typeof renderRecommendations === 'function') renderRecommendations();
+    });
   } else {
     loadEnvData();
+    const city = localStorage.getItem('allersense_city') || '台中市';
+    if (typeof fetchWeatherHistory === 'function') fetchWeatherHistory(city);
+    if (typeof renderForecast === 'function') renderForecast(city);
+    if (typeof renderRecommendations === 'function') renderRecommendations();
   }
 
   // 城市切換時重新載入資料
@@ -6622,6 +7850,9 @@
     if (_origSelectCity) _origSelectCity(el, city, desc);
     localStorage.setItem('allersense_city', city);
     loadEnvData();
+    localStorage.removeItem('allersense_weather_history');
+    if (typeof fetchWeatherHistory === 'function') fetchWeatherHistory(city);
+    if (typeof renderForecast === 'function') renderForecast(city);
   };
 })();
 </script>
@@ -6759,8 +7990,23 @@ window.handleRegisterRedirect = function() {
       const badge   = card.querySelector('.profile-badge');
       if (nameEl)  nameEl.textContent  = name;
       if (emailEl) emailEl.textContent = email;
-      if (badge)   { badge.textContent = '✦ 正式會員'; badge.removeAttribute('style'); }
+      if (badge) {
+        const tier = user.user_metadata?.membership_tier || user.app_metadata?.membership_tier || '一般會員';
+        badge.textContent = `✦ ${tier}`;
+        badge.removeAttribute('style');
+      }
     }
+    // 同步更新 edit profile modal 的欄位
+    const editNameEl  = document.getElementById('editProfileName');
+    const editEmailEl = document.getElementById('editProfileEmail');
+    const editBadgeEl = document.getElementById('editProfileBadgeTag');
+    if (editNameEl)  editNameEl.value = name;
+    if (editEmailEl) editEmailEl.value = email;
+    if (editBadgeEl) {
+      const tier = user.user_metadata?.membership_tier || user.app_metadata?.membership_tier || '一般會員';
+      editBadgeEl.textContent = `✦ ${tier}`;
+    }
+
     if (typeof updateGreetingName === 'function') updateGreetingName(name);
     if (typeof setLoginState      === 'function') setLoginState(true);
   }
@@ -6788,6 +8034,7 @@ window.handleRegisterRedirect = function() {
           mood:      MOOD_ZH[r.mood] || '輕微',
           severity:  r.severity || 1,
           symptoms:  r.symptoms || [],
+          note:      r.note || '',
         }));
 
       if (imported.length) {
@@ -6810,6 +8057,7 @@ window.handleRegisterRedirect = function() {
         severity:  entry.severity || 1,
         time_slot: entry.timeSlot || '全天',
         symptoms:  entry.symptoms || [],
+        note:      entry.note || null,
       }, { onConflict: 'user_id,log_date,time_slot' });
     } catch(e) {}
   }
@@ -6837,18 +8085,10 @@ window.handleRegisterRedirect = function() {
         return;
       }
 
-      // 帳號不存在 → 自動註冊
-      if (error?.message?.includes('Invalid login credentials') ||
-          error?.message?.includes('Email not confirmed') ||
-          error?.status === 400) {
-        const { data: signUpData, error: signUpError } = await sb.auth.signUp({ email, password });
-        if (!signUpError) {
-          showLoginError('已發送確認信至 ' + email + '，請收信後再登入。');
-        } else {
-          showLoginError('登入失敗：' + (signUpError.message || '請再試一次'));
-        }
+      if (error?.message?.includes('Email not confirmed')) {
+        showLoginError('Email 尚未驗證，請前往信箱點擊確認連結後再登入。');
       } else {
-        showLoginError('登入失敗：' + (error?.message || '請再試一次'));
+        showLoginError('帳號或密碼錯誤，請重新確認。');
       }
     } catch(e) {
       showLoginError('連線錯誤，請稍後再試');
@@ -6887,24 +8127,16 @@ window.handleRegisterRedirect = function() {
 
       if (!error && data?.user) {
         applyUserToUI(data.user);
-        await loadLogsFromSupabase(data.user.id);
+        loadLogsFromSupabase(data.user.id); // 背景載入，不 await
         closeLoginModal();
         if (typeof showScreen === 'function') showScreen('screen-home');
         return;
       }
 
-      // 帳號不存在 → 自動註冊
-      if (error?.message?.includes('Invalid login credentials') ||
-          error?.message?.includes('Email not confirmed') ||
-          error?.status === 400) {
-        const { data: signUpData, error: signUpError } = await sb.auth.signUp({ email, password });
-        if (!signUpError) {
-          showModalError('已發送確認信至 ' + email + '，請收信後再登入。');
-        } else {
-          showModalError('登入失敗：' + (signUpError.message || '請再試一次'));
-        }
+      if (error?.message?.includes('Email not confirmed')) {
+        showModalError('Email 尚未驗證，請前往信箱點擊確認連結後再登入。');
       } else {
-        showModalError('登入失敗：' + (error?.message || '請再試一次'));
+        showModalError('帳號或密碼錯誤，請重新確認。');
       }
     } catch(e) {
       showModalError('連線錯誤，請稍後再試');
@@ -7028,28 +8260,69 @@ window.handleRegisterRedirect = function() {
   });
 
   /* ── 監聽登入狀態 ── */
+  let _lastLoadedUserId = null;
   sb.auth.onAuthStateChange(async (_event, session) => {
     if (session?.user) {
-      applyUserToUI(session.user);
-      await loadLogsFromSupabase(session.user.id);
+      // 避免同次登入重複載入
+      if (_lastLoadedUserId !== session.user.id) {
+        _lastLoadedUserId = session.user.id;
+        applyUserToUI(session.user);
+        loadLogsFromSupabase(session.user.id); // 背景載入
+      }
+    } else if (_event === 'SIGNED_OUT') {
+      _lastLoadedUserId = null;
+      clearUserData();
+      if (typeof setLoginState === 'function') setLoginState(false);
     }
   });
 
   /* ── 頁面載入時確認 session ── */
-  sb.auth.getSession().then(async ({ data: { session } }) => {
+  sb.auth.getSession().then(({ data: { session } }) => {
     if (session?.user) {
       applyUserToUI(session.user);
-      await loadLogsFromSupabase(session.user.id);
+      loadLogsFromSupabase(session.user.id); // 背景載入
+    } else {
+      if (typeof setLoginState === 'function') setLoginState(false);
     }
   }).catch(() => {});
 
   /* ── 綁定登出按鈕 ── */
+  /* ── 登出：清除資料並重置 UI ── */
+  function clearUserData() {
+    // prototype：不清除紀錄資料（無後端可重新載入，保留 localStorage）
+    // localStorage.removeItem('allersense_logs');
+    localStorage.removeItem('allersense_city');
+
+    // 重置今日症狀卡
+    if (typeof initTodaySymptomCard === 'function') initTodaySymptomCard();
+
+    // 重置日誌頁（未登入狀態）
+    if (typeof applyLogGuestState === 'function') applyLogGuestState();
+
+    // 重置分析圖表
+    if (typeof renderAnalysisChart === 'function') {
+      const activeTab = document.querySelector('#analysisTabBar .tab--active');
+      const period = activeTab ? activeTab.dataset.period : '7d';
+      renderAnalysisChart(period);
+    }
+
+    // 重置問候名字
+    if (typeof window.updateGreetingName === 'function') window.updateGreetingName(null);
+  }
+
+  function doLogout() {
+    try { sb.auth.signOut().catch(() => {}); } catch(e) {}
+    clearUserData();
+    setLoginState(false);
+    showScreen('screen-home');
+  }
+
   function bindLogoutBtn() {
     const btn = document.getElementById('settingsActionBtn');
     if (!btn) return;
     btn.addEventListener('click', () => {
       if (btn.textContent?.includes('登出') || btn.dataset?.action === 'logout') {
-        try { sb.auth.signOut().catch(() => {}); } catch(e) {}
+        doLogout();
       }
     });
   }
@@ -7057,11 +8330,7 @@ window.handleRegisterRedirect = function() {
   function bindSidebarLogout() {
     const btn = document.getElementById('sidebar-logout-btn');
     if (!btn) return;
-    btn.addEventListener('click', () => {
-      try { sb.auth.signOut().catch(() => {}); } catch(e) {}
-      setLoginState(false);
-      showScreen('screen-login');
-    });
+    btn.addEventListener('click', () => doLogout());
   }
 
   if (document.readyState === 'loading') {
@@ -7074,5 +8343,6 @@ window.handleRegisterRedirect = function() {
 } catch(e) { console.warn('[AllerSense Supabase] 初始化失敗，使用 prototype 模式', e); }
 })();
 </script>
+
 </body>
 </html>
