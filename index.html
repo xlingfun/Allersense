@@ -5228,7 +5228,7 @@
   async function fetchAQI(city) {
     const c = CITY_DATA[city];
     if (!c) return null;
-    const url = `https://api.waqi.info/feed/${c.waqi}/?token=d3032dc80ae97a6693231ec14eeea771967661c5`;
+    const url = `https://api.waqi.info/feed/${c.waqi}/?token=6b4f64b1b94f20dff830e18deda5a790e758f921`;
     const res  = await fetch(url);
     const data = await res.json();
     if (data.status !== 'ok') return null;
@@ -7712,19 +7712,22 @@
 
 <!-- ═══════════════════════════════════════
      AllerSense 真實環境資料 API
-     Open-Meteo（免費，不需 API key）
+     空氣品質：AQICN（台灣 EPA 監測站即時數據）
+     天氣：Open-Meteo（免費，不需 API key）
 ═══════════════════════════════════════ -->
 <script>
 (function () {
+  const AQICN_TOKEN = '6b4f64b1b94f20dff830e18deda5a790e758f921';
+
   const CITY_COORDS = {
-    '台北市': { lat: 25.0330, lon: 121.5654 },
-    '新北市': { lat: 25.0169, lon: 121.4627 },
-    '桃園市': { lat: 24.9937, lon: 121.3009 },
-    '台中市': { lat: 24.1477, lon: 120.6736 },
-    '台南市': { lat: 22.9998, lon: 120.2269 },
-    '高雄市': { lat: 22.6273, lon: 120.3014 },
-    '新竹市': { lat: 24.8066, lon: 120.9686 },
-    '基隆市': { lat: 25.1276, lon: 121.7392 },
+    '台北市': { lat: 25.0330, lon: 121.5654, waqi: 'taipei'     },
+    '新北市': { lat: 25.0169, lon: 121.4627, waqi: 'new-taipei' },
+    '桃園市': { lat: 24.9937, lon: 121.3009, waqi: 'taoyuan'    },
+    '台中市': { lat: 24.1477, lon: 120.6736, waqi: 'taichung'   },
+    '台南市': { lat: 22.9998, lon: 120.2269, waqi: 'tainan'     },
+    '高雄市': { lat: 22.6273, lon: 120.3014, waqi: 'kaohsiung'  },
+    '新竹市': { lat: 24.8066, lon: 120.9686, waqi: 'hsinchu'    },
+    '基隆市': { lat: 25.1276, lon: 121.7392, waqi: 'keelung'    },
   };
 
   function weatherDesc(code) {
@@ -7765,19 +7768,24 @@
     const coords = CITY_COORDS[city] || CITY_COORDS['台中市'];
 
     try {
+      // AQICN：台灣 EPA 監測站即時數據（PM2.5 / AQI）
+      // Open-Meteo：天氣資料（溫度、濕度、天氣描述）
+      const waqiStation = coords.waqi || 'taichung';
       const [aqRes, wxRes] = await Promise.all([
-        fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${coords.lat}&longitude=${coords.lon}&current=pm2_5,pm10,european_aqi&timezone=Asia/Taipei`),
+        fetch(`https://api.waqi.info/feed/${waqiStation}/?token=${AQICN_TOKEN}`),
         fetch(`https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia/Taipei`),
       ]);
       const aq = await aqRes.json();
       const wx = await wxRes.json();
 
-      const pm25  = Math.round(aq.current.pm2_5 || 0);
-      const aqi   = Math.round((aq.current.european_aqi || 0) * 1.1);
-      const temp  = Math.round(wx.current.temperature_2m);
-      const humid = Math.round(wx.current.relative_humidity_2m);
-      const wdesc = weatherDesc(wx.current.weather_code);
-      const risk  = riskLevel(aqi);
+      // AQICN 回傳 US AQI 及監測站實測 PM2.5
+      const aqiRaw = (aq.status === 'ok') ? (aq.data.aqi || 0) : 0;
+      const pm25   = (aq.status === 'ok') ? Math.round(aq.data.iaqi?.pm25?.v ?? aqiRaw * 0.4) : 0;
+      const aqi    = aqiRaw;
+      const temp   = Math.round(wx.current.temperature_2m);
+      const humid  = Math.round(wx.current.relative_humidity_2m);
+      const wdesc  = weatherDesc(wx.current.weather_code);
+      const risk   = riskLevel(aqi);
 
       // 副標題
       const sub = document.getElementById('risk-subtitle');
@@ -7960,7 +7968,7 @@ window.handleRegisterRedirect = function() {
 
 (function() { try {
   const SUPABASE_URL = 'https://fbuxcjaidshooygieiwf.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_TaqeEMC27bq42mpbDy5p6g_U5_2Mf1F';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZidXhjamFpZHNob295Z2llaXdmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzMzIxMzYsImV4cCI6MjA5MTkwODEzNn0.ABE7OGmmvEEjlY9vgGykIdbMVTMbbRa4K1pMKGM4XaI';
   if (typeof supabase === 'undefined') throw new Error('supabase CDN not loaded');
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
