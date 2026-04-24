@@ -475,6 +475,7 @@
     .rec-icon--blue   { background: #EEF3FF; }
     .rec-icon--green  { background: #DCFCE7; }
     .rec-icon--amber  { background: #FEF3C7; }
+    .rec-icon--red    { background: #FEE2E2; }
     .rec-text {
       flex: 1;
       font-size: 13px;
@@ -781,6 +782,8 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      flex: 1;
+      min-width: 0;
     }
     .factor-icon {
       width: 28px; height: 28px;
@@ -798,9 +801,22 @@
     }
     .factor-pct {
       font-family: var(--font-head);
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 800;
       color: var(--color-text-1);
+      white-space: nowrap;
+      flex-shrink: 0;
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      line-height: 1.3;
+    }
+    .factor-pct__num {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-1);
+      margin-top: 4px;
     }
     .bar-track {
       height: 8px;
@@ -4913,7 +4929,7 @@
         <div class="toggle toggle--on" data-toggle style="cursor:pointer"></div>
       </div>
     </div>
-    <button class="pref-save" onclick="closePrefModal('timeSlotOverlay')">
+    <button class="pref-save" onclick="saveTimeSlots()">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8.5l4 4 8-8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       儲存設定
     </button>
@@ -5609,6 +5625,7 @@
         const cache = JSON.parse(raw);
         if (cache.city === city && Date.now() - cache.ts < CACHE_TTL) {
           applyRealDataToUI(cache.weather, cache.aqi);
+          if (typeof renderInsights === 'function') renderInsights();
           if (statusEl) statusEl.textContent = `更新於 ${new Date(cache.ts).toLocaleTimeString('zh-TW', {hour:'2-digit',minute:'2-digit'})}`;
           return;
         }
@@ -5627,6 +5644,7 @@
       localStorage.setItem(CACHE_KEY, JSON.stringify({ city, weather, aqi, ts: Date.now() }));
 
       applyRealDataToUI(weather, aqi);
+      if (typeof renderInsights === 'function') renderInsights();
 
       const now = new Date();
       if (statusEl) statusEl.textContent = `即時數據 · ${now.toLocaleTimeString('zh-TW', {hour:'2-digit',minute:'2-digit'})} 更新`;
@@ -6130,11 +6148,16 @@
     const humPct = document.getElementById('factorPctHumidity');
     const humSub = document.getElementById('factorSubHumidity');
     if (avgHum !== null) {
+      const humWord  = avgHum >= 80 ? '偏高' : avgHum >= 75 ? '警戒' : avgHum >= 55 ? '正常' : '偏低';
+      const humLabel = `${humWord}<div class="factor-pct__num">${avgHum}%</div>`;
+      const humColor = avgHum >= 75 ? '#0284C7' : '#16A34A';
+      const humDesc  = avgHum >= 80 ? `警戒值 ≥75%，易誘發塵蟎與黴菌過敏`
+                     : avgHum >= 75 ? `警戒值 ≥75%，請留意室內通風`
+                     : `警戒值 ≥75%，濕度控制良好`;
       if (humBar) humBar.style.width = avgHum + '%';
-      if (humPct) { humPct.textContent = avgHum + '%'; humPct.style.color = avgHum >= 75 ? '#0284C7' : '#16A34A'; }
-      if (humSub) humSub.textContent = `${periodLabel}均值 ${avgHum}% · 警戒值 ≥75%`;
+      if (humPct) { humPct.innerHTML = humLabel; humPct.style.color = humColor; }
+      if (humSub) humSub.textContent = humDesc;
     } else {
-      // 無資料時用靜態 fallback
       const f = d.factors.humidity;
       if (humBar) humBar.style.width = f.width + '%';
       if (humPct) { humPct.textContent = f.pct; humPct.style.color = f.pctColor; }
@@ -6147,11 +6170,16 @@
     const pm25Sub = document.getElementById('factorSubPm25');
     if (avgPm25 !== null) {
       const pm25PctVal = Math.min(Math.round(avgPm25 / 75 * 100), 100);
+      const pm25Word  = avgPm25 > 55 ? '嚴重超標' : avgPm25 > 35 ? '超標' : avgPm25 > 15 ? '普通' : '良好';
+      const pm25Label = `${pm25Word}<div class="factor-pct__num">${avgPm25}μg/m³</div>`;
+      const pm25Color = avgPm25 > 35 ? '#EA580C' : '#16A34A';
+      const pm25Desc  = avgPm25 > 55 ? `標準 ≤35μg/m³，嚴重超標，建議減少外出`
+                      : avgPm25 > 35 ? `標準 ≤35μg/m³，超過 WHO 標準，請注意防護`
+                      : `標準 ≤35μg/m³，PM2.5 控制良好`;
       if (pm25Bar) pm25Bar.style.width = pm25PctVal + '%';
-      if (pm25Pct) { pm25Pct.textContent = pm25PctVal + '%'; pm25Pct.style.color = avgPm25 > 35 ? '#EA580C' : '#16A34A'; }
-      if (pm25Sub) pm25Sub.textContent = `${periodLabel}均值 ${avgPm25} μg/m³ · 標準 ≤35`;
+      if (pm25Pct) { pm25Pct.innerHTML = pm25Label; pm25Pct.style.color = pm25Color; }
+      if (pm25Sub) pm25Sub.textContent = pm25Desc;
     } else {
-      // 無歷史 PM2.5 資料時，顯示空值而非假資料
       if (pm25Bar) pm25Bar.style.width = '0%';
       if (pm25Pct) { pm25Pct.textContent = '—'; pm25Pct.style.color = '#C4CAD4'; }
       if (pm25Sub) pm25Sub.textContent = '尚無歷史數據';
@@ -6173,9 +6201,10 @@
       const slotAvgs = Object.entries(bySlot).map(([k, v]) => ({ k, avg: v.reduce((a,b)=>a+b,0)/v.length }));
       const worst = slotAvgs.reduce((a, b) => b.avg > a.avg ? b : a);
       const pctVal = Math.min(Math.round((worst.avg / 5) * 100), 100);
+      const sevLabel = worst.avg >= 4 ? '嚴重' : worst.avg >= 3 ? '中度' : worst.avg >= 2 ? '輕度' : '輕微';
       if (timeBar) timeBar.style.width = pctVal + '%';
-      if (timePct) { timePct.textContent = pctVal + '%'; timePct.style.color = '#7C3AED'; }
-      if (timeSub) timeSub.textContent = `${worst.k} 影響最高（${slotAvgs.length} 個時段比較）`;
+      if (timePct) { timePct.textContent = sevLabel; timePct.style.color = '#7C3AED'; }
+      if (timeSub) timeSub.textContent = `${worst.k} 症狀最明顯，共比較 ${slotAvgs.length} 個時段`;
     } else {
       if (timeBar) timeBar.style.width = '0%';
       if (timePct) { timePct.textContent = '—'; timePct.style.color = '#C4CAD4'; }
@@ -6188,9 +6217,14 @@
     const tempSub = document.getElementById('factorSubTemp');
     if (avgTemp !== null) {
       const tempPctVal = Math.min(Math.round(avgTemp / 15 * 100), 100);
+      const tempWord  = avgTemp >= 10 ? '溫差大' : avgTemp >= 7 ? '偏大' : '正常';
+      const tempLabel = `${tempWord}<div class="factor-pct__num">${avgTemp}°C</div>`;
+      const tempDesc  = avgTemp >= 10 ? `警戒值 ≥7°C，日夜溫差大，呼吸道敏感者需注意`
+                      : avgTemp >= 7  ? `警戒值 ≥7°C，溫差偏大，建議外出注意保暖`
+                      : `警戒值 ≥7°C，溫差正常，影響較低`;
       if (tempBar) tempBar.style.width = tempPctVal + '%';
-      if (tempPct) { tempPct.textContent = tempPctVal + '%'; tempPct.style.color = avgTemp >= 7 ? '#EA580C' : '#16A34A'; }
-      if (tempSub) tempSub.textContent = `${periodLabel}均溫差 ${avgTemp}°C · 警戒值 ≥7°C`;
+      if (tempPct) { tempPct.innerHTML = tempLabel; tempPct.style.color = avgTemp >= 7 ? '#EA580C' : '#16A34A'; }
+      if (tempSub) tempSub.textContent = tempDesc;
     } else {
       const f = d.factors.temp;
       if (tempBar) tempBar.style.width = f.width + '%';
@@ -6883,7 +6917,8 @@
       ));
     }
 
-    container.innerHTML = blocks.join('');
+    // 最多顯示 3 則
+    container.innerHTML = blocks.slice(0, 3).join('');
   }
 
   /* ── 今日建議（動態化）── */
@@ -6977,6 +7012,33 @@
 
     // 根據條件選出建議
     const selected = [];
+
+    // ── 偏好設定命中提示（最優先顯示）──
+    // 過敏原 × 今日環境
+    // 塵蟎：藍色水滴（濕度）
+    const _humIcon  = `<path d="M9 2C9 2 4 7.5 4 11a5 5 0 0010 0c0-3.5-5-9-5-9z" fill="#0284C7" opacity=".9"/>`;
+    // 黴菌：綠色孢子
+    const _moldIcon = `<circle cx="9" cy="9" r="5.5" stroke="#16A34A" stroke-width="1.5"/><circle cx="9" cy="9" r="2" fill="#16A34A"/><circle cx="9" cy="3.5" r="1.2" fill="#16A34A" opacity=".5"/><circle cx="14.5" cy="9" r="1.2" fill="#16A34A" opacity=".5"/><circle cx="3.5" cy="9" r="1.2" fill="#16A34A" opacity=".5"/>`;
+    // PM2.5：橙色雲 + 顆粒
+    const _pm25Icon = `<path d="M13 10.5a3 3 0 00-2.83-4 4 4 0 00-7.67 1.5A2.5 2.5 0 005 13h8a2.5 2.5 0 000-5h.13" stroke="#EA580C" stroke-width="1.4" fill="none" stroke-linecap="round"/><circle cx="7" cy="15.5" r=".8" fill="#EA580C"/><circle cx="9.5" cy="15.5" r=".8" fill="#EA580C"/><circle cx="12" cy="15.5" r=".8" fill="#EA580C"/>`;
+
+    if (allergens.includes('塵蟎') && humidity >= 70)
+      REC._trigDustmite = { color:'blue',  icon:_humIcon,  text:`今天濕度 <em>${humidity}%</em>，你的過敏原「塵蟎」已觸發。建議開除濕機，目標低於 55%。` };
+    if (allergens.includes('黴菌孢子') && humidity >= 75)
+      REC._trigMold    = { color:'green', icon:_moldIcon, text:`今天高濕 <em>${humidity}%</em>，你的過敏原「黴菌孢子」已觸發。浴室廚房保持通風乾燥。` };
+    if ((allergens.includes('PM2.5') || allergens.includes('空污PM2.5')) && pm25 > 35)
+      REC._trigPm25    = { color:'amber', icon:_pm25Icon, text:`今天 PM2.5 <em>${pm25} μg/m³</em>，命中你的過敏原。外出配戴 N95 口罩，減少戶外活動。` };
+
+    // 敏感時段
+    const _slots     = JSON.parse(localStorage.getItem('allersense_time_slots') || '[]');
+    const _slotHours = { '清晨':[5,6],'早晨':[7,8],'午間':[12,13],'傍晚':[17,18],'深夜':[22,23,0,1] };
+    const _nowHour   = new Date().getHours();
+    const _activeNow = _slots.filter(s => (_slotHours[s]||[]).includes(_nowHour));
+    if (_activeNow.length > 0)
+      REC._trigSlot  = { color:'amber', icon:`<circle cx="9" cy="9" r="7" stroke="#D97706" stroke-width="1.5"/><path d="M9 5v4l2.5 2" stroke="#D97706" stroke-width="1.5" stroke-linecap="round"/>`, text:`現在是你設定的敏感時段（<em>${_activeNow.join('、')}</em>），請特別留意環境變化與症狀。` };
+
+    // 命中的提示優先加入
+    ['_trigDustmite','_trigMold','_trigPm25','_trigSlot'].forEach(k => { if (REC[k]) selected.push(k); });
 
     // — PM2.5 邏輯 —
     if (pm25 >= 55) {
@@ -7669,6 +7731,22 @@
         else chip.classList.remove('allergen-chip--active');
       });
     }
+    // 時段 overlay：還原 toggle 狀態 + 整張卡片可點擊
+    if (id === 'timeSlotOverlay') {
+      const savedSlots = JSON.parse(localStorage.getItem('allersense_time_slots') || '[]');
+      el.querySelectorAll('.time-slot-card').forEach(card => {
+        const name   = card.querySelector('.time-slot-card__name')?.textContent?.trim();
+        const toggle = card.querySelector('.toggle');
+        if (!toggle) return;
+        // 還原儲存狀態
+        if (savedSlots.length > 0) {
+          toggle.classList.toggle('toggle--on', savedSlots.includes(name));
+        }
+        // 整張卡片點擊都觸發 toggle
+        card.style.cursor = 'pointer';
+        card.onclick = () => toggle.classList.toggle('toggle--on');
+      });
+    }
     // 地點 overlay：還原已儲存的城市選取
     if (id === 'locationOverlay') {
       const savedCity = localStorage.getItem('allersense_city') || '台中市';
@@ -7720,6 +7798,26 @@
     _selectedCity = name;
     document.querySelectorAll('#cityList .city-item__radio').forEach(r => r.classList.remove('city-item__radio--active'));
     el.querySelector('.city-item__radio').classList.add('city-item__radio--active');
+  }
+  function saveTimeSlots() {
+    const active = [];
+    const rangeMap = { '清晨':'05:00-07:00','早晨':'07:00-09:00','午間':'12:00-14:00','傍晚':'17:00-19:00','深夜':'22:00-02:00' };
+    document.querySelectorAll('#timeSlotOverlay .time-slot-card').forEach(card => {
+      if (card.querySelector('.toggle')?.classList.contains('toggle--on')) {
+        const name = card.querySelector('.time-slot-card__name')?.textContent?.trim();
+        if (name) active.push(name);
+      }
+    });
+    localStorage.setItem('allersense_time_slots', JSON.stringify(active));
+    const item = document.getElementById('settingsPrefTime');
+    if (item) {
+      const desc = active.length
+        ? active.map(s => `${s} ${rangeMap[s]||''}`).join('，')
+        : '未設定';
+      item.querySelector('.settings-item__desc').textContent = desc;
+    }
+    if (typeof renderInsights === 'function') renderInsights();
+    closePrefModal('timeSlotOverlay');
   }
   function saveLocation() {
     const item = document.getElementById('settingsPrefLocation');
@@ -8151,8 +8249,17 @@
         insight.innerHTML = text;
       }
 
-      // 今日建議動態化
+      // 存環境快取（供個人化洞察讀取）
+      localStorage.setItem('allersense_env_cache', JSON.stringify({
+        city,
+        weather: { humidity: humid, temp },
+        aqi:     { pm25, aqi },
+        ts:      Date.now()
+      }));
+
+      // 今日建議 & 個人化洞察動態化
       if (typeof renderRecommendations === 'function') renderRecommendations();
+      if (typeof renderInsights === 'function') renderInsights();
 
     } catch (err) {
       console.warn('[AllerSense] 環境資料載入失敗，顯示預設值', err);
