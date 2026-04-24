@@ -553,6 +553,31 @@
       font-weight: 700;
       color: var(--color-text-1);
     }
+    .tomorrow-mini { cursor: pointer; position: relative; }
+    .tomorrow-mini:active { opacity: .75; }
+    /* 預測日 tooltip */
+    #forecastTooltip {
+      position: fixed; z-index: 2000;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 8px 28px rgba(0,0,0,.15);
+      padding: 14px 16px;
+      width: 200px;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    #forecastTooltip.visible { opacity: 1; transform: translateY(0); }
+    .ft-title { font-family: var(--font-head); font-size: 13px; font-weight: 800; color: #1A1F36; margin-bottom: 8px; }
+    .ft-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #475569; margin-bottom: 4px; }
+    .ft-row:last-child { margin-bottom: 0; }
+    .ft-val { font-weight: 700; }
+    .ft-val--warn { color: #EA580C; }
+    .ft-val--ok   { color: #16A34A; }
+    .ft-divider { border: none; border-top: 1px solid #F1F5F9; margin: 8px 0; }
+    .ft-reason { font-size: 11.5px; color: #64748B; line-height: 1.5; }
+    .ft-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; flex-shrink: 0; }
 
     /* ═══════════════════════════════════════════
        MOOD LOG
@@ -2776,7 +2801,7 @@
             <div class="tomorrow-card__title">未來 5 天風險趨勢</div>
             <span class="badge badge--blue" style="font-size:11px;">AI 預測</span>
           </div>
-          <div class="tomorrow-mini-row" id="forecastRow">
+          <div class="tomorrow-mini-row" id="forecastRow" onclick="handleForecastClick(event)">
             <!-- 由 renderForecast() 動態填入 -->
             <div class="tomorrow-mini" style="opacity:.35"><div class="tomorrow-mini__day">—</div><div class="tomorrow-mini__bar-wrap"></div><div class="tomorrow-mini__pct">—</div></div>
             <div class="tomorrow-mini" style="opacity:.35"><div class="tomorrow-mini__day">—</div><div class="tomorrow-mini__bar-wrap"></div><div class="tomorrow-mini__pct">—</div></div>
@@ -4664,6 +4689,16 @@
   </div>
 </div>
 
+<!-- 預測日風險 Tooltip -->
+<div id="forecastTooltip">
+  <div class="ft-title" id="ftTitle"></div>
+  <div class="ft-row"><span><span class="ft-dot" style="background:#38BDF8"></span>濕度</span><span class="ft-val" id="ftHum"></span></div>
+  <div class="ft-row"><span><span class="ft-dot" style="background:#FB923C"></span>PM2.5</span><span class="ft-val" id="ftPm25"></span></div>
+  <div class="ft-row"><span><span class="ft-dot" style="background:#4ADE80"></span>日夜溫差</span><span class="ft-val" id="ftTdiff"></span></div>
+  <hr class="ft-divider">
+  <div class="ft-reason" id="ftReason"></div>
+</div>
+
 <!-- 使用條款與隱私政策 Modal -->
 <div id="termsModalOverlay" style="display:none;opacity:0;position:fixed;inset:0;background:rgba(15,20,40,.48);z-index:3000;align-items:center;justify-content:center;padding:24px 16px;box-sizing:border-box;">
   <div id="termsModal" style="background:#fff;border-radius:24px;overflow:hidden;width:100%;max-width:540px;max-height:82dvh;max-height:82vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.2);animation:dissolveIn .22s ease;">
@@ -5207,6 +5242,61 @@
   function closeTermsModal() {
     modalHide(document.getElementById('termsModalOverlay'));
   }
+
+  /* ── 預測日風險 Tooltip ── */
+  let _ftVisible = false;
+  function handleForecastClick(e) {
+    const card = e.target.closest('.tomorrow-mini[data-score]');
+    const tip  = document.getElementById('forecastTooltip');
+    if (!tip) return;
+    if (!card) { hideForecastTooltip(); return; }
+
+    const label  = card.dataset.label;
+    const score  = Number(card.dataset.score);
+    const hum    = Number(card.dataset.hum);
+    const pm25   = card.dataset.pm25 !== '' ? Number(card.dataset.pm25) : null;
+    const tdiff  = Number(card.dataset.tdiff);
+
+    // 填入數值
+    document.getElementById('ftTitle').textContent = `${label} 風險 ${score}%`;
+    const humEl = document.getElementById('ftHum');
+    humEl.textContent = `${hum}%`;
+    humEl.className = 'ft-val ' + (hum >= 75 ? 'ft-val--warn' : 'ft-val--ok');
+
+    const pm25El = document.getElementById('ftPm25');
+    pm25El.textContent = pm25 !== null ? `${pm25} μg/m³` : '—';
+    pm25El.className   = 'ft-val ' + (pm25 !== null && pm25 > 35 ? 'ft-val--warn' : 'ft-val--ok');
+
+    const tdEl = document.getElementById('ftTdiff');
+    tdEl.textContent = `${tdiff}°C`;
+    tdEl.className   = 'ft-val ' + (tdiff >= 7 ? 'ft-val--warn' : 'ft-val--ok');
+
+    // 產生原因文字
+    const reasons = [];
+    if (hum >= 75)                         reasons.push(`濕度 ${hum}% 偏高，易誘發塵蟎過敏`);
+    if (pm25 !== null && pm25 > 35)        reasons.push(`PM2.5 超標（${pm25} μg/m³）`);
+    if (tdiff >= 7)                        reasons.push(`溫差 ${tdiff}°C 過大，呼吸道易過敏`);
+    document.getElementById('ftReason').textContent =
+      reasons.length ? reasons.join('；') + '。' : '各項環境指標在正常範圍，風險來自基礎過敏體質。';
+
+    // 定位：顯示在 card 上方
+    const rect = card.getBoundingClientRect();
+    tip.style.left = Math.min(rect.left, window.innerWidth - 216) + 'px';
+    tip.style.top  = (rect.top - 10 + window.scrollY) + 'px';
+    tip.style.transform = 'translateY(-100%)';
+    tip.classList.add('visible');
+    _ftVisible = true;
+  }
+  function hideForecastTooltip() {
+    const tip = document.getElementById('forecastTooltip');
+    if (tip) tip.classList.remove('visible');
+    _ftVisible = false;
+  }
+  document.addEventListener('click', e => {
+    if (_ftVisible && !e.target.closest('#forecastRow') && !e.target.closest('#forecastTooltip')) {
+      hideForecastTooltip();
+    }
+  });
   function switchTermsTab(tab) {
     const isTerms = tab === 'terms';
     document.getElementById('termsContentTerms').style.display  = isTerms ? '' : 'none';
@@ -5493,7 +5583,9 @@
         else if (score >= 30) { barGrad = 'linear-gradient(180deg,#FBBF24,#FDE68A)'; txtColor = '#CA8A04'; }
         else                  { barGrad = 'linear-gradient(180deg,#4ADE80,#86EFAC)'; txtColor = '#15803D'; }
 
-        return `<div class="tomorrow-mini">
+        const pm25Val = pm25 !== null ? Math.round(pm25) : null;
+        const tempDiffVal = Math.round(tempDiff * 10) / 10;
+        return `<div class="tomorrow-mini" data-label="${label}" data-score="${score}" data-hum="${Math.round(hum)}" data-pm25="${pm25Val ?? ''}" data-tdiff="${tempDiffVal}">
           <div class="tomorrow-mini__day">${label}</div>
           <div class="tomorrow-mini__bar-wrap">
             <div class="tomorrow-mini__bar" style="height:${score}%;background:${barGrad};width:100%;transition:height .4s ease;"></div>
@@ -6670,7 +6762,11 @@
     if (insightPrompt) insightPrompt.style.display = 'none';
 
     const logs = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
-    const envCache = JSON.parse(localStorage.getItem('allersense_env_cache') || '{}');
+    const _cache = JSON.parse(localStorage.getItem('allersense_env_cache') || '{}');
+    const envCache = {
+      pm25:     _cache.aqi?.pm25     ?? _cache.pm25     ?? null,
+      humidity: _cache.weather?.humidity ?? _cache.humidity ?? null,
+    };
     const todayStr = new Date().toISOString().split('T')[0];
 
     function insightBlock(bg, iconBg, iconSvg, html) {
