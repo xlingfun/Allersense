@@ -1448,10 +1448,15 @@
     .pref-sheet {
       background: var(--color-bg); border-radius: 24px;
       width: calc(100% - 32px); max-width: 420px; padding: 0 0 32px;
-      max-height: 88vh; overflow-y: auto;
+      max-height: 88vh; max-height: 88dvh; overflow-y: auto;
+      scrollbar-width: thin; scrollbar-color: rgba(0,0,0,.15) transparent;
       box-shadow: 0 16px 48px rgba(0,0,0,.2);
       animation: dissolveIn .22s ease;
     }
+    #locationOverlay .pref-sheet { max-height: 72vh; max-height: 72dvh; }
+    .pref-sheet::-webkit-scrollbar { width: 4px; }
+    .pref-sheet::-webkit-scrollbar-track { background: transparent; }
+    .pref-sheet::-webkit-scrollbar-thumb { background: rgba(0,0,0,.15); border-radius: 2px; }
     @keyframes dissolveIn {
       from { opacity: 0; transform: scale(.97); }
       to   { opacity: 1; transform: scale(1); }
@@ -2909,7 +2914,7 @@
           </div>
           <div class="stat-chip">
             <div class="stat-chip__val" id="analysisStatDelta" style="color:#15803D">↓12</div>
-            <div class="stat-chip__label">比上月</div>
+            <div class="stat-chip__label" id="analysisStatDeltaLabel">比上月</div>
           </div>
         </div>
       </div>
@@ -4661,7 +4666,7 @@
 
 <!-- 使用條款與隱私政策 Modal -->
 <div id="termsModalOverlay" style="display:none;opacity:0;position:fixed;inset:0;background:rgba(15,20,40,.48);z-index:3000;align-items:center;justify-content:center;padding:24px 16px;box-sizing:border-box;">
-  <div id="termsModal" style="background:#fff;border-radius:24px;width:100%;max-width:540px;max-height:82vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.2);animation:dissolveIn .22s ease;">
+  <div id="termsModal" style="background:#fff;border-radius:24px;overflow:hidden;width:100%;max-width:540px;max-height:82dvh;max-height:82vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.2);animation:dissolveIn .22s ease;">
     <!-- Header -->
     <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 22px 16px;border-bottom:1px solid #E8EDF5;flex-shrink:0;">
       <div style="font-family:var(--font-head);font-size:17px;font-weight:800;color:#1A1F36;letter-spacing:-.3px;">使用條款與隱私政策</div>
@@ -4670,7 +4675,7 @@
       </button>
     </div>
     <!-- 捲動內容 -->
-    <div style="overflow-y:auto;padding:20px 22px 28px;font-family:var(--font-body);font-size:13.5px;line-height:1.8;color:#1A1F36;">
+    <div style="overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(0,0,0,.15) transparent;padding:20px 22px 28px;font-family:var(--font-body);font-size:13.5px;line-height:1.8;color:#1A1F36;">
 
       <!-- Tab 切換 -->
       <div style="display:flex;gap:8px;margin-bottom:20px;background:#F6F8FC;border-radius:12px;padding:4px;">
@@ -4735,7 +4740,7 @@
       </svg>
     </div>
     <div style="text-align:center;margin-bottom:22px;">
-      <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;color:#1A1F36;letter-spacing:-.3px;margin-bottom:6px;">需要登入才能使用</div>
+      <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;color:#1A1F36;letter-spacing:-.3px;margin-bottom:6px;">立即登入，解鎖所有功能</div>
       <div style="font-size:13px;color:#64748B;line-height:1.6;">登入後才能儲存個人設定、<br>同步日誌紀錄，並讓 AI 學習你的過敏模式。</div>
     </div>
     <button onclick="hideLoginPrompt();setLoginState(true);showScreen('screen-login')" style="width:100%;height:50px;border-radius:14px;background:#4C7DFF;color:#fff;font-family:'Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:700;border:none;cursor:pointer;margin-bottom:10px;">
@@ -4892,6 +4897,70 @@
     </div>
     <div class="pref-subtitle">選擇你的主要生活地區，AI 將抓取當地即時環境數據</div>
     <div class="city-list" id="cityList">
+      <div class="city-item" onclick="selectCity(this,'台北市','北台灣 · 都會盆地，梅雨季濕度高')">
+        <div class="city-item__icon">🗼</div>
+        <div class="city-item__text">
+          <div class="city-item__name">台北市</div>
+          <div class="city-item__sub">北台灣 · 都會盆地，梅雨季濕度高</div>
+        </div>
+        <div class="city-item__radio "></div>
+      </div>
+      <div class="city-item" onclick="selectCity(this,'新北市','大台北 · 河谷地形，花粉濃度高')">
+        <div class="city-item__icon">🌆</div>
+        <div class="city-item__text">
+          <div class="city-item__name">新北市</div>
+          <div class="city-item__sub">大台北 · 河谷地形，花粉濃度高</div>
+        </div>
+        <div class="city-item__radio "></div>
+      </div>
+      <div class="city-item" onclick="selectCity(this,'桃園市','北台灣 · 工業區多，PM2.5 需留意')">
+        <div class="city-item__icon">✈️</div>
+        <div class="city-item__text">
+          <div class="city-item__name">桃園市</div>
+          <div class="city-item__sub">北台灣 · 工業區多，PM2.5 需留意</div>
+        </div>
+        <div class="city-item__radio "></div>
+      </div>
+      <div class="city-item" onclick="selectCity(this,'基隆市','北台灣 · 多雨潮濕，黴菌過敏風險高')">
+        <div class="city-item__icon">⛵</div>
+        <div class="city-item__text">
+          <div class="city-item__name">基隆市</div>
+          <div class="city-item__sub">北台灣 · 多雨潮濕，黴菌過敏風險高</div>
+        </div>
+        <div class="city-item__radio "></div>
+      </div>
+      <div class="city-item" onclick="selectCity(this,'新竹市','竹科 · 風大乾燥，塵蟎較少')">
+        <div class="city-item__icon">💨</div>
+        <div class="city-item__text">
+          <div class="city-item__name">新竹市</div>
+          <div class="city-item__sub">竹科 · 風大乾燥，塵蟎較少</div>
+        </div>
+        <div class="city-item__radio "></div>
+      </div>
+      <div class="city-item" onclick="selectCity(this,'新竹縣','北台灣 · 山海交界，溫差明顯')">
+        <div class="city-item__icon">🏔</div>
+        <div class="city-item__text">
+          <div class="city-item__name">新竹縣</div>
+          <div class="city-item__sub">北台灣 · 山海交界，溫差明顯</div>
+        </div>
+        <div class="city-item__radio "></div>
+      </div>
+      <div class="city-item" onclick="selectCity(this,'宜蘭縣','東北角 · 多雨潮濕，過敏族群需注意')">
+        <div class="city-item__icon">🌧</div>
+        <div class="city-item__text">
+          <div class="city-item__name">宜蘭縣</div>
+          <div class="city-item__sub">東北角 · 多雨潮濕，過敏族群需注意</div>
+        </div>
+        <div class="city-item__radio "></div>
+      </div>
+      <div class="city-item" onclick="selectCity(this,'苗栗縣','中台灣 · 丘陵地形，溫差大')">
+        <div class="city-item__icon">🌄</div>
+        <div class="city-item__text">
+          <div class="city-item__name">苗栗縣</div>
+          <div class="city-item__sub">中台灣 · 丘陵地形，溫差大</div>
+        </div>
+        <div class="city-item__radio "></div>
+      </div>
       <div class="city-item" onclick="selectCity(this,'台中市','中台灣 · 盆地型氣候，早晚溫差大')">
         <div class="city-item__icon">🏙</div>
         <div class="city-item__text">
@@ -4900,21 +4969,45 @@
         </div>
         <div class="city-item__radio city-item__radio--active"></div>
       </div>
-      <div class="city-item" onclick="selectCity(this,'台北市','北台灣 · 濕度高，梅雨季長')">
-        <div class="city-item__icon">🗼</div>
+      <div class="city-item" onclick="selectCity(this,'彰化縣','中台灣 · 農業地帶，花粉濃度較高')">
+        <div class="city-item__icon">🌾</div>
         <div class="city-item__text">
-          <div class="city-item__name">台北市</div>
-          <div class="city-item__sub">北台灣 · 濕度高，梅雨季長</div>
+          <div class="city-item__name">彰化縣</div>
+          <div class="city-item__sub">中台灣 · 農業地帶，花粉濃度較高</div>
         </div>
-        <div class="city-item__radio"></div>
+        <div class="city-item__radio "></div>
       </div>
-      <div class="city-item" onclick="selectCity(this,'新北市','大台北 · 河谷地形，花粉濃度高')">
-        <div class="city-item__icon">🌆</div>
+      <div class="city-item" onclick="selectCity(this,'南投縣','中台灣 · 山區氣候，空氣品質通常良好')">
+        <div class="city-item__icon">🏞</div>
         <div class="city-item__text">
-          <div class="city-item__name">新北市</div>
-          <div class="city-item__sub">大台北 · 河谷地形，花粉濃度高</div>
+          <div class="city-item__name">南投縣</div>
+          <div class="city-item__sub">中台灣 · 山區氣候，空氣品質通常良好</div>
         </div>
-        <div class="city-item__radio"></div>
+        <div class="city-item__radio "></div>
+      </div>
+      <div class="city-item" onclick="selectCity(this,'雲林縣','中台灣 · 農業縣，風吹揚塵需留意')">
+        <div class="city-item__icon">🌻</div>
+        <div class="city-item__text">
+          <div class="city-item__name">雲林縣</div>
+          <div class="city-item__sub">中台灣 · 農業縣，風吹揚塵需留意</div>
+        </div>
+        <div class="city-item__radio "></div>
+      </div>
+      <div class="city-item" onclick="selectCity(this,'嘉義市','南台灣 · 日照充足，乾季 PM2.5 偏高')">
+        <div class="city-item__icon">☀️</div>
+        <div class="city-item__text">
+          <div class="city-item__name">嘉義市</div>
+          <div class="city-item__sub">南台灣 · 日照充足，乾季 PM2.5 偏高</div>
+        </div>
+        <div class="city-item__radio "></div>
+      </div>
+      <div class="city-item" onclick="selectCity(this,'嘉義縣','南台灣 · 平原廣闊，花粉季明顯')">
+        <div class="city-item__icon">🌵</div>
+        <div class="city-item__text">
+          <div class="city-item__name">嘉義縣</div>
+          <div class="city-item__sub">南台灣 · 平原廣闊，花粉季明顯</div>
+        </div>
+        <div class="city-item__radio "></div>
       </div>
       <div class="city-item" onclick="selectCity(this,'台南市','南台灣 · 乾燥少雨，PM2.5 偏高')">
         <div class="city-item__icon">🏯</div>
@@ -4922,7 +5015,7 @@
           <div class="city-item__name">台南市</div>
           <div class="city-item__sub">南台灣 · 乾燥少雨，PM2.5 偏高</div>
         </div>
-        <div class="city-item__radio"></div>
+        <div class="city-item__radio "></div>
       </div>
       <div class="city-item" onclick="selectCity(this,'高雄市','南台灣 · 工業區多，空氣品質需留意')">
         <div class="city-item__icon">🌊</div>
@@ -4930,15 +5023,47 @@
           <div class="city-item__name">高雄市</div>
           <div class="city-item__sub">南台灣 · 工業區多，空氣品質需留意</div>
         </div>
-        <div class="city-item__radio"></div>
+        <div class="city-item__radio "></div>
       </div>
-      <div class="city-item" onclick="selectCity(this,'新竹市','竹科 · 風大乾燥，塵蟎較少')">
-        <div class="city-item__icon">💨</div>
+      <div class="city-item" onclick="selectCity(this,'屏東縣','最南端 · 熱帶氣候，全年花粉活躍')">
+        <div class="city-item__icon">🌴</div>
         <div class="city-item__text">
-          <div class="city-item__name">新竹市</div>
-          <div class="city-item__sub">竹科 · 風大乾燥，塵蟎較少</div>
+          <div class="city-item__name">屏東縣</div>
+          <div class="city-item__sub">最南端 · 熱帶氣候，全年花粉活躍</div>
         </div>
-        <div class="city-item__radio"></div>
+        <div class="city-item__radio "></div>
+      </div>
+      <div class="city-item" onclick="selectCity(this,'花蓮縣','東台灣 · 空氣清新，過敏風險相對低')">
+        <div class="city-item__icon">🏝</div>
+        <div class="city-item__text">
+          <div class="city-item__name">花蓮縣</div>
+          <div class="city-item__sub">東台灣 · 空氣清新，過敏風險相對低</div>
+        </div>
+        <div class="city-item__radio "></div>
+      </div>
+      <div class="city-item" onclick="selectCity(this,'台東縣','東台灣 · 山海環境，空氣品質佳')">
+        <div class="city-item__icon">🌺</div>
+        <div class="city-item__text">
+          <div class="city-item__name">台東縣</div>
+          <div class="city-item__sub">東台灣 · 山海環境，空氣品質佳</div>
+        </div>
+        <div class="city-item__radio "></div>
+      </div>
+      <div class="city-item" onclick="selectCity(this,'澎湖縣','離島 · 強風多鹽霧，呼吸道需注意')">
+        <div class="city-item__icon">🐚</div>
+        <div class="city-item__text">
+          <div class="city-item__name">澎湖縣</div>
+          <div class="city-item__sub">離島 · 強風多鹽霧，呼吸道需注意</div>
+        </div>
+        <div class="city-item__radio "></div>
+      </div>
+      <div class="city-item" onclick="selectCity(this,'金門縣','離島 · 季風強，沙塵易影響空品')">
+        <div class="city-item__icon">🏰</div>
+        <div class="city-item__text">
+          <div class="city-item__name">金門縣</div>
+          <div class="city-item__sub">離島 · 季風強，沙塵易影響空品</div>
+        </div>
+        <div class="city-item__radio "></div>
       </div>
     </div>
     <button class="pref-save" id="locationSaveBtn" onclick="saveLocation()">
@@ -5157,7 +5282,7 @@
 
   const CACHE_KEY = 'allersense_env_cache';
   const CACHE_TTL = 30 * 60 * 1000; // 30 分鐘
-  const WEATHER_HISTORY_KEY = 'allersense_weather_history';
+  const WEATHER_HISTORY_KEY = 'allersense_weather_history_v2';
 
   // 撈過去 90 天歷史氣象（Open-Meteo archive，免費不需 API Key）
   async function fetchWeatherHistory(city) {
@@ -5174,13 +5299,25 @@
       const endDate   = todayStr;
       const startDate = (() => { const d = new Date(); d.setDate(d.getDate() - 89); return d.toISOString().split('T')[0]; })();
 
-      // 同時撈氣象 + 空品歷史
+      // 同時撈氣象 + 空品歷史（空品用 hourly 再算日均值）
       const [wRes, aqRes] = await Promise.all([
         fetch(`https://archive-api.open-meteo.com/v1/archive?latitude=${c.lat}&longitude=${c.lon}&start_date=${startDate}&end_date=${endDate}&daily=temperature_2m_max,temperature_2m_min,relative_humidity_2m_mean&timezone=Asia%2FTaipei`),
-        fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${c.lat}&longitude=${c.lon}&start_date=${startDate}&end_date=${endDate}&daily=pm2_5&timezone=Asia%2FTaipei`)
+        fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${c.lat}&longitude=${c.lon}&start_date=${startDate}&end_date=${endDate}&hourly=pm2_5&timezone=Asia%2FTaipei`)
       ]);
       const wData  = await wRes.json();
       const aqData = await aqRes.json();
+
+      // 把 hourly PM2.5 彙整成 date → 日均值
+      const pm25ByDate = {};
+      const hrTimes = aqData.hourly?.time || [];
+      const hrPm25  = aqData.hourly?.pm2_5 || [];
+      hrTimes.forEach((t, i) => {
+        const d = t.split('T')[0];
+        if (hrPm25[i] != null) {
+          if (!pm25ByDate[d]) pm25ByDate[d] = [];
+          pm25ByDate[d].push(hrPm25[i]);
+        }
+      });
 
       const result = { _fetchedDate: todayStr };
       const dates = wData.daily?.time || [];
@@ -5188,12 +5325,13 @@
         const tMax = wData.daily.temperature_2m_max[i];
         const tMin = wData.daily.temperature_2m_min[i];
         const hum  = wData.daily.relative_humidity_2m_mean[i];
-        const pm25 = aqData.daily?.pm2_5?.[i] ?? null;
+        const arr  = pm25ByDate[date];
+        const pm25 = arr?.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : null;
         if (tMax != null && tMin != null) {
           result[date] = {
             humidity: Math.round(hum ?? 0),
             tempDiff: parseFloat((tMax - tMin).toFixed(1)),
-            pm25:     pm25 != null ? Math.round(pm25) : null,
+            pm25:     pm25,
           };
         }
       });
@@ -5308,17 +5446,31 @@
 
     try {
       const [wRes, aqRes] = await Promise.all([
-        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&daily=temperature_2m_max,temperature_2m_min,relative_humidity_2m_mean&forecast_days=5&timezone=Asia%2FTaipei`),
-        fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${c.lat}&longitude=${c.lon}&daily=pm2_5&forecast_days=5&timezone=Asia%2FTaipei`)
+        fetch(`https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&daily=temperature_2m_max,temperature_2m_min&hourly=relative_humidity_2m&forecast_days=5&timezone=Asia%2FTaipei`),
+        fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${c.lat}&longitude=${c.lon}&hourly=pm2_5&forecast_days=5&timezone=Asia%2FTaipei`)
       ]);
       const wData  = await wRes.json();
       const aqData = await aqRes.json();
 
+      // 把 hourly 資料彙整成 date → 日均值
+      const humByDate = {}, pm25ByDate2 = {};
+      (wData.hourly?.time || []).forEach((t, i) => {
+        const d = t.split('T')[0];
+        const v = wData.hourly.relative_humidity_2m[i];
+        if (v != null) { if (!humByDate[d]) humByDate[d] = []; humByDate[d].push(v); }
+      });
+      (aqData.hourly?.time || []).forEach((t, i) => {
+        const d = t.split('T')[0];
+        const v = aqData.hourly?.pm2_5?.[i];
+        if (v != null) { if (!pm25ByDate2[d]) pm25ByDate2[d] = []; pm25ByDate2[d].push(v); }
+      });
+      const avgOf = arr => arr?.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : null;
+
       const dates    = wData.daily?.time || [];
-      const humArr   = wData.daily?.relative_humidity_2m_mean || [];
       const tMaxArr  = wData.daily?.temperature_2m_max || [];
       const tMinArr  = wData.daily?.temperature_2m_min || [];
-      const pm25Arr  = aqData.daily?.pm2_5 || [];
+      const humArr   = dates.map(d => avgOf(humByDate[d]) ?? 65);
+      const pm25Arr  = dates.map(d => avgOf(pm25ByDate2[d]));
 
       const dayNames = ['週日','週一','週二','週三','週四','週五','週六'];
 
@@ -5503,7 +5655,7 @@
     }
 
     // 讀 weather history 快取
-    const wh = JSON.parse(localStorage.getItem('allersense_weather_history') || '{}');
+    const wh = JSON.parse(localStorage.getItem('allersense_weather_history_v2') || '{}');
     function envFromCache(key, base) {
       const d = wh[key];
       return {
@@ -5572,7 +5724,7 @@
     } else {
       // trend：近 12 週，每週取最高 severity 的那筆作為代表
       const logs90 = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
-      const weatherHistory = JSON.parse(localStorage.getItem('allersense_weather_history') || '{}');
+      const weatherHistory = JSON.parse(localStorage.getItem('allersense_weather_history_v2') || '{}');
       // 建 date → 最高嚴重度 entry 的 map
       const logMap90 = {};
       logs90.forEach(l => {
@@ -5849,13 +6001,18 @@
     if (elDays)  elDays.textContent  = stats.daysVal;
     if (elDaysL) elDaysL.textContent = stats.daysLabel;
     if (elDelta) { elDelta.textContent = stats.delta; elDelta.style.color = stats.deltaColor; }
+    const elDeltaLabel = document.getElementById('analysisStatDeltaLabel');
+    if (elDeltaLabel) {
+      const labelMap = { '7d': '比上週', '30d': '比上月', 'trend': '趨勢' };
+      elDeltaLabel.textContent = labelMap[period] || '比上月';
+    }
 
     // chart title
     const elTitle = document.getElementById('analysisChartTitle');
     if (elTitle) elTitle.textContent = d.chartTitle;
 
     // factor bars：7d / 30d 從 weather history 計算真實均值；trend 用靜態
-    const wh = JSON.parse(localStorage.getItem('allersense_weather_history') || '{}');
+    const wh = JSON.parse(localStorage.getItem('allersense_weather_history_v2') || '{}');
     const today = new Date();
     const daysBack = period === '7d' ? 7 : period === '30d' ? 30 : 90;
     const periodLabel = period === '7d' ? '7 天' : period === '30d' ? '30 天' : '3 個月';
@@ -5902,20 +6059,36 @@
       if (pm25Pct) { pm25Pct.textContent = pm25PctVal + '%'; pm25Pct.style.color = avgPm25 > 35 ? '#EA580C' : '#16A34A'; }
       if (pm25Sub) pm25Sub.textContent = `${periodLabel}均值 ${avgPm25} μg/m³ · 標準 ≤35`;
     } else {
-      const f = d.factors.pm25;
-      if (pm25Bar) pm25Bar.style.width = f.width + '%';
-      if (pm25Pct) { pm25Pct.textContent = f.pct; pm25Pct.style.color = f.pctColor; }
-      if (pm25Sub) pm25Sub.textContent = f.sub;
+      // 無歷史 PM2.5 資料時，顯示空值而非假資料
+      if (pm25Bar) pm25Bar.style.width = '0%';
+      if (pm25Pct) { pm25Pct.textContent = '—'; pm25Pct.style.color = '#C4CAD4'; }
+      if (pm25Sub) pm25Sub.textContent = '尚無歷史數據';
     }
 
-    // Time bar（固定靜態，無法從天氣資料推算）
+    // Time bar（需從使用者時段日誌計算；資料不足時顯示空值）
     const timeBar = document.getElementById('factorBarTime');
     const timePct = document.getElementById('factorPctTime');
     const timeSub = document.getElementById('factorSubTime');
-    const tf = d.factors.time;
-    if (timeBar) timeBar.style.width = tf.width + '%';
-    if (timePct) { timePct.textContent = tf.pct; timePct.style.color = tf.pctColor; }
-    if (timeSub) timeSub.textContent = tf.sub;
+    const timeLogs = JSON.parse(localStorage.getItem('allersense_logs') || '[]')
+      .filter(l => l.timeSlot && l.timeSlot !== '全天');
+    if (timeLogs.length >= 2) {
+      const bySlot = {};
+      timeLogs.forEach(l => {
+        const s = l.timeSlot;
+        if (!bySlot[s]) bySlot[s] = [];
+        bySlot[s].push(Number(l.severity) || 0);
+      });
+      const slotAvgs = Object.entries(bySlot).map(([k, v]) => ({ k, avg: v.reduce((a,b)=>a+b,0)/v.length }));
+      const worst = slotAvgs.reduce((a, b) => b.avg > a.avg ? b : a);
+      const pctVal = Math.min(Math.round((worst.avg / 5) * 100), 100);
+      if (timeBar) timeBar.style.width = pctVal + '%';
+      if (timePct) { timePct.textContent = pctVal + '%'; timePct.style.color = '#7C3AED'; }
+      if (timeSub) timeSub.textContent = `${worst.k} 影響最高（${slotAvgs.length} 個時段比較）`;
+    } else {
+      if (timeBar) timeBar.style.width = '0%';
+      if (timePct) { timePct.textContent = '—'; timePct.style.color = '#C4CAD4'; }
+      if (timeSub) timeSub.textContent = `再記錄 ${Math.max(1, 2 - timeLogs.length)} 筆時段日誌即可顯示`;
+    }
 
     // Temp bar
     const tempBar = document.getElementById('factorBarTemp');
@@ -6313,7 +6486,7 @@
       const stc = SEV_TAG_COLOR[rep.severity] || SEV_TAG_COLOR[3];
       // 環境因子 tag（優先讀 weather history 真實資料，無資料才 fallback 亂數）
       function envTagsFor(dateStr) {
-        const logWeatherHistory = JSON.parse(localStorage.getItem('allersense_weather_history') || '{}');
+        const logWeatherHistory = JSON.parse(localStorage.getItem('allersense_weather_history_v2') || '{}');
         const real = logWeatherHistory[dateStr];
         if (real) {
           const tags = [];
@@ -6321,7 +6494,7 @@
           if (real.pm25 != null)     tags.push({ val: real.pm25,     cls:'tag--pm25',    label: `PM2.5 ${real.pm25>75?'極高':real.pm25>50?'高':real.pm25>35?'中':'低'}` });
           if (real.tempDiff != null) tags.push({ val: real.tempDiff, cls:'tag--teal',    label: `溫差 ${real.tempDiff}°C` });
           tags.sort((a,b) => b.val - a.val);
-          return tags.slice(0,2).map(t=>`<span class="tag ${t.cls}">${t.label}</span>`).join('');
+          return tags.map(t=>`<span class="tag ${t.cls}">${t.label}</span>`).join('');
         }
         // fallback
         const dv = new Date(dateStr);
@@ -6333,7 +6506,7 @@
           { val: sr(s,3.1), cls:'tag--teal',      label: v => `溫差 ${Math.round(3 + v*11)}°C` },
         ];
         factors.sort((a,b) => b.val - a.val);
-        return factors.slice(0,2).map(f=>`<span class="tag ${f.cls}">${f.label(f.val)}</span>`).join('');
+        return factors.map(f=>`<span class="tag ${f.cls}">${f.label(f.val)}</span>`).join('');
       }
       const tagsHtml = envTagsFor(date);
 
@@ -6411,18 +6584,36 @@
       alert('目前沒有日誌紀錄可以匯出。');
       return;
     }
-    const headers = ['日期', '時段', '感覺', '嚴重程度', '症狀', '備註', '記錄時間'];
-    const rows = logs.map(l => [
-      l.date || '',
-      l.timeSlot || '',
-      l.mood || '',
-      l.severity || '',
-      (l.symptoms || []).join('、'),
-      (l.note || '').replace(/,/g, '，'),
-      l.timestamp ? new Date(l.timestamp).toLocaleString('zh-TW') : ''
-    ]);
+    const wh = JSON.parse(localStorage.getItem('allersense_weather_history_v2') || '{}');
+
+    function envWarning(env) {
+      if (!env) return '';
+      const warns = [];
+      if (env.humidity != null && env.humidity >= 80) warns.push(`濕度偏高 ${env.humidity}%（易誘發塵蟎過敏）`);
+      if (env.pm25 != null && env.pm25 > 35)         warns.push(`PM2.5 超標 ${env.pm25} μg/m³（超過 WHO 標準）`);
+      if (env.tempDiff != null && env.tempDiff >= 7)  warns.push(`日夜溫差大 ${env.tempDiff}°C（易引起過敏發作）`);
+      return warns.join('；');
+    }
+
+    const headers = ['日期', '時段', '感覺', '嚴重程度(1-5)', '症狀', '備註', '濕度(%)', 'PM2.5(μg/m³)', '日夜溫差(°C)', '環境警語', '記錄時間'];
+    const rows = logs.map(l => {
+      const env = wh[l.date] || null;
+      return [
+        l.date || '',
+        l.timeSlot || '',
+        l.mood || '',
+        l.severity || '',
+        (l.symptoms || []).join('、'),
+        (l.note || '').replace(/,/g, '，'),
+        env && env.humidity != null ? env.humidity : '',
+        env && env.pm25     != null ? env.pm25     : '',
+        env && env.tempDiff != null ? env.tempDiff : '',
+        envWarning(env),
+        l.timestamp ? new Date(l.timestamp).toLocaleString('zh-TW') : ''
+      ];
+    });
     const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
-    const bom = '\uFEFF'; // 讓 Excel 正確顯示中文
+    const bom = '\uFEFF';
     const blob = new Blob([bom + csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -7428,7 +7619,7 @@
   }
 
   /* ─── 地點選擇 ─── */
-  let _selectedCity = '台中市';
+  let _selectedCity = localStorage.getItem('allersense_city') || '台中市';
   function selectCity(el, name, sub) {
     _selectedCity = name;
     document.querySelectorAll('#cityList .city-item__radio').forEach(r => r.classList.remove('city-item__radio--active'));
@@ -7720,14 +7911,31 @@
   const AQICN_TOKEN = '6b4f64b1b94f20dff830e18deda5a790e758f921';
 
   const CITY_COORDS = {
-    '台北市': { lat: 25.0330, lon: 121.5654, waqi: 'taipei'     },
-    '新北市': { lat: 25.0169, lon: 121.4627, waqi: 'new-taipei' },
-    '桃園市': { lat: 24.9937, lon: 121.3009, waqi: 'taoyuan'    },
-    '台中市': { lat: 24.1477, lon: 120.6736, waqi: 'taichung'   },
-    '台南市': { lat: 22.9998, lon: 120.2269, waqi: 'tainan'     },
-    '高雄市': { lat: 22.6273, lon: 120.3014, waqi: 'kaohsiung'  },
-    '新竹市': { lat: 24.8066, lon: 120.9686, waqi: 'hsinchu'    },
-    '基隆市': { lat: 25.1276, lon: 121.7392, waqi: 'keelung'    },
+    // 北部
+    '台北市': { lat: 25.0330, lon: 121.5654, waqi: 'taipei'       },
+    '新北市': { lat: 25.0169, lon: 121.4627, waqi: 'banqiao'      },
+    '桃園市': { lat: 24.9937, lon: 121.3009, waqi: 'taoyuan-city' },
+    '基隆市': { lat: 25.1276, lon: 121.7392, waqi: 'keelung'      },
+    '新竹市': { lat: 24.8066, lon: 120.9686, waqi: 'hsinchu'      },
+    '新竹縣': { lat: 24.8387, lon: 121.0177, waqi: 'xinzhu'       },
+    '宜蘭縣': { lat: 24.7021, lon: 121.7378, waqi: 'yilan'        },
+    // 中部
+    '苗栗縣': { lat: 24.5600, lon: 120.8214, waqi: null           },
+    '台中市': { lat: 24.1477, lon: 120.6736, waqi: 'taichung'     },
+    '彰化縣': { lat: 24.0518, lon: 120.5162, waqi: null           },
+    '南投縣': { lat: 23.9609, lon: 120.9718, waqi: 'nantou'       },
+    '雲林縣': { lat: 23.7092, lon: 120.4313, waqi: 'douliou'      },
+    // 南部
+    '嘉義市': { lat: 23.4801, lon: 120.4491, waqi: null           },
+    '嘉義縣': { lat: 23.4518, lon: 120.2554, waqi: null           },
+    '台南市': { lat: 22.9998, lon: 120.2269, waqi: 'tainan'       },
+    '高雄市': { lat: 22.6273, lon: 120.3014, waqi: 'kaohsiung'    },
+    '屏東縣': { lat: 22.6761, lon: 120.4942, waqi: 'chaozhou'     },
+    // 東部 & 離島
+    '花蓮縣': { lat: 23.9769, lon: 121.6044, waqi: 'hualien'      },
+    '台東縣': { lat: 22.7583, lon: 121.1444, waqi: 'taitung'      },
+    '澎湖縣': { lat: 23.5654, lon: 119.5795, waqi: 'makung'       },
+    '金門縣': { lat: 24.4493, lon: 118.3767, waqi: 'kinmen'       },
   };
 
   function weatherDesc(code) {
@@ -7769,19 +7977,30 @@
 
     try {
       // AQICN：台灣 EPA 監測站即時數據（PM2.5 / AQI）
-      // Open-Meteo：天氣資料（溫度、濕度、天氣描述）
-      const waqiStation = coords.waqi || 'taichung';
-      const [aqRes, wxRes] = await Promise.all([
-        fetch(`https://api.waqi.info/feed/${waqiStation}/?token=${AQICN_TOKEN}`),
+      // Open-Meteo：天氣資料 + AQICN 無站台城市的備援空品資料
+      const waqiStation = coords.waqi;
+      const requests = [
         fetch(`https://api.open-meteo.com/v1/forecast?latitude=${coords.lat}&longitude=${coords.lon}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&timezone=Asia/Taipei`),
-      ]);
+      ];
+      if (waqiStation) {
+        requests.unshift(fetch(`https://api.waqi.info/feed/${waqiStation}/?token=${AQICN_TOKEN}`));
+      } else {
+        requests.unshift(fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${coords.lat}&longitude=${coords.lon}&current=pm2_5,european_aqi&timezone=Asia/Taipei`));
+      }
+      const [aqRes, wxRes] = await Promise.all(requests);
       const aq = await aqRes.json();
       const wx = await wxRes.json();
 
-      // AQICN 回傳 US AQI 及監測站實測 PM2.5
-      const aqiRaw = (aq.status === 'ok') ? (aq.data.aqi || 0) : 0;
-      const pm25   = (aq.status === 'ok') ? Math.round(aq.data.iaqi?.pm25?.v ?? aqiRaw * 0.4) : 0;
-      const aqi    = aqiRaw;
+      // 解析 AQI / PM2.5（AQICN 或 Open-Meteo 備援）
+      let aqiRaw, pm25;
+      if (waqiStation && aq.status === 'ok') {
+        aqiRaw = aq.data.aqi || 0;
+        pm25   = Math.round(aq.data.iaqi?.pm25?.v ?? aqiRaw * 0.4);
+      } else {
+        aqiRaw = Math.round((aq.current?.european_aqi || 0) * 1.1);
+        pm25   = Math.round(aq.current?.pm2_5 || 0);
+      }
+      const aqi = aqiRaw;
       const temp   = Math.round(wx.current.temperature_2m);
       const humid  = Math.round(wx.current.relative_humidity_2m);
       const wdesc  = weatherDesc(wx.current.weather_code);
@@ -7866,7 +8085,7 @@
     if (_origSelectCity) _origSelectCity(el, city, desc);
     localStorage.setItem('allersense_city', city);
     loadEnvData();
-    localStorage.removeItem('allersense_weather_history');
+    localStorage.removeItem('allersense_weather_history_v2');
     if (typeof fetchWeatherHistory === 'function') fetchWeatherHistory(city);
     if (typeof renderForecast === 'function') renderForecast(city);
   };
@@ -8202,7 +8421,10 @@ window.handleRegisterRedirect = function() {
     try {
       const { data, error } = await sb.auth.signUp({
         email, password,
-        options: { data: { full_name: name || email.split('@')[0] } }
+        options: {
+          data: { full_name: name || email.split('@')[0] },
+          emailRedirectTo: 'https://xlingfun.github.io/Allersense/'
+        }
       });
       if (error) { showErr('註冊失敗：' + (error.message || '請再試一次')); return; }
 
