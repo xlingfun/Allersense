@@ -8581,9 +8581,8 @@ window.handleRegisterRedirect = function() {
           timeSlot:  r.time_slot || '全天',
           timestamp: r.created_at,
           mood:      MOOD_ZH[r.mood] || '輕微',
-          severity:  r.severity || 1,
-          symptoms:  r.symptoms || [],
-          note:      r.note || '',
+          severity:  r.overall_severity || 1,
+          note:      r.notes || '',
         }));
 
       if (imported.length) {
@@ -8600,15 +8599,15 @@ window.handleRegisterRedirect = function() {
   async function saveLogToSupabase(entry, userId) {
     try {
       await sb.from('daily_logs').upsert({
-        user_id:   userId,
-        log_date:  entry.date,
-        mood:      MOOD_DB[entry.mood] || 'mild',
-        severity:  entry.severity || 1,
-        time_slot: entry.timeSlot || '全天',
-        symptoms:  entry.symptoms || [],
-        note:      entry.note || null,
+        user_id:          userId,
+        log_date:         entry.date,
+        mood:             MOOD_DB[entry.mood] || 'mild',
+        overall_severity: entry.severity || 1,
+        time_slot:        entry.timeSlot || '全天',
+        notes:            entry.note || null,
+        location_city:    localStorage.getItem('allersense_city') || null,
       }, { onConflict: 'user_id,log_date,time_slot' });
-    } catch(e) {}
+    } catch(e) { console.warn('[AllerSense] Supabase save failed', e); }
   }
 
   /* ── 登入主流程 ── */
