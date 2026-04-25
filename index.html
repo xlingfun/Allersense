@@ -8172,6 +8172,11 @@
     const bodyEl  = document.getElementById('symptomCardBody');
     const emptyEl = document.getElementById('symptomCardEmpty');
     if (loggedIn) {
+      // 登入後：還原 empty state 的文字和按鈕（setLoginState(false) 會改掉它們）
+      const emptySpan = document.querySelector('#symptomCardEmpty span');
+      const emptyBtn  = document.querySelector('#symptomCardEmpty button');
+      if (emptySpan) emptySpan.textContent = '嗨，今天身體還好嗎？✨';
+      if (emptyBtn)  { emptyBtn.textContent = '記錄'; emptyBtn.onclick = () => openMoodModal(); }
       // 登入後：交由 initTodaySymptomCard 決定顯示 body 或 empty
       if (typeof initTodaySymptomCard === 'function') initTodaySymptomCard();
     } else {
@@ -8626,10 +8631,12 @@ window.handleRegisterRedirect = function() {
       const { data, error } = await sb.auth.signInWithPassword({ email, password });
 
       if (!error && data?.user) {
-        // 登入成功
+        // 登入成功 — 先跳首頁，背景再拉資料
         applyUserToUI(data.user);
-        await loadLogsFromSupabase(data.user.id);
         if (typeof showScreen === 'function') showScreen('screen-home');
+        loadLogsFromSupabase(data.user.id).then(() => {
+          if (typeof initTodaySymptomCard === 'function') initTodaySymptomCard();
+        });
         return;
       }
 
@@ -8675,9 +8682,11 @@ window.handleRegisterRedirect = function() {
 
       if (!error && data?.user) {
         applyUserToUI(data.user);
-        loadLogsFromSupabase(data.user.id); // 背景載入，不 await
         closeLoginModal();
         if (typeof showScreen === 'function') showScreen('screen-home');
+        loadLogsFromSupabase(data.user.id).then(() => {
+          if (typeof initTodaySymptomCard === 'function') initTodaySymptomCard();
+        });
         return;
       }
 
@@ -8805,20 +8814,33 @@ window.handleRegisterRedirect = function() {
   document.addEventListener('allersense:logSaved', async (e) => {
     try {
       const { data: { user } } = await sb.auth.getUser();
-      if (!user) return;
-      await saveLogToSupabase(e.detail, user.id);
-    } catch(err) {}
+      console.log('[AllerSense] logSaved fired, user:', user?.id, 'entry:', e.detail);
+      if (!user) { console.warn('[AllerSense] 未登入，跳過 Supabase 儲存'); return; }
+      const result = await sb.from('daily_logs').upsert({
+        user_id:          user.id,
+        log_date:         e.detail.date,
+        mood:             MOOD_DB[e.detail.mood] || 'mild',
+        overall_severity: e.detail.severity || 1,
+        time_slot:        e.detail.timeSlot || '全天',
+        notes:            e.detail.note || null,
+        location_city:    localStorage.getItem('allersense_city') || null,
+      }, { onConflict: 'user_id,log_date,time_slot' });
+      console.log('[AllerSense] upsert result:', result);
+    } catch(err) { console.error('[AllerSense] logSaved error:', err); }
   });
 
   /* ── 監聽登入狀態 ── */
   let _lastLoadedUserId = null;
-  sb.auth.onAuthStateChange(async (_event, session) => {
+  sb.auth.onAuthStateChange((_event, session) => {
     if (session?.user) {
       // 避免同次登入重複載入
       if (_lastLoadedUserId !== session.user.id) {
         _lastLoadedUserId = session.user.id;
         applyUserToUI(session.user);
-        loadLogsFromSupabase(session.user.id); // 背景載入
+        loadLogsFromSupabase(session.user.id).then(() => {
+          if (typeof initTodaySymptomCard === 'function') initTodaySymptomCard();
+          if (typeof checkNotifBadge === 'function') checkNotifBadge();
+        });
       }
     } else if (_event === 'SIGNED_OUT') {
       _lastLoadedUserId = null;
