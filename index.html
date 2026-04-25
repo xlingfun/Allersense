@@ -6302,6 +6302,14 @@
     '不適': { severity: '嚴重程度 3/5' },
   };
   function initTodaySymptomCard() {
+    // 未登入：強制顯示空狀態，不讀取 localStorage
+    if (!window._isLoggedIn) {
+      const body  = document.getElementById('symptomCardBody');
+      const empty = document.getElementById('symptomCardEmpty');
+      if (body)  body.style.display  = 'none';
+      if (empty) empty.style.display = '';
+      return;
+    }
     const todayStr = new Date().toISOString().split('T')[0];
     const logs = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
     const todayLogs = logs.filter(l => l.date === todayStr);
