@@ -2079,7 +2079,7 @@
       .web-sidebar {
         position: fixed; top: 0; left: 0; bottom: 0; width: 240px;
         background: #fff; border-right: 1px solid var(--color-border);
-        padding: 24px 16px; display: flex; flex-direction: column; gap: 4px; z-index: 100;
+        padding: 24px 16px; display: flex; flex-direction: column; gap: 4px; z-index: 9100;
       }
       .web-sidebar__brand {
         font-family: var(--font-head);
@@ -6673,11 +6673,13 @@
       const detailRows = entries.length > 1 ? sortedEntries.map(e => {
         const sc = SEV_COLOR[e.severity] || '#B45309';
         const sym = (e.symptoms||[]).length ? (e.symptoms||[]).map(s=>`<span class="tag" style="background:rgba(76,125,255,.12);color:#3B5BDB;font-size:10px;padding:2px 7px;border-radius:100px">${s}</span>`).join('') : '';
+        const noteHtml = e.note ? `<div style="width:100%;font-size:11px;color:var(--color-text-2);margin-top:4px;padding-left:46px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="flex-shrink:0;opacity:.5"><path d="M2 9.5h8M8.5 2l1.5 1.5-6 6H2.5V8L8.5 2Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.note}</span></div>` : '';
         return `<div class="log-timeslot-row">
           <span class="log-timeslot-badge">${e.timeSlot || '全天'}</span>
           <span style="font-size:12px;font-weight:600;color:${sc}">${MOOD_LABEL[e.mood]||e.mood}</span>
           <span style="font-size:11px;color:var(--color-text-3)">嚴重程度 ${e.severity}/5</span>
           ${sym ? `<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px">${sym}</div>` : ''}
+          ${noteHtml}
         </div>`;
       }).join('') : '';
 
@@ -7367,6 +7369,8 @@
   });
 
   function showScreen(targetId) {
+    // 切換頁面時，若今日紀錄 modal 開著，先關掉
+    if (typeof closeMoodModal === 'function') closeMoodModal();
     // 1024px 以上，登入頁改用 modal
     if (targetId === 'screen-login' && window.innerWidth >= 1024) {
       openLoginModal();
