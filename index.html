@@ -8816,16 +8816,22 @@ window.handleRegisterRedirect = function() {
       const { data: { user } } = await sb.auth.getUser();
       console.log('[AllerSense] logSaved fired, user:', user?.id, 'entry:', e.detail);
       if (!user) { console.warn('[AllerSense] 未登入，跳過 Supabase 儲存'); return; }
-      const result = await sb.from('daily_logs').upsert({
+      const payload = {
         user_id:          user.id,
         log_date:         e.detail.date,
         mood:             MOOD_DB[e.detail.mood] || 'mild',
-        overall_severity: e.detail.severity || 1,
+        overall_severity: Number(e.detail.severity) || 1,
         time_slot:        e.detail.timeSlot || '全天',
         notes:            e.detail.note || null,
         location_city:    localStorage.getItem('allersense_city') || null,
-      }, { onConflict: 'user_id,log_date,time_slot' });
-      console.log('[AllerSense] upsert result:', result);
+      };
+      console.log('[AllerSense] payload:', JSON.stringify(payload));
+      const result = await sb.from('daily_logs').upsert(payload, { onConflict: 'user_id,log_date,time_slot' });
+      if (result.error) {
+        console.error('[AllerSense] upsert error:', result.error.code, result.error.message, result.error.details, result.error.hint);
+      } else {
+        console.log('[AllerSense] upsert OK, status:', result.status);
+      }
     } catch(err) { console.error('[AllerSense] logSaved error:', err); }
   });
 
