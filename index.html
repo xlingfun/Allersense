@@ -8370,6 +8370,7 @@
       // 今日建議 & 個人化洞察動態化
       if (typeof renderRecommendations === 'function') renderRecommendations();
       if (typeof renderInsights === 'function') renderInsights();
+      if (typeof checkNotifBadge === 'function') checkNotifBadge();
 
     } catch (err) {
       console.warn('[AllerSense] 環境資料載入失敗，顯示預設值', err);
