@@ -7837,6 +7837,29 @@
     closePrefModal('allergenOverlay');
   }
 
+  /* ─── 自動偵測城市（僅首次，不覆蓋手動設定） ─── */
+  function autoDetectCity() {
+    if (localStorage.getItem('allersense_city')) return; // 已手動設定，跳過
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(pos => {
+      const { latitude: lat, longitude: lon } = pos.coords;
+      let nearest = '台中市', minDist = Infinity;
+      Object.entries(CITY_COORDS).forEach(([name, c]) => {
+        const d = Math.hypot(lat - c.lat, lon - c.lon);
+        if (d < minDist) { minDist = d; nearest = name; }
+      });
+      localStorage.setItem('allersense_city', nearest);
+      _selectedCity = nearest;
+      // 更新 UI
+      const cityLabelEl = document.querySelector('.top-nav__city');
+      if (cityLabelEl) cityLabelEl.textContent = nearest + '，台灣';
+      const cityItem = document.getElementById('settingsPrefLocation');
+      if (cityItem) cityItem.querySelector('.settings-item__desc').textContent = nearest + '，台灣';
+      // 重新抓天氣
+      if (typeof onCityChange === 'function') onCityChange(nearest);
+    }, () => {}); // 拒絕授權或錯誤時靜默 fallback
+  }
+
   /* ─── 地點選擇 ─── */
   let _selectedCity = localStorage.getItem('allersense_city') || '台中市';
   function selectCity(el, name, sub) {
@@ -8402,6 +8425,7 @@
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
+      autoDetectCity();
       loadEnvData();
       const city = localStorage.getItem('allersense_city') || '台中市';
       if (typeof fetchWeatherHistory === 'function') fetchWeatherHistory(city);
@@ -8409,6 +8433,7 @@
       if (typeof renderRecommendations === 'function') renderRecommendations();
     });
   } else {
+    autoDetectCity();
     loadEnvData();
     const city = localStorage.getItem('allersense_city') || '台中市';
     if (typeof fetchWeatherHistory === 'function') fetchWeatherHistory(city);
@@ -8583,7 +8608,7 @@ window.handleRegisterRedirect = function() {
     if (typeof setLoginState      === 'function') setLoginState(true);
   }
 
-  /* ── 從 Supabase 載入紀錄並合併 localStorage ── */
+  /* ── 從 Supabase 載入該使用者的紀錄（直接覆蓋 localStorage，確保每個帳號資料獨立） ── */
   async function loadLogsFromSupabase(userId) {
     try {
       const { data, error } = await sb
@@ -8592,29 +8617,19 @@ window.handleRegisterRedirect = function() {
         .eq('user_id', userId)
         .order('log_date', { ascending: false })
         .limit(90);
-      if (error || !data?.length) return;
+      if (error) return;
 
-      const existing = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
-      const existingKeys = new Set(existing.map(l => `${l.date}_${l.timeSlot}`));
+      const logs = (data || []).map(r => ({
+        date:      r.log_date,
+        timeSlot:  r.time_slot || '全天',
+        timestamp: r.created_at,
+        mood:      MOOD_ZH[r.mood] || '輕微',
+        severity:  r.overall_severity || 1,
+        note:      r.notes || '',
+      }));
 
-      const imported = data
-        .filter(r => !existingKeys.has(`${r.log_date}_${r.time_slot || '全天'}`))
-        .map(r => ({
-          date:      r.log_date,
-          timeSlot:  r.time_slot || '全天',
-          timestamp: r.created_at,
-          mood:      MOOD_ZH[r.mood] || '輕微',
-          severity:  r.overall_severity || 1,
-          note:      r.notes || '',
-        }));
-
-      if (imported.length) {
-        const merged = [...imported, ...existing]
-          .sort((a, b) => b.date.localeCompare(a.date));
-        localStorage.setItem('allersense_logs', JSON.stringify(merged));
-        // 重新渲染日誌頁
-        if (typeof renderLogPage === 'function') renderLogPage();
-      }
+      localStorage.setItem('allersense_logs', JSON.stringify(logs));
+      if (typeof renderLogPage === 'function') renderLogPage();
     } catch(e) {}
   }
 
@@ -8659,7 +8674,7 @@ window.handleRegisterRedirect = function() {
       }
 
       if (error?.message?.includes('Email not confirmed')) {
-        showLoginError('Email 尚未驗證，請前往信箱點擊確認連結後再登入。');
+        showLoginError('帳號或密碼錯誤，請重新確認。');
       } else {
         showLoginError('帳號或密碼錯誤，請重新確認。');
       }
@@ -8709,7 +8724,7 @@ window.handleRegisterRedirect = function() {
       }
 
       if (error?.message?.includes('Email not confirmed')) {
-        showModalError('Email 尚未驗證，請前往信箱點擊確認連結後再登入。');
+        showModalError('帳號或密碼錯誤，請重新確認。');
       } else {
         showModalError('帳號或密碼錯誤，請重新確認。');
       }
@@ -8774,7 +8789,7 @@ window.handleRegisterRedirect = function() {
       }
 
       // 成功
-      showOk('🎉 帳號建立成功！請前往信箱點擊確認連結後再登入。');
+      showOk('🎉 帳號建立成功！請直接登入開始使用。');
       setTimeout(() => {
         closeRegisterModal();
         if (typeof openLoginModal === 'function') openLoginModal();
@@ -8886,8 +8901,7 @@ window.handleRegisterRedirect = function() {
   /* ── 綁定登出按鈕 ── */
   /* ── 登出：清除資料並重置 UI ── */
   function clearUserData() {
-    // prototype：不清除紀錄資料（無後端可重新載入，保留 localStorage）
-    // localStorage.removeItem('allersense_logs');
+    localStorage.removeItem('allersense_logs');
     localStorage.removeItem('allersense_city');
 
     // 重置今日症狀卡
