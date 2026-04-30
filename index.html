@@ -332,7 +332,7 @@
 
     /* Bottom nav glass */
     [data-theme="dark"] .bottom-nav {
-      background: rgba(22,28,48,.92) !important;
+      background: rgba(22,28,48,.78) !important;
       box-shadow: 0 4px 24px rgba(0,0,0,.4), 0 1px 0 rgba(255,255,255,.04) !important;
       border: 1px solid rgba(255,255,255,.06) !important;
     }
@@ -703,6 +703,17 @@
       transition: transform .25s cubic-bezier(.34,1.56,.64,1);
     }
     .metric-explain-overlay.open .metric-explain-card { transform: translateY(0); }
+    /* 桌機 / 平板：改為置中 modal */
+    @media (min-width: 768px) {
+      .metric-explain-overlay { align-items: center; }
+      .metric-explain-card {
+        border-radius: 24px;
+        max-width: 440px;
+        box-shadow: 0 24px 60px rgba(0,0,0,.25);
+        transform: translateY(16px) scale(.97);
+      }
+      .metric-explain-overlay.open .metric-explain-card { transform: translateY(0) scale(1); }
+    }
     .metric-explain-card__top {
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 16px;
@@ -1639,6 +1650,12 @@
     .tag--pm25 { background: rgba(251,146,60,.14); color: #B45309; }
     .tag--pollen { background: rgba(74,222,128,.14); color: #15803D; }
     .tag--teal { background: rgba(74,222,128,.14); color: #15803D; }
+    [data-theme="dark"] .tag--humidity { background: rgba(56,189,248,.18); color: #7DD3FC; }
+    [data-theme="dark"] .tag--pm25 { background: rgba(251,146,60,.18); color: #FBB97D; }
+    [data-theme="dark"] .tag--pollen { background: rgba(74,222,128,.18); color: #86EFAC; }
+    [data-theme="dark"] .tag--teal { background: rgba(74,222,128,.18); color: #86EFAC; }
+    .tag--symptom { background: rgba(76,125,255,.12); color: #3B5BDB; }
+    [data-theme="dark"] .tag--symptom { background: rgba(76,125,255,.2); color: #93AEFF; }
     .history-record__risk { flex-shrink: 0; text-align: center; width: 44px; }
     .history-record__risk svg { width: 33px; height: 33px; display: block; }
     .history-record__pct {
@@ -2145,7 +2162,7 @@
 
     /* Mobile (≤ 767px) */
     @media (max-width: 767px) {
-      .content { padding-bottom: 100px; }
+      .content { padding-bottom: 140px; }
       .bottom-nav { position: fixed; bottom: 14px; left: 12px; right: 12px; border-radius: 24px; }
       .top-nav { padding-top: 32px; }
       .page-header { padding-top: 32px; }
@@ -2156,12 +2173,19 @@
       #topNavLoginBtn #topNavChevron { display: none !important; }
       #topNavLoginBtn { padding: 0 10px !important; min-width: 40px; justify-content: center; }
       /* Risk card — 縮小 donut，減少擁擠感 */
-      .risk-card { padding: 20px; }
+      .risk-card { padding: 14px; }
       .donut-wrap { width: 110px; height: 110px; }
       .donut-wrap svg { width: 110px; height: 110px; }
-      .risk-card__body { gap: 16px; }
+      .risk-card__body { gap: 10px; }
       .cause-name, .cause-pct { font-size: 13px; }
+      .cause-bar-wrap { margin: 0 10px; }
       .cause-footnote { font-size: 11px; }
+    }
+
+    /* 小手機 (≤480px) */
+    @media (max-width: 480px) {
+      .cause-item { gap: 4px; }
+      .cause-name { width: 4em; }
     }
 
     /* Tablet (768–1023px) */
@@ -2439,8 +2463,17 @@
       #screen-home .rec-list { grid-template-columns: 1fr; }
 
       /* 分析頁 */
+      #screen-analysis .content > .px.section-gap:has(.history-compare-card) { grid-column: span 12; }
       #screen-analysis .content > .px.section-gap:has(.factor-card) { grid-column: span 6; }
       #screen-analysis .content > .px.section-gap:has(.breakdown-card) { grid-column: span 6; }
+      #screen-analysis .content > .px.section-gap:has(.insight-block),
+      #screen-analysis .content > .px.section-gap:has(#insightLoginPrompt[style*="flex"]) { grid-column: span 6; }
+      #screen-analysis .content > .px.section-gap:has(.insight-block) > div[style*="flex-direction:column"],
+      #screen-analysis .content > .px.section-gap:has(#insightLoginPrompt[style*="flex"]) > div[style*="flex-direction:column"] {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+      }
 
       /* 歷史/設定欄位 */
       #screen-history .log-calendar-section,
@@ -2832,6 +2865,10 @@
       display: flex; align-items: center; justify-content: center;
       transition: all 0.15s ease;
       flex-shrink: 0;
+    }
+    @media (max-width: 767px) {
+      .symptom-icon,
+      .mood-modal__symptom--selected .symptom-icon { width: 48px; height: 48px; }
     }
     .symptom-icon svg,
     .symptom-icon i {
@@ -4984,9 +5021,9 @@
               頭痛
             </button>
 
-            <button class="mood-modal__symptom" data-symptom="疲勞">
+            <button class="mood-modal__symptom" data-symptom="鼻塞">
               <div class="symptom-icon"><i class="fa-solid fa-face-tired"></i></div>
-              疲勞
+              鼻塞
             </button>
 
           </div>
@@ -5006,6 +5043,17 @@
 
 
 <!-- ══ Metric Explain Popup ══ -->
+<!-- 全部日誌 modal -->
+<div id="logAllOverlay" onclick="if(event.target===this)closeLogAllModal()" style="display:none;opacity:0;position:fixed;inset:0;background:rgba(15,20,40,.45);z-index:10500;align-items:center;justify-content:center;transition:opacity .2s;">
+  <div id="logAllSheet" style="background:var(--color-bg);border-radius:24px;width:calc(100% - 32px);max-width:520px;max-height:85vh;display:flex;flex-direction:column;transform:translateY(24px);transition:transform .25s cubic-bezier(.34,1.56,.64,1);box-shadow:0 24px 60px rgba(0,0,0,.3);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 20px 12px;border-bottom:1px solid var(--color-border);flex-shrink:0;">
+      <span style="font-family:var(--font-head);font-size:16px;font-weight:800;color:var(--color-text-1)">全部日誌</span>
+      <button onclick="closeLogAllModal()" style="width:28px;height:28px;border-radius:50%;border:none;background:var(--color-border);color:var(--color-text-2);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+    </div>
+    <div id="logAllList" style="overflow-y:auto;padding:12px 16px 32px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;"></div>
+  </div>
+</div>
+
 <div class="metric-explain-overlay" id="metricExplainOverlay" onclick="closeMetricExplain(event)">
   <div class="metric-explain-card" id="metricExplainCard">
     <div class="metric-explain-card__top">
@@ -6657,14 +6705,11 @@
       `<text x="${p.cx.toFixed(1)}" y="${svgH - 4}" text-anchor="middle" font-size="9" fill="#A0ADBF">${p.label}</text>`
     ).join('');
 
-    // 右側不適/舒適標籤
-    const sideLabel = `
-      <text x="${svgW - padR + 4}" y="${padT + 6}" font-size="9" fill="#F97316" font-weight="700">不適</text>
-      <text x="${svgW - padR + 4}" y="${padT + chartH}" font-size="9" fill="#4ADE80" font-weight="700">舒適</text>`;
+    const sideLabel = '';
 
-    // 點擊透明遮罩（觸發 tooltip）
+    // hover 透明遮罩（觸發 tooltip）
     const hitTargets = pts.map((p, i) =>
-      `<rect x="${(p.cx - spacing/2).toFixed(1)}" y="${padT}" width="${spacing.toFixed(1)}" height="${chartH}" fill="transparent" style="cursor:pointer" onclick="showBarTooltip(${i})"/>`
+      `<rect x="${(p.cx - spacing/2).toFixed(1)}" y="${padT}" width="${spacing.toFixed(1)}" height="${chartH}" fill="transparent" style="cursor:pointer" onmouseenter="showBarTooltip(${i})" onmouseleave="hideBarTooltip()"/>`
     ).join('');
 
 
@@ -6676,8 +6721,8 @@
       ${bars}
       ${nowMark}
       ${xLabels}
-      ${sideLabel}
       ${hitTargets}
+      ${sideLabel}
     `;
 
     // overlay 顯示狀態依 chip 狀態決定（預設全關）
@@ -6763,10 +6808,14 @@
     tooltip.style.top     = ty + 'px';
     tooltip.style.right   = 'auto';
     tooltip.style.display = 'block';
-
-    clearTimeout(window._tipTimer);
-    window._tipTimer = setTimeout(() => { tooltip.style.display = 'none'; }, 3000);
   }
+
+  function hideBarTooltip() {
+    const tooltip = document.getElementById('chartTooltip');
+    if (tooltip) tooltip.style.display = 'none';
+  }
+  window.showBarTooltip = showBarTooltip;
+  window.hideBarTooltip = hideBarTooltip;
 
   function switchAnalysisTab(tab) {
     // 更新 active tab 樣式
@@ -7277,7 +7326,10 @@
     const _dark = () => document.documentElement.getAttribute('data-theme') === 'dark';
     const SEV_COLOR  = () => _dark()
       ? { 1: '#4ADE80', 2: '#4ADE80', 3: '#FCD34D', 4: '#F87171', 5: '#F87171' }
-      : { 1: '#166534', 2: '#166534', 3: '#78350F', 4: '#DC2626', 5: '#B91C1C' };
+      : { 1: '#16A34A', 2: '#16A34A', 3: '#D97706', 4: '#DC2626', 5: '#B91C1C' };
+    const MOOD_COLOR = () => _dark()
+      ? { '舒適': '#4ADE80', '輕微': '#FCD34D', '不適': '#F87171' }
+      : { '舒適': '#15803D', '輕微': '#B45309', '不適': '#B91C1C' };
     const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
     const today = new Date().toISOString().split('T')[0];
 
@@ -7289,7 +7341,14 @@
     });
     const dates = Object.keys(byDate).sort((a, b) => b.localeCompare(a));
 
-    list.innerHTML = addRowHtml + dates.map(date => {
+    window._logDates = dates;
+    window._logByDate = byDate;
+    window._logHelpers = { MOOD_LABEL, MOOD_COLOR, MONTHS, today, envTagsFor: null };
+
+    const SHOW_LIMIT = 5;
+    const visibleDates = dates.slice(0, SHOW_LIMIT);
+
+    function buildLogRow(date) {
       const entries = byDate[date];
       // 代表那筆 = 嚴重程度最高
       const rep = entries.reduce((a, b) => b.severity > a.severity ? b : a);
@@ -7299,7 +7358,7 @@
       const isToday = date === today;
       const dayLabel = isToday ? '今天' : `${d.getMonth()+1}月${d.getDate()}日`;
       const title = `${dayLabel} • ${MOOD_LABEL[rep.mood] || rep.mood}`;
-      const sevColor = SEV_COLOR()[rep.severity] || '#B45309';
+      const sevColor = MOOD_COLOR()[rep.mood] || '#D97706';
       // tag 顏色：嚴重程度依等級、症狀藍紫、共N筆灰色
       const SEV_TAG_COLOR = {
         1: { bg: 'rgba(22,163,74,.12)',  c: '#15803D' },
@@ -7341,13 +7400,13 @@
         (SLOT_ORDER[a.timeSlot] ?? 99) - (SLOT_ORDER[b.timeSlot] ?? 99)
       );
       const detailRows = entries.length > 1 ? sortedEntries.map(e => {
-        const sc = SEV_COLOR()[e.severity] || '#B45309';
-        const sym = (e.symptoms||[]).length ? (e.symptoms||[]).map(s=>`<span class="tag" style="background:rgba(76,125,255,.12);color:#3B5BDB;font-size:10px;padding:2px 7px;border-radius:100px">${s}</span>`).join('') : '';
-        const noteHtml = e.note ? `<div style="width:100%;font-size:11px;color:var(--color-text-2);margin-top:4px;padding-left:46px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="flex-shrink:0;opacity:.5"><path d="M2 9.5h8M8.5 2l1.5 1.5-6 6H2.5V8L8.5 2Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.note}</span></div>` : '';
+        const sc = MOOD_COLOR()[e.mood] || '#D97706';
+        const sym = (e.symptoms||[]).length ? (e.symptoms||[]).map(s=>`<span class="tag tag--symptom">${s}</span>`).join('') : '';
+        const noteHtml = e.note ? `<div style="width:100%;font-size:11px;color:var(--color-text-1);margin-top:4px;padding-left:46px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="flex-shrink:0;opacity:.45;color:var(--color-text-2)"><path d="M2 9.5h8M8.5 2l1.5 1.5-6 6H2.5V8L8.5 2Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.note}</span></div>` : '';
         return `<div class="log-timeslot-row">
           <span class="log-timeslot-badge">${e.timeSlot || '全天'}</span>
           <span style="font-size:12px;font-weight:600;color:${sc}">${MOOD_LABEL[e.mood]||e.mood}</span>
-          <span style="font-size:11px;color:var(--color-text-3)">嚴重程度 ${e.severity}/5</span>
+          <span style="font-size:11px;color:var(--color-text-2)">嚴重程度 ${e.severity}/5</span>
           ${sym ? `<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px">${sym}</div>` : ''}
           ${noteHtml}
         </div>`;
@@ -7375,7 +7434,15 @@
         </div>
         ${entries.length > 1 ? `<div class="log-day-detail-wrap"><div class="log-day-detail">${detailRows}</div></div>` : ''}
       </div>`;
-    }).join('');
+    }
+
+    const moreBtnHtml = dates.length > SHOW_LIMIT ? `
+      <button onclick="openLogAllModal()" style="width:100%;margin-top:4px;padding:13px;border-radius:14px;border:1.5px solid var(--color-border);background:var(--color-card);color:var(--color-primary);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        查看全部 ${dates.length} 筆紀錄
+      </button>` : '';
+
+    list.innerHTML = addRowHtml + visibleDates.map(buildLogRow).join('') + moreBtnHtml;
 
     // 渲染本月趨勢圖
     renderMonthlyChart();
@@ -8470,6 +8537,8 @@
     const navD = document.getElementById('navThemeIconDark');
     if (navL) navL.style.display = dark ? 'none' : '';
     if (navD) navD.style.display = dark ? ''     : 'none';
+    // 重新渲染日誌 list（顏色依主題動態計算）
+    if (typeof renderLogPage === 'function') renderLogPage();
   }
   function toggleTheme() {
     const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -9105,8 +9174,8 @@
       // 進度條寬度（各誘因嚴重程度 0–100%）
       const wcode2 = wx.current.weather_code || 0;
       const barH = Math.min(100, Math.round((humid / 100) * 100));
-      const barP = Math.min(100, Math.round((pm25 / 75) * 100));
-      const barT = Math.min(100, Math.round((Math.abs(temp - 21) / 14) * 100));
+      const barP = Math.min(100, Math.round((pm25 / 150) * 100));
+      const barT = Math.min(100, Math.round((Math.max(0, temp) / 40) * 100));
       const barW = [51,53,55,61,63,65,71,73,75,80,81,82,95,96,99].includes(wcode2) ? 75
                  : [2,3,45,48].includes(wcode2) ? 40 : 15;
       requestAnimationFrame(() => {
@@ -9324,7 +9393,7 @@ window.handleRegisterRedirect = function() {
     const btn = document.getElementById('login-submit-btn');
     if (!btn) return;
     btn.disabled = on;
-    btn.textContent = on ? '登入中…' : '🔒 登入';
+    btn.textContent = on ? '登入中…' : '登入';
   }
 
   /* ── 套用真實使用者資訊到 UI ── */
@@ -9452,7 +9521,7 @@ window.handleRegisterRedirect = function() {
     const btn = document.getElementById('modal-login-submit-btn');
     if (!btn) return;
     btn.disabled = on;
-    btn.textContent = on ? '登入中…' : '🔒 登入';
+    btn.textContent = on ? '登入中…' : '登入';
   }
 
   window.tryModalLogin = async function () {
@@ -9759,6 +9828,92 @@ function closeMetricExplain(e) {
 }
 window.showMetricExplain = showMetricExplain;
 window.closeMetricExplain = closeMetricExplain;
+
+function openLogAllModal() {
+  const overlay = document.getElementById('logAllOverlay');
+  const sheet   = document.getElementById('logAllSheet');
+  const listEl  = document.getElementById('logAllList');
+  const dates   = window._logDates || [];
+  const byDate  = window._logByDate || {};
+
+  // 渲染全部日誌（借用 renderLogPage 的 buildLogRow 邏輯）
+  renderLogPage();
+  const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const _dark = () => document.documentElement.getAttribute('data-theme') === 'dark';
+  const MOOD_LABEL = { '舒適': '感覺舒適', '輕微': '輕微不適', '不適': '感覺不適' };
+  const MOOD_COLOR = () => _dark()
+    ? { '舒適': '#4ADE80', '輕微': '#FCD34D', '不適': '#F87171' }
+    : { '舒適': '#15803D', '輕微': '#B45309', '不適': '#B91C1C' };
+  const today = new Date().toISOString().split('T')[0];
+
+  const wh = JSON.parse(localStorage.getItem('allersense_weather_history_v2') || '{}');
+  listEl.innerHTML = (window._logDates || []).map((date, i, arr) => {
+    const entries = byDate[date];
+    if (!entries) return '';
+    const rep = entries.reduce((a, b) => b.severity > a.severity ? b : a);
+    const d = new Date(date);
+    const isToday = date === today;
+    const dayLabel = isToday ? '今天' : `${d.getMonth()+1}/${d.getDate()}`;
+    const moodLabel = MOOD_LABEL[rep.mood] || rep.mood;
+    const sevColor = MOOD_COLOR()[rep.mood] || '#D97706';
+    const real = wh[date];
+    let tagsHtml = '';
+    if (real) {
+      const tags = [];
+      if (real.humidity != null) tags.push(`<span class="tag tag--humidity">濕度 ${real.humidity}%</span>`);
+      if (real.pm25 != null)     tags.push(`<span class="tag tag--pm25">PM2.5 ${real.pm25>75?'極高':real.pm25>50?'高':real.pm25>35?'中':'低'}</span>`);
+      if (real.tempDiff != null) tags.push(`<span class="tag tag--teal">溫差 ${real.tempDiff}°C</span>`);
+      tagsHtml = tags.join('');
+    }
+    const title = `${dayLabel} • ${moodLabel}`;
+    const SLOT_ORDER = { '早上': 0, '中午': 1, '下午': 2, '晚上': 3, '深夜': 4 };
+    const sortedEntries = [...entries].sort((a, b) => (SLOT_ORDER[a.timeSlot]??99) - (SLOT_ORDER[b.timeSlot]??99));
+    const detailRows = entries.length > 1 ? sortedEntries.map(e => {
+      const sc = MOOD_COLOR()[e.mood] || '#D97706';
+      const sym = (e.symptoms||[]).length ? (e.symptoms||[]).map(s=>`<span class="tag tag--symptom">${s}</span>`).join('') : '';
+      const noteHtml = e.note ? `<div style="width:100%;font-size:11px;color:var(--color-text-1);margin-top:4px;padding-left:46px;display:flex;align-items:center;gap:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="flex-shrink:0;opacity:.45;color:var(--color-text-2)"><path d="M2 9.5h8M8.5 2l1.5 1.5-6 6H2.5V8L8.5 2Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.note}</span></div>` : '';
+      return `<div class="log-timeslot-row">
+        <span class="log-timeslot-badge">${e.timeSlot||'全天'}</span>
+        <span style="font-size:12px;font-weight:600;color:${sc}">${MOOD_LABEL[e.mood]||e.mood}</span>
+        <span style="font-size:11px;color:var(--color-text-2)">嚴重程度 ${e.severity}/5</span>
+        ${sym ? `<div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px">${sym}</div>` : ''}
+        ${noteHtml}
+      </div>`;
+    }).join('') : '';
+    return `<div class="history-record log-day-record" style="flex-direction:column;align-items:stretch;cursor:${entries.length>1?'pointer':'default'}">
+      <div class="log-day-inner" onclick="this.closest('.log-day-record').querySelector('.log-day-detail-wrap')?.classList.toggle('log-day-detail-wrap--open')" style="display:flex;align-items:center;gap:12px;">
+        <div class="history-record__date-col">
+          <div class="history-record__day">${d.getDate()}</div>
+          <div class="history-record__month">${MONTHS[d.getMonth()]}</div>
+        </div>
+        <div class="history-record__divider"></div>
+        <div class="history-record__info">
+          <div class="history-record__title">${title}</div>
+          <div class="history-record__tags">${tagsHtml}</div>
+        </div>
+        <div style="width:36px;height:36px;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-left:auto">${FACE_SVG[rep.mood]||FACE_SVG['輕微']}</div>
+        <span class="log-expand-arrow" style="${entries.length>1?'':'visibility:hidden'}">›</span>
+      </div>
+      ${entries.length>1 ? `<div class="log-day-detail-wrap"><div class="log-day-detail">${detailRows}</div></div>` : ''}
+    </div>`;
+  }).join('');
+
+  overlay.style.display = 'flex';
+  requestAnimationFrame(() => {
+    overlay.style.opacity = '1';
+    sheet.style.transform = 'translateY(0)';
+  });
+}
+
+function closeLogAllModal() {
+  const overlay = document.getElementById('logAllOverlay');
+  const sheet   = document.getElementById('logAllSheet');
+  overlay.style.opacity = '0';
+  sheet.style.transform = 'translateY(24px)';
+  setTimeout(() => { overlay.style.display = 'none'; }, 220);
+}
+window.openLogAllModal  = openLogAllModal;
+window.closeLogAllModal = closeLogAllModal;
 </script>
 
 </body>
