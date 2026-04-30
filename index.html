@@ -28,6 +28,8 @@
       --risk-low-bg:   #DCFCE7; --risk-low-fg:   #15803D;
       --risk-mid-bg:   #FEF9C3; --risk-mid-fg:   #B45309;
       --risk-high-bg:  #FEE2E2; --risk-high-fg:  #DC2626;
+      --color-danger: #DC2626;
+      --color-success: #16A34A;
 
       /* Category accents */
       --cat-humidity: #38BDF8;
@@ -43,11 +45,316 @@
       --font-body: 'Noto Sans TC', 'Figtree', sans-serif;
     }
 
+    /* ── 暗色模式 ── */
+    [data-theme="dark"] {
+      --color-primary:      #6B95FF;
+      --color-primary-soft: rgba(76,125,255,.18);
+      --color-primary-dim:  rgba(76,125,255,.14);
+
+      --color-bg:     #0F1117;
+      --color-card:   #1A1F2E;
+      --color-border: #252B3D;
+
+      --color-text-1: #E8EEFF;
+      --color-text-2: #7B88A8;
+      --color-text-3: #4A5268;
+
+      --risk-low-bg:   #0D2E1A; --risk-low-fg:   #4ADE80;
+      --risk-mid-bg:   #2D2300; --risk-mid-fg:   #FCD34D;
+      --risk-high-bg:  #2D0F0F; --risk-high-fg:  #F87171;
+      --color-danger: #F87171;
+      --color-success: #4ADE80;
+
+      --shadow-card: 0 4px 24px rgba(0,0,0,.3), 0 1px 4px rgba(0,0,0,.2);
+      --shadow-fab:  0 8px 28px rgba(76,125,255,.4);
+
+      --color-icon-tile: rgba(255,255,255,.07);
+    }
+
+    /* ── 暗色模式：元件覆蓋 ── */
+
+    /* Status bar */
+    [data-theme="dark"] .status-bar svg path,
+    [data-theme="dark"] .status-bar svg rect { fill: var(--color-text-1) !important; stroke: none; }
+    [data-theme="dark"] .status-bar svg rect[stroke] { stroke: var(--color-text-1) !important; }
+    [data-theme="dark"] .status-bar { color: var(--color-text-1); }
+
+    /* Top nav icons */
+    [data-theme="dark"] .top-nav__icon-btn svg path[fill="#1A1F36"],
+    [data-theme="dark"] .top-nav__icon-btn svg circle[fill="#1A1F36"] { fill: var(--color-text-1) !important; }
+    [data-theme="dark"] .top-nav__location svg path { fill: var(--color-text-2) !important; }
+    [data-theme="dark"] .top-nav__app { color: var(--color-text-1); }
+
+    /* Nav bar (mobile bottom) */
+    [data-theme="dark"] .nav-bar { background: var(--color-card); border-top-color: var(--color-border); }
+    [data-theme="dark"] .nav-item__label { color: var(--color-text-3); }
+    [data-theme="dark"] .nav-item--active .nav-item__label { color: var(--color-primary); }
+
+    /* Input fields */
+    [data-theme="dark"] .input-field { background: #252B3D !important; color: var(--color-text-1) !important; border-color: var(--color-border) !important; }
+    [data-theme="dark"] .input-field::placeholder { color: var(--color-text-3) !important; }
+    [data-theme="dark"] .input-field--active { border-color: var(--color-primary) !important; }
+    [data-theme="dark"] .mood-notes { background: #252B3D !important; color: var(--color-text-1) !important; border-color: var(--color-border) !important; }
+    [data-theme="dark"] .mood-notes:focus { background: #252B3D !important; }
+    [data-theme="dark"] .mood-notes::placeholder { color: var(--color-text-3) !important; }
+
+    /* 今日紀錄 Mood Modal */
+    [data-theme="dark"] .mood-modal { background: var(--color-bg) !important; }
+    [data-theme="dark"] .mood-btn { background: var(--color-card) !important; border-color: var(--color-border) !important; }
+    [data-theme="dark"] .mood-btn--active { background: var(--color-primary-soft) !important; border-color: var(--color-primary) !important; }
+
+    /* Mood modal option buttons */
+    [data-theme="dark"] .mood-modal__btn { background: var(--color-border) !important; border-color: transparent !important; color: var(--color-text-2) !important; }
+    [data-theme="dark"] .mood-modal__btn--selected-good  { background: rgba(34,197,94,.15) !important; border-color: #22C55E !important; color: #4ADE80 !important; }
+    [data-theme="dark"] .mood-modal__btn--selected-mild  { background: rgba(251,191,36,.12) !important; border-color: #FBBF24 !important; color: #FCD34D !important; }
+    [data-theme="dark"] .mood-modal__btn--selected-bad   { background: rgba(239,68,68,.12)  !important; border-color: #EF4444 !important; color: #F87171 !important; }
+
+    /* Symptom icon circles */
+    [data-theme="dark"] .symptom-icon { background: var(--color-border) !important; }
+    [data-theme="dark"] .symptom-icon svg, [data-theme="dark"] .symptom-icon i { color: var(--color-primary) !important; }
+    [data-theme="dark"] .mood-modal__symptom { background: var(--color-card) !important; color: var(--color-text-2) !important; border-color: var(--color-border) !important; }
+    [data-theme="dark"] .mood-modal__symptom--selected { background: var(--color-primary-soft) !important; color: var(--color-primary) !important; border-color: var(--color-primary) !important; }
+    [data-theme="dark"] .sev-dot { background: var(--color-border) !important; }
+    [data-theme="dark"] .sev-dot--active { background: var(--color-primary) !important; }
+    [data-theme="dark"] .mood-modal__section-title { color: var(--color-text-2) !important; }
+    [data-theme="dark"] .mood-modal__close { color: var(--color-text-2) !important; }
+
+    /* 主要過敏原 overlay */
+    [data-theme="dark"] .allergen-chip { background: var(--color-card) !important; border-color: var(--color-border) !important; }
+    [data-theme="dark"] .allergen-chip--active { background: var(--color-primary-soft) !important; border-color: var(--color-primary) !important; }
+    [data-theme="dark"] .allergen-chip__icon { background: var(--color-icon-tile) !important; }
+    /* 敏感時段 overlay icon tiles */
+    [data-theme="dark"] .time-slot-card__icon { background: var(--color-icon-tile) !important; }
+    [data-theme="dark"] .time-slot-card { background: var(--color-card) !important; }
+    /* Log timeslot badge & add row */
+    [data-theme="dark"] .log-timeslot-badge { background: var(--color-border) !important; color: var(--color-text-2) !important; }
+    [data-theme="dark"] #logAddRow { background: var(--color-card) !important; }
+    [data-theme="dark"] .log-day-inner { background: var(--color-card) !important; }
+    [data-theme="dark"] .log-day-detail-wrap { background: transparent !important; }
+    [data-theme="dark"] .log-timeslot-row { background: rgba(255,255,255,.04); border-radius: 10px; padding: 6px 10px !important; }
+    [data-theme="dark"] .history-record { background: var(--color-card) !important; }
+
+    /* Calendar */
+    [data-theme="dark"] .cal-day { background: var(--color-card); }
+    [data-theme="dark"] .cal-day--today { background: var(--color-primary-soft) !important; }
+    [data-theme="dark"] .calendar-weekday { color: var(--color-text-3) !important; }
+
+    /* Modals with hardcoded white */
+    [data-theme="dark"] #forecastTooltip { background: var(--color-card) !important; box-shadow: 0 8px 28px rgba(0,0,0,.4) !important; }
+    [data-theme="dark"] .ft-title { color: var(--color-text-1) !important; }
+    [data-theme="dark"] .ft-row { color: var(--color-text-2) !important; }
+    [data-theme="dark"] #accountDropdown { background: var(--color-card) !important; box-shadow: 0 8px 32px rgba(0,0,0,.5), 0 0 0 1px var(--color-border) !important; }
+    [data-theme="dark"] #accountDropdownHeader { border-bottom-color: var(--color-border) !important; }
+    [data-theme="dark"] #accountDropdownMenu [style*="border-top"] { border-top-color: rgba(255,255,255,.08) !important; }
+    [data-theme="dark"] #accountDropdownMenu [style*="color:#DC2626"] { color: #F87171 !important; }
+    [data-theme="dark"] #accountDropdownMenu [style*="color:#DC2626"] svg path,
+    [data-theme="dark"] #accountDropdownMenu [style*="color:#DC2626"] svg [stroke="#DC2626"] { stroke: #F87171 !important; }
+    /* 全域：deep red → light red in dark mode */
+    [data-theme="dark"] [style*="color:#DC2626"] { color: #F87171 !important; }
+    [data-theme="dark"] [style*="color:#EF4444"] { color: #F87171 !important; }
+    [data-theme="dark"] [style*="color:#B91C1C"] { color: #FCA5A5 !important; }
+    [data-theme="dark"] .log-stat-card--bad .log-stat-card__val { color: #F87171 !important; }
+    [data-theme="dark"] .log-record-item__badge--bad { background: rgba(248,113,113,.15) !important; color: #F87171 !important; }
+    [data-theme="dark"] #privacyModal { background: var(--color-card) !important; }
+    [data-theme="dark"] #privacyModal > div[style*="background:#F8FAFC"],
+    [data-theme="dark"] #privacyModal div[style*="background:#F8FAFC"] { background: var(--color-bg) !important; }
+    [data-theme="dark"] #privacyModal button[style*="background:#F1F5F9"] { background: var(--color-border) !important; }
+    [data-theme="dark"] #privacyModal button[style*="background:#F1F5F9"] svg path { stroke: var(--color-text-2) !important; }
+    [data-theme="dark"] .chart-tooltip { background: var(--color-card) !important; }
+    [data-theme="dark"] .chart-tooltip__date { color: var(--color-text-2) !important; }
+
+    /* Export / login prompt / terms modals (hardcoded inline #fff) */
+    [data-theme="dark"] #exportConfirmModal > div,
+    [data-theme="dark"] #loginPromptModal > div,
+    [data-theme="dark"] #termsModal { background: var(--color-card) !important; color: var(--color-text-1) !important; }
+    [data-theme="dark"] #termsModal .tab-bar-inner { background: var(--color-border) !important; }
+    [data-theme="dark"] #termsModal button[style*="background:#fff"] { background: var(--color-card) !important; color: var(--color-text-1) !important; }
+
+    /* Edit profile sheet */
+    [data-theme="dark"] .edit-profile-sheet { background: var(--color-card) !important; }
+    [data-theme="dark"] .edit-profile-title { color: var(--color-text-1) !important; }
+    [data-theme="dark"] .edit-profile-section__label { color: var(--color-text-3) !important; }
+    [data-theme="dark"] .edit-profile-field { background: #252B3D !important; border-color: var(--color-border) !important; }
+    [data-theme="dark"] .edit-profile-field input { background: transparent !important; color: var(--color-text-1) !important; }
+
+    /* Rec items */
+    [data-theme="dark"] .rec-item { background: var(--color-card) !important; }
+    [data-theme="dark"] .rec-item__title { color: var(--color-text-1) !important; }
+
+    /* Insight card login btn area */
+    [data-theme="dark"] .insight-login-btn { background: linear-gradient(135deg,#4C7DFF,#7C5CFC) !important; color: #fff !important; }
+
+    /* City items in location overlay */
+    [data-theme="dark"] .city-item { background: transparent !important; }
+    [data-theme="dark"] .city-item:hover { background: rgba(255,255,255,.05) !important; }
+    [data-theme="dark"] .city-item__radio { border-color: var(--color-text-3) !important; }
+    [data-theme="dark"] .city-item:hover .city-item__radio { border-color: var(--color-text-2) !important; }
+
+    /* Settings profile card button */
+    [data-theme="dark"] .profile-edit-btn { background: rgba(255,255,255,.12) !important; color: #fff !important; border-color: transparent !important; }
+
+    /* Notification overlay */
+    [data-theme="dark"] #notifOverlay > div { background: var(--color-card) !important; }
+    [data-theme="dark"] .notif-item { border-bottom-color: var(--color-border) !important; }
+
+    /* Login page */
+    [data-theme="dark"] .login-form { background: var(--color-bg) !important; }
+    [data-theme="dark"] .or-divider { color: var(--color-text-3) !important; }
+    [data-theme="dark"] .or-divider::before,
+    [data-theme="dark"] .or-divider::after { background: var(--color-border) !important; }
+    [data-theme="dark"] .social-btn { background: var(--color-card) !important; border-color: var(--color-border) !important; color: var(--color-text-1) !important; }
+
+    /* Analysis chart bars extra */
+    [data-theme="dark"] .chart-filter-chip { background: var(--color-card) !important; color: var(--color-text-2) !important; border-color: var(--color-border) !important; }
+    [data-theme="dark"] .chart-filter-chip--active { background: var(--color-primary-soft) !important; color: var(--color-primary) !important; border-color: var(--color-primary) !important; }
+
+    /* Toggle (off state bg) */
+    [data-theme="dark"] .toggle { background: var(--color-border) !important; }
+    [data-theme="dark"] .toggle--on { background: var(--color-primary) !important; }
+
+    /* ── 共用右上角浮動導覽 ── */
+    #sharedNavRight {
+      position: fixed;
+      top: 14px;
+      right: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      z-index: 9998;
+    }
+
+    /* AI Insight card — liquid glass */
+    [data-theme="dark"] .insight-card {
+      background: rgba(76,125,255,.14) !important;
+      backdrop-filter: blur(24px) !important;
+      -webkit-backdrop-filter: blur(24px) !important;
+      border: 1px solid rgba(107,149,255,.28) !important;
+      box-shadow: 0 8px 32px rgba(76,125,255,.18), inset 0 1px 0 rgba(255,255,255,.1) !important;
+    }
+    [data-theme="dark"] .insight-card::before,
+    [data-theme="dark"] .insight-card::after { display: none !important; }
+
+    /* Forecast mini day cards */
+    [data-theme="dark"] .tomorrow-mini { background: rgba(255,255,255,.05) !important; }
+    [data-theme="dark"] .tomorrow-mini__day { color: var(--color-text-2) !important; }
+    [data-theme="dark"] .tomorrow-mini__pct { color: var(--color-text-1) !important; }
+
+    /* Progress bar track — transparent glass */
+    [data-theme="dark"] .bar-track {
+      background: rgba(255,255,255,.1) !important;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.08) !important;
+      height: 10px !important;
+      border-radius: 100px !important;
+    }
+
+    /* Risk card decorative circles */
+    [data-theme="dark"] .risk-card::before { background: rgba(107,149,255,.03) !important; }
+    [data-theme="dark"] .risk-card::after  { background: rgba(251,146,60,.02) !important; }
+
+    /* Settings profile card — liquid glass */
+    [data-theme="dark"] .settings-profile {
+      background: rgba(76,125,255,.14) !important;
+      backdrop-filter: blur(24px) !important;
+      -webkit-backdrop-filter: blur(24px) !important;
+      border: 1px solid rgba(107,149,255,.28) !important;
+      box-shadow: 0 8px 32px rgba(76,125,255,.18), inset 0 1px 0 rgba(255,255,255,.1) !important;
+    }
+    [data-theme="dark"] .settings-profile::before,
+    [data-theme="dark"] .settings-profile::after { display: none !important; }
+
+    /* Analysis: insight login prompt card & insight blocks */
+    [data-theme="dark"] #insightLoginPrompt { background: var(--color-card) !important; }
+    [data-theme="dark"] .insight-block { background: var(--color-card) !important; }
+    [data-theme="dark"] .insight-block__title { color: var(--color-text-1) !important; }
+    [data-theme="dark"] .insight-block__body { color: var(--color-text-2) !important; }
+
+    /* Settings item icon backgrounds (override inline styles) */
+    [data-theme="dark"] .settings-item__icon { background: var(--color-border) !important; }
+
+    /* Settings item active / hover state */
+    [data-theme="dark"] .settings-item:active { background: var(--color-border) !important; }
+
+    /* Settings bottom action button (訪客：登入 / 建立帳號) */
+    [data-theme="dark"] #settingsActionBtn { background: var(--color-primary-soft) !important; border-color: var(--color-primary) !important; color: var(--color-primary) !important; }
+
+    /* Settings logout button (登入後才出現) */
+    [data-theme="dark"] .settings-logout { background: rgba(220,38,38,.12) !important; border-color: rgba(220,38,38,.3) !important; }
+
+    /* Rec icon backgrounds */
+    [data-theme="dark"] .rec-icon--blue  { background: rgba(107,149,255,.18) !important; }
+    [data-theme="dark"] .rec-icon--green { background: rgba(74,222,128,.15) !important; }
+    [data-theme="dark"] .rec-icon--amber { background: rgba(252,211,77,.15) !important; }
+    [data-theme="dark"] .rec-icon--red   { background: rgba(248,113,113,.15) !important; }
+
+    /* Rec check */
+
+    /* Body outer bg */
+    [data-theme="dark"] body { background: #080B12 !important; }
+
+    /* ═══════════════════════════════════════════════════════
+       LIQUID GLASS — 首頁 Dark Mode（光暈 orbs only）
+    ═══════════════════════════════════════════════════════ */
+
+    [data-theme="dark"] #screen-home::before,
+    [data-theme="dark"] #screen-home::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(72px);
+    }
+    [data-theme="dark"] #screen-home::before {
+      width: 360px; height: 360px;
+      top: -80px; left: -80px;
+      background: radial-gradient(circle, rgba(76,125,255,.45) 0%, transparent 68%);
+      animation: lg-orb-a 14s ease-in-out infinite alternate;
+    }
+    [data-theme="dark"] #screen-home::after {
+      width: 280px; height: 280px;
+      bottom: 120px; right: -60px;
+      background: radial-gradient(circle, rgba(124,92,252,.38) 0%, transparent 68%);
+      animation: lg-orb-b 11s ease-in-out infinite alternate;
+    }
+    @keyframes lg-orb-a {
+      0%   { transform: translate(0,0) scale(1); opacity: .9; }
+      100% { transform: translate(50px,40px) scale(1.18); opacity: .6; }
+    }
+    @keyframes lg-orb-b {
+      0%   { transform: translate(0,0) scale(1); opacity: .85; }
+      100% { transform: translate(-35px,-25px) scale(1.12); opacity: .55; }
+    }
+
+    /* content 浮在 orbs 上 */
+    [data-theme="dark"] #screen-home .content,
+    [data-theme="dark"] #screen-home .status-bar,
+    [data-theme="dark"] #screen-home .nav-bar { position: relative; z-index: 1; }
+
+    /* Bottom nav glass */
+    [data-theme="dark"] .bottom-nav {
+      background: rgba(22,28,48,.92) !important;
+      box-shadow: 0 4px 24px rgba(0,0,0,.4), 0 1px 0 rgba(255,255,255,.04) !important;
+      border: 1px solid rgba(255,255,255,.06) !important;
+    }
+
+    /* Top nav icon btn (subtle) */
+    [data-theme="dark"] .top-nav__icon-btn { background: rgba(255,255,255,.05) !important; border-color: rgba(255,255,255,.06) !important; }
+
     /* ═══════════════════════════════════════════
        RESET + GLOBAL
     ═══════════════════════════════════════════ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scrollbar-gutter: stable; }
+    html { overflow-x: hidden; }
+    body { overflow-x: hidden; }
+    /* 全域捲軸樣式 */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,.18); border-radius: 100px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,.28); }
+    [data-theme="dark"] ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.12); }
+    [data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.22); }
+    * { scrollbar-width: thin; scrollbar-color: rgba(0,0,0,.18) transparent; }
+    [data-theme="dark"] * { scrollbar-color: rgba(255,255,255,.12) transparent; }
 
     body {
       background: #D8DCE8;
@@ -119,41 +426,58 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 16px 24px 10px;
-    }
-    .top-nav__location {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      font-family: var(--font-head);
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--color-text-2);
-      margin-bottom: 4px;
+      padding: 16px 20px 10px;
     }
     .top-nav__app {
       font-family: var(--font-head);
-      font-size: 20px;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--color-text-1);
+      letter-spacing: -0.3px;
+      line-height: 1.2;
+    }
+    .top-nav__greeting {
+      font-family: var(--font-head);
+      font-size: 22px;
       font-weight: 800;
       color: var(--color-text-1);
       letter-spacing: -0.5px;
+      margin-bottom: 4px;
     }
-    .top-nav__app span { color: var(--color-primary); }
-    .top-nav__greeting {
+    .top-nav__tagline {
       font-family: var(--font-body);
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 400;
       color: var(--color-text-2);
-      margin-top: 6px;
-      letter-spacing: 0;
+      line-height: 1.4;
+      margin-bottom: 10px;
     }
-    .top-nav__greeting .greeting-name {
-      font-weight: 600;
-      color: var(--color-text-1);
+    .top-nav__chips { display: flex; gap: 6px; margin-top: 8px; }
+    .top-nav__location-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px 5px 10px;
+      background: rgba(255,255,255,.65);
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 20px;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--color-text-2);
     }
-    .top-nav__greeting .greeting-date {
-      color: var(--color-text-3);
-      margin-left: 6px;
+    .chip-sep {
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--color-text-3);
+      opacity: .5;
+      flex-shrink: 0;
+    }
+    [data-theme="dark"] .top-nav__location-chip {
+      background: rgba(255,255,255,.08) !important;
+      border-color: rgba(255,255,255,.12) !important;
+      backdrop-filter: blur(12px) !important;
+      -webkit-backdrop-filter: blur(12px) !important;
     }
     .top-nav__icon-btn {
       width: 40px; height: 40px;
@@ -218,11 +542,13 @@
     }
     .risk-card__header {
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: space-between;
+      gap: 12px;
       margin-bottom: 20px;
       position: relative; z-index: 1;
     }
+    .risk-card__header > div { min-width: 0; flex: 1; }
     .risk-card__title {
       font-family: var(--font-head);
       font-size: 16px;
@@ -233,6 +559,10 @@
       font-size: 12px;
       color: var(--color-text-2);
       margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
     }
     .badge {
       display: inline-flex;
@@ -240,6 +570,8 @@
       gap: 4px;
       padding: 4px 10px;
       border-radius: 100px;
+      white-space: nowrap;
+      flex-shrink: 0;
       font-family: var(--font-head);
       font-size: 12px;
       font-weight: 700;
@@ -256,8 +588,8 @@
       gap: 24px;
       position: relative; z-index: 1;
     }
-    .donut-wrap { position: relative; width: 110px; height: 110px; flex-shrink: 0; align-self: center; }
-    .donut-wrap svg { transform: rotate(-90deg); }
+    .donut-wrap { position: relative; width: 136px; height: 136px; flex-shrink: 0; align-self: center; }
+    .donut-wrap svg { transform: rotate(-90deg); overflow: visible; }
     .donut-center {
       position: absolute;
       inset: 0;
@@ -268,17 +600,31 @@
     }
     .donut-center__pct {
       font-family: var(--font-head);
-      font-size: 28px;
+      font-size: 30px;
       font-weight: 800;
       color: var(--color-text-1);
       line-height: 1;
     }
     .donut-center__label {
-      font-size: 12px;
-      font-weight: 500;
+      font-size: 11px;
+      font-weight: 600;
       color: var(--color-text-2);
-      margin-top: 2px;
+      margin-top: 3px;
+      letter-spacing: .3px;
     }
+    @keyframes donut-entry {
+      from { stroke-dasharray: 0 327; }
+    }
+    @keyframes donut-pulse {
+      0%, 100% { opacity: .28; }
+      50%       { opacity: .55; }
+    }
+    #donut-arc  { animation: donut-entry .9s cubic-bezier(.4,0,.2,1) both; }
+    #donut-glow { animation: donut-pulse 2.6s ease-in-out infinite; }
+    .donut-seg  { animation: donut-entry .9s cubic-bezier(.4,0,.2,1) both; }
+    [data-theme="dark"] #donut-track { stroke: rgba(255,255,255,.08) !important; }
+    #donut-glow { display: none; }
+    [data-theme="dark"] #donut-glow { display: block; }
 
     .risk-info { flex: 1; }
     .risk-level-row {
@@ -298,6 +644,89 @@
       display: flex;
       align-items: center;
       gap: 8px;
+      cursor: pointer;
+      border-radius: 8px;
+      padding: 4px 6px;
+      transition: background .15s;
+      position: relative;
+    }
+    .cause-item:hover { background: var(--color-primary-soft); }
+    .cause-item::after {
+      content: '›';
+      font-size: 18px;
+      color: var(--color-primary);
+      opacity: 0;
+      margin-left: 2px;
+      transform: translateX(-4px);
+      transition: opacity .15s, transform .15s;
+      line-height: 1;
+    }
+    .cause-item:hover::after { opacity: 1; transform: translateX(0); }
+    .cause-name::after { display: none; }
+    .cause-bar-wrap {
+      flex: 1;
+      height: 5px;
+      background: var(--color-border);
+      border-radius: 100px;
+      overflow: hidden;
+      margin: 0 10px;
+    }
+    .cause-bar {
+      height: 100%;
+      border-radius: 100px;
+      width: 0%;
+      transition: width .8s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* Metric Explain Popup */
+    .metric-explain-overlay {
+      display: none; opacity: 0;
+      position: fixed; inset: 0;
+      background: rgba(15,20,40,.45);
+      z-index: 10500;
+      align-items: flex-end;
+      justify-content: center;
+      transition: opacity .2s;
+    }
+    .metric-explain-overlay.open {
+      display: flex;
+      opacity: 1;
+    }
+    .metric-explain-card {
+      background: var(--color-card);
+      border-radius: 24px 24px 0 0;
+      padding: 24px 24px 40px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 -8px 40px rgba(0,0,0,.18);
+      transform: translateY(20px);
+      transition: transform .25s cubic-bezier(.34,1.56,.64,1);
+    }
+    .metric-explain-overlay.open .metric-explain-card { transform: translateY(0); }
+    .metric-explain-card__top {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .metric-explain-card__emoji { font-size: 28px; }
+    .metric-explain-card__close {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: var(--color-border); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: var(--color-text-2);
+    }
+    .metric-explain-card__title {
+      font-family: var(--font-head); font-size: 18px; font-weight: 800;
+      color: var(--color-text-1); margin-bottom: 8px;
+    }
+    .metric-explain-card__body {
+      font-family: var(--font-body); font-size: 14px; line-height: 1.7;
+      color: var(--color-text-2); margin-bottom: 14px;
+    }
+    .metric-explain-card__tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--color-primary-soft); color: var(--color-primary);
+      border-radius: 100px; padding: 5px 12px;
+      font-size: 12px; font-weight: 600; font-family: var(--font-head);
     }
     .cause-dot {
       width: 8px; height: 8px;
@@ -308,13 +737,18 @@
       font-size: 14px;
       font-weight: 500;
       color: var(--color-text-2);
-      flex: 1;
+      width: 6em;
+      flex: none;
+      display: flex;
+      align-items: center;
     }
     .cause-pct {
       font-family: var(--font-head);
       font-size: 14px;
       font-weight: 700;
       color: var(--color-text-1);
+      margin-left: auto;
+      text-align: right;
     }
     .cause-footnote {
       font-size: 12px;
@@ -328,6 +762,8 @@
     ═══════════════════════════════════════════ */
     .insight-card {
       margin-top: 16px;
+      margin-left: 20px;
+      margin-right: 20px;
       background: linear-gradient(135deg, #4C7DFF 0%, #6C8FFF 100%);
       border-radius: var(--radius-card);
       padding: 20px;
@@ -381,6 +817,17 @@
     .insight-card__text strong {
       color: #fff;
       font-weight: 700;
+    }
+    .insight-card__text--loading { display: flex; flex-direction: column; gap: 7px; }
+    .insight-skeleton {
+      display: block; width: 100%; height: 12px; border-radius: 6px;
+      background: linear-gradient(90deg, rgba(255,255,255,.15) 25%, rgba(255,255,255,.28) 50%, rgba(255,255,255,.15) 75%);
+      background-size: 200% 100%;
+      animation: skeleton-shimmer 1.6s ease-in-out infinite;
+    }
+    @keyframes skeleton-shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
     }
 
     /* ═══════════════════════════════════════════
@@ -455,6 +902,27 @@
       margin-left: auto;
       flex-shrink: 0;
     }
+    /* 未登入狀態：垂直排列 + 醒目 CTA */
+    #symptomCardEmpty.guest-mode {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    #symptomCardEmpty.guest-mode button {
+      margin-left: 0;
+      width: 100%;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--color-primary-soft);
+      color: var(--color-primary);
+      font-family: var(--font-head);
+      font-size: 14px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      box-shadow: none;
+      letter-spacing: .2px;
+    }
     /* 手機版：wrapper 透明，子元件直接參與正常流排版 */
     .home-right-col { display: contents; }
 
@@ -470,6 +938,7 @@
       align-items: center;
       gap: 14px;
       box-shadow: var(--shadow-card);
+      cursor: default;
     }
     .rec-icon {
       width: 36px; height: 36px;
@@ -492,17 +961,6 @@
       font-style: normal;
       font-weight: 700;
       color: var(--color-text-1);
-    }
-    .rec-check {
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      border: 1.5px solid var(--color-border);
-      flex-shrink: 0;
-    }
-    .rec-check--done {
-      background: #DCFCE7;
-      border-color: #15803D;
-      display: flex; align-items: center; justify-content: center;
     }
 
     /* ═══════════════════════════════════════════
@@ -532,6 +990,7 @@
     }
     .tomorrow-mini {
       flex: 1;
+      min-width: 0;
       background: var(--color-bg);
       border-radius: 14px;
       padding: 12px;
@@ -542,13 +1001,16 @@
       font-weight: 500;
       color: var(--color-text-3);
       margin-bottom: 6px;
+      white-space: nowrap;
     }
     .tomorrow-mini__bar-wrap {
       height: 40px;
+      width: 100%;
+      max-width: 44px;
+      margin: 0 auto 6px;
       display: flex;
       align-items: flex-end;
       justify-content: center;
-      margin-bottom: 6px;
     }
     .tomorrow-mini__bar {
       width: 14px;
@@ -646,14 +1108,17 @@
     ═══════════════════════════════════════════ */
     .bottom-nav {
       position: absolute;
-      bottom: 0; left: 0; right: 0;
+      bottom: 14px; left: 12px; right: 12px;
       background: rgba(255,255,255,.92);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-top: 1px solid var(--color-border);
-      padding: 10px 0 24px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      border: none;
+      padding: 10px 0 14px;
       display: flex;
       justify-content: space-around;
+      box-shadow: 0 4px 24px rgba(0,0,0,.10), 0 1px 0 rgba(0,0,0,.04);
+      z-index: 100;
     }
     .nav-item {
       display: flex;
@@ -950,7 +1415,7 @@
     .mood-btn { transition: transform .12s ease, opacity .12s ease; }
     .mood-btn:active { transform: scale(0.93); opacity: 0.82; }
 
-    .rec-item { transition: transform .1s ease, box-shadow .1s ease; cursor: pointer; }
+    .rec-item { transition: transform .1s ease, box-shadow .1s ease; cursor: default; }
     .rec-item:active { transform: scale(0.97); box-shadow: none; }
 
     .tab { transition: all .12s ease; }
@@ -1343,7 +1808,7 @@
     .login-modal-overlay {
       position: fixed; inset: 0;
       background: rgba(15,20,40,.52);
-      z-index: 9200;
+      z-index: 10000;
       display: none; align-items: center; justify-content: center;
       opacity: 0; transition: opacity 0.22s ease;
     }
@@ -1488,7 +1953,7 @@
     /* ── 偏好設定通用 Modal ── */
     .pref-overlay {
       position: fixed; inset: 0; background: rgba(15,20,40,.5);
-      z-index: 9200; display: none; align-items: center; justify-content: center;
+      z-index: 10000; display: none; align-items: center; justify-content: center;
       opacity: 0; transition: opacity 0.22s ease;
     }
     .pref-overlay--visible { display: flex; opacity: 1; }
@@ -1551,9 +2016,12 @@
     /* 城市 radio list */
     .city-list { display: flex; flex-direction: column; padding: 0 20px 20px; }
     .city-item {
-      display: flex; align-items: center; gap: 12px; padding: 14px 0;
+      display: flex; align-items: center; gap: 12px; padding: 14px 20px;
+      margin: 0 -20px;
       border-bottom: 1px solid var(--color-border); cursor: pointer;
+      transition: background .12s;
     }
+    .city-item:hover { background: rgba(0,0,0,.04); border-radius: 0; }
     .city-item:last-child { border-bottom: none; }
     .city-item__icon { font-size: 22px; width: 36px; text-align: center; flex-shrink: 0; }
     .city-item__text { flex: 1; }
@@ -1678,23 +2146,48 @@
     /* Mobile (≤ 767px) */
     @media (max-width: 767px) {
       .content { padding-bottom: 100px; }
-      .bottom-nav { position: fixed; }
+      .bottom-nav { position: fixed; bottom: 14px; left: 12px; right: 12px; border-radius: 24px; }
+      .top-nav { padding-top: 32px; }
+      .page-header { padding-top: 32px; }
+      /* 主題切換 — 手機版隱藏（可從設定頁調整） */
+      #themeBtn { display: none !important; }
+      /* 訪客模式按鈕 — 手機版只顯示 icon，隱藏文字和箭頭 */
+      #topNavLoginBtn span,
+      #topNavLoginBtn #topNavChevron { display: none !important; }
+      #topNavLoginBtn { padding: 0 10px !important; min-width: 40px; justify-content: center; }
+      /* Risk card — 縮小 donut，減少擁擠感 */
+      .risk-card { padding: 20px; }
+      .donut-wrap { width: 110px; height: 110px; }
+      .donut-wrap svg { width: 110px; height: 110px; }
+      .risk-card__body { gap: 16px; }
+      .cause-name, .cause-pct { font-size: 13px; }
+      .cause-footnote { font-size: 11px; }
     }
 
     /* Tablet (768–1023px) */
     @media (min-width: 768px) and (max-width: 1023px) {
       .top-nav, .page-header, .month-nav { padding-left: 32px; padding-right: 32px; }
+      .top-nav { padding-top: 36px; }
+      .page-header { padding-top: 36px; }
       .px { padding-left: 32px; padding-right: 32px; }
-      .risk-card, .settings-profile { margin-left: 32px; margin-right: 32px; }
+      .risk-card, .settings-profile,
+      .insight-card, .today-symptom-card { margin-left: 32px; margin-right: 32px; }
+      .settings-section { padding-left: 32px !important; padding-right: 32px !important; }
       .tab-bar { padding-left: 32px; padding-right: 32px; }
       .content { padding-bottom: 110px; }
-      .bottom-nav { position: fixed; max-width: 1280px; left: 50%; transform: translateX(-50%); border-radius: 24px 24px 0 0; }
+      .bottom-nav { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: calc(100% - 64px); max-width: 560px; border-radius: 24px; }
 
       .login-form, .or-divider, .social-btns, .login-footer,
       .login-section-title, .login-section-sub {
         max-width: 480px; margin-left: auto; margin-right: auto;
       }
 
+      #sharedNavRight { top: 20px; right: 32px; }
+
+      /* 本週預測卡在平板尺寸 */
+      .tomorrow-mini-row { gap: 12px; }
+      .tomorrow-mini { flex: 1; min-width: 0; }
+      .tomorrow-mini__bar-wrap { height: 80px; max-width: 52px; width: 100%; }
     }
 
     /* 「返回首頁」按鈕全域隱藏 */
@@ -1749,10 +2242,13 @@
         margin-right: 0 !important;
       }
 
-      .top-nav { margin-bottom: 20px; }
+      .top-nav { margin-bottom: 20px; padding-top: 0 !important; }
       .page-header { margin-bottom: 16px; padding-top: 0 !important; }
       .month-nav { margin-bottom: 16px; }
       .tab-bar { margin-bottom: 20px; }
+
+      /* 桌機版：共用右上角改從 sidebar 右側算起 */
+      #sharedNavRight { top: 32px; right: 24px; }
 
       /* ─── 12 欄 grid：content 層 ─── */
       #screen-home .content,
@@ -1792,10 +2288,9 @@
       #screen-home .content > .px.section-gap:has(.rec-list) { grid-column: span 7; }
       #screen-home .content > .px.section-gap:has(.tomorrow-card) { grid-column: span 5; }
       #screen-home .rec-list { flex: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; align-content: start; }
-      #screen-home .tomorrow-card { flex: 1; display: flex; flex-direction: column; }
-      #screen-home .tomorrow-card .tomorrow-mini-row { flex: 1; }
-      #screen-home .tomorrow-mini { display: flex; flex-direction: column; justify-content: space-between; }
-      #screen-home .tomorrow-mini__bar-wrap { flex: 1; height: auto; min-height: 80px; }
+      #screen-home .tomorrow-card { flex: 1; }
+      #screen-home .tomorrow-mini { display: flex; flex-direction: column; align-items: center; }
+      #screen-home .tomorrow-mini__bar-wrap { height: 110px; max-width: 56px; width: 100%; margin: 8px auto 6px; }
       #screen-home .content > .px.section-gap:has(.mood-card) {
         grid-column: 1 / -1; margin: 0 !important; padding: 0 !important;
       }
@@ -1926,6 +2421,31 @@
       #screen-login .login-footer,
       #screen-login .login-section-title,
       #screen-login .login-section-sub { padding-left: 0 !important; padding-right: 0 !important; }
+    }
+
+    /* Narrow desktop (1024–1279px) — 較窄的桌機，格線間距縮小 */
+    @media (min-width: 1024px) and (max-width: 1279px) {
+      #screen-home .content,
+      #screen-analysis .content,
+      #screen-history .content,
+      #screen-settings .content { gap: 16px; }
+
+      /* 首頁：調整欄位比例讓內容不被壓縮 */
+      #screen-home .risk-card { grid-column: span 8; }
+      #screen-home .home-right-col { grid-column: span 4; }
+      #screen-home .content > .px.section-gap:has(.rec-list) { grid-column: span 8; }
+      #screen-home .content > .px.section-gap:has(.tomorrow-card) { grid-column: span 4; }
+      /* 建議卡改為單欄條列 */
+      #screen-home .rec-list { grid-template-columns: 1fr; }
+
+      /* 分析頁 */
+      #screen-analysis .content > .px.section-gap:has(.factor-card) { grid-column: span 6; }
+      #screen-analysis .content > .px.section-gap:has(.breakdown-card) { grid-column: span 6; }
+
+      /* 歷史/設定欄位 */
+      #screen-history .log-calendar-section,
+      #screen-history .log-monthly-section { grid-column: span 6; }
+      #screen-settings .settings-section { grid-column: span 6; }
     }
 
     /* 月比較 mini chart（所有斷點通用） */
@@ -2078,7 +2598,7 @@
     @media (min-width: 1024px) {
       .web-sidebar {
         position: fixed; top: 0; left: 0; bottom: 0; width: 240px;
-        background: #fff; border-right: 1px solid var(--color-border);
+        background: var(--color-card); border-right: 1px solid var(--color-border);
         padding: 24px 16px; display: flex; flex-direction: column; gap: 4px; z-index: 100;
       }
       .web-sidebar__brand {
@@ -2642,20 +3162,23 @@
     <!-- Top Nav -->
     <div class="top-nav">
       <div>
-        <div class="top-nav__location">
-          <svg width="12" height="14" viewBox="0 0 12 14" fill="none">
-            <path d="M6 0C3.24 0 1 2.24 1 5c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 116 3.5a1.5 1.5 0 010 3z" fill="#64748B"/>
-          </svg>
-          台中市，台灣
-        </div>
-        <div class="top-nav__app">Aller<span>Sense</span></div>
         <div class="top-nav__greeting" id="home-greeting"></div>
-      </div>
-      <div class="top-nav__icon-btn" id="notifBtn" onclick="openNotifModal()">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-          <path d="M9 2a5 5 0 00-5 5v2.5L2.5 11v1h13v-1L14 9.5V7a5 5 0 00-5-5zM7 13h4a2 2 0 01-4 0z" fill="#1A1F36"/>
-        </svg>
-        <div class="top-nav__badge" id="notifBadge"></div>
+        <div class="top-nav__tagline" id="home-tagline"></div>
+        <div class="top-nav__chips">
+          <div class="top-nav__location-chip">
+            <svg width="10" height="12" viewBox="0 0 12 14" fill="none">
+              <path d="M6 0C3.24 0 1 2.24 1 5c0 3.75 5 9 5 9s5-5.25 5-9c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 116 3.5a1.5 1.5 0 010 3z" fill="#64748B"/>
+            </svg>
+            <span id="top-nav-city">台中市，台灣</span>
+          </div>
+          <div class="top-nav__location-chip" id="home-weather-chip" style="display:none">
+            <span id="home-weather-emoji"></span>
+            <span id="home-weather-temp"></span>
+          </div>
+          <div class="top-nav__location-chip">
+            <span id="home-date"></span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -2667,7 +3190,7 @@
         <div class="risk-card__header">
           <div>
             <div class="risk-card__title">今日過敏風險</div>
-            <div class="risk-card__subtitle" id="risk-subtitle">載入中... • 持續更新中</div>
+            <div class="risk-card__subtitle" id="risk-subtitle">資料載入中…</div>
           </div>
           <span class="badge badge--warn" id="risk-badge">
             <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" id="risk-badge-dot" fill="#B45309"/></svg>
@@ -2678,29 +3201,26 @@
         <div class="risk-card__body">
           <!-- Donut -->
           <div class="donut-wrap">
-            <svg width="110" height="110" viewBox="0 0 110 110">
-              <!-- Track -->
-              <circle cx="55" cy="55" r="44"
-                fill="none"
-                stroke="#EEF3FF"
-                stroke-width="10"/>
-              <!-- Amber arc (72%) -->
-              <circle id="donut-arc" cx="55" cy="55" r="44"
-                fill="none"
-                stroke="url(#donut-grad)"
-                stroke-width="10"
-                stroke-linecap="round"
-                stroke-dasharray="198.5 276.5"/>
+            <svg width="136" height="136" viewBox="0 0 136 136">
               <defs>
-                <linearGradient id="donut-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%"   stop-color="#FB923C"/>
-                  <stop offset="100%" stop-color="#FBBF24"/>
+                <linearGradient id="donut-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop id="donut-grad-start" offset="0%"   stop-color="#E2E8F0"/>
+                  <stop id="donut-grad-end"   offset="100%" stop-color="#CBD5E1"/>
                 </linearGradient>
               </defs>
+              <circle id="donut-track" cx="68" cy="68" r="52"
+                fill="none" stroke="#EEF3FF" stroke-width="11"/>
+              <circle id="donut-glow" cx="68" cy="68" r="52"
+                fill="none" stroke="url(#donut-grad)" stroke-width="20"
+                stroke-linecap="round" stroke-dasharray="0 327"
+                opacity=".35" style="filter:blur(7px)"/>
+              <circle id="donut-arc" cx="68" cy="68" r="52"
+                fill="none" stroke="url(#donut-grad)" stroke-width="11"
+                stroke-linecap="round" stroke-dasharray="0 327"/>
             </svg>
             <div class="donut-center">
-              <div class="donut-center__pct" id="donut-pct">72%</div>
-              <div class="donut-center__label" id="donut-label">低風險</div>
+              <div class="donut-center__pct" id="donut-pct">—</div>
+              <div class="donut-center__label" id="donut-label">載入中</div>
             </div>
           </div>
 
@@ -2710,24 +3230,28 @@
               <div class="risk-level-label">主要誘因</div>
             </div>
             <div class="cause-list">
-              <div class="cause-item">
+              <div class="cause-item" onclick="showMetricExplain('humidity')">
                 <div class="cause-dot" style="background:var(--cat-humidity)"></div>
                 <span class="cause-name">相對濕度</span>
+                <div class="cause-bar-wrap"><div class="cause-bar" id="bar-humidity" style="background:var(--cat-humidity)"></div></div>
                 <span class="cause-pct" id="cause-humidity">85%</span>
               </div>
-              <div class="cause-item">
+              <div class="cause-item" onclick="showMetricExplain('pm25')">
                 <div class="cause-dot" style="background:var(--cat-pm25)"></div>
                 <span class="cause-name">PM2.5</span>
+                <div class="cause-bar-wrap"><div class="cause-bar" id="bar-pm25" style="background:var(--cat-pm25)"></div></div>
                 <span class="cause-pct" id="cause-pm25">48 μg</span>
               </div>
-              <div class="cause-item">
+              <div class="cause-item" onclick="showMetricExplain('temp')">
                 <div class="cause-dot" style="background:var(--cat-pollen)"></div>
                 <span class="cause-name">溫度</span>
+                <div class="cause-bar-wrap"><div class="cause-bar" id="bar-temp" style="background:var(--cat-pollen)"></div></div>
                 <span class="cause-pct" id="cause-temp">31°C</span>
               </div>
-              <div class="cause-item">
+              <div class="cause-item" onclick="showMetricExplain('weather')">
                 <div class="cause-dot" style="background:#C084FC"></div>
                 <span class="cause-name">天氣</span>
+                <div class="cause-bar-wrap"><div class="cause-bar" id="bar-weather" style="background:#C084FC"></div></div>
                 <span class="cause-pct" id="cause-weather">晴天</span>
               </div>
             </div>
@@ -2740,7 +3264,7 @@
       <div class="home-right-col">
 
       <!-- ── AI INSIGHT CARD ── -->
-      <div class="insight-card px" style="margin:16px 20px 0;">
+      <div class="insight-card px" style="margin-top:16px;">
         <div class="insight-card__header">
           <div class="insight-card__icon">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -2749,8 +3273,10 @@
           </div>
           <span class="insight-card__label">AI 洞察</span>
         </div>
-        <p class="insight-card__text" id="insight-text">
-          根據你過去 <strong>30 天的紀錄</strong>，你在濕度超過 <strong>80%</strong> 時，過敏發作機率提升 <strong>2.3 倍</strong>。本週台中連續高濕，建議今天優先待在室內並開除濕機。
+        <p class="insight-card__text insight-card__text--loading" id="insight-text">
+          <span class="insight-skeleton"></span>
+          <span class="insight-skeleton" style="width:75%"></span>
+          <span class="insight-skeleton" style="width:88%"></span>
         </p>
       </div>
 
@@ -2811,7 +3337,6 @@
               </svg>
             </div>
             <div class="rec-text">載入個人化建議中…</div>
-            <div class="rec-check"></div>
           </div>
         </div>
       </div>
@@ -4046,13 +4571,7 @@
     <!-- Top Nav -->
     <div class="top-nav">
       <div>
-        <div class="top-nav__app" style="font-size:20px;letter-spacing:-.3px">帳號設定</div>
-      </div>
-      <div class="top-nav__icon-btn" style="display:none">
-        <!-- Edit icon -->
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-          <path d="M13 2l3 3-9 9H4v-3L13 2z" stroke="#1A1F36" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <div class="top-nav__app">帳號設定</div>
       </div>
     </div>
 
@@ -4220,7 +4739,13 @@
 
       <!-- 關於 -->
       <div class="settings-section">
-        <div class="settings-section__title">關於</div>
+        <div class="settings-section__title" style="display:flex;align-items:center;gap:8px;">
+          關於
+          <div onclick="toggleTheme()" style="display:flex;align-items:center;cursor:pointer;opacity:.7;" title="切換明暗模式">
+            <svg id="themeIconLight" width="13" height="13" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="4" fill="currentColor"/><path d="M9 1v2M9 15v2M1 9h2M15 9h2M3.1 3.1l1.4 1.4M13.5 13.5l1.4 1.4M3.1 14.9l1.4-1.4M13.5 4.5l1.4-1.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <svg id="themeIconDark" width="13" height="13" viewBox="0 0 18 18" fill="none" style="display:none"><path d="M15 10.5A7 7 0 116.5 3c-.5 1.2-.5 3.5 1.5 5.5s4.3 2 5.5 1.5c.5.7.5 1 1.5.5z" fill="currentColor"/></svg>
+          </div>
+        </div>
         <div class="settings-group">
           <div class="settings-item">
             <div class="settings-item__icon" style="background:#F6F8FC">
@@ -4299,6 +4824,38 @@
       </div>
     </div>
 
+  </div>
+</div>
+
+<!-- ── 共用右上角導覽按鈕（所有分頁共用）── -->
+<div id="sharedNavRight">
+  <div class="top-nav__icon-btn" id="themeBtn" onclick="toggleTheme()" title="切換明暗模式">
+    <svg id="navThemeIconLight" width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="4" fill="#1A1F36"/><path d="M9 1v2M9 15v2M1 9h2M15 9h2M3.1 3.1l1.4 1.4M13.5 13.5l1.4 1.4M3.1 14.9l1.4-1.4M13.5 4.5l1.4-1.4" stroke="#1A1F36" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <svg id="navThemeIconDark" width="18" height="18" viewBox="0 0 18 18" fill="none" style="display:none"><path d="M15 10.5A7 7 0 116.5 3c-.5 1.2-.5 3.5 1.5 5.5s4.3 2 5.5 1.5c.5.7.5 1 1.5.5z" fill="#E8EEFF"/></svg>
+  </div>
+  <div class="top-nav__icon-btn" id="notifBtn" onclick="openNotifModal()">
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <path d="M9 2a5 5 0 00-5 5v2.5L2.5 11v1h13v-1L14 9.5V7a5 5 0 00-5-5zM7 13h4a2 2 0 01-4 0z" fill="#1A1F36"/>
+    </svg>
+    <div class="top-nav__badge" id="notifBadge"></div>
+  </div>
+  <div id="topNavLoginBtn" onclick="toggleAccountDropdown()" style="display:none;align-items:center;gap:6px;height:40px;padding:0 12px 0 8px;border-radius:12px;background:var(--color-card);box-shadow:var(--shadow-card);cursor:pointer;flex-shrink:0;">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><circle cx="12" cy="8" r="4" fill="var(--color-primary)"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="var(--color-primary)"/></svg>
+    <span style="font-family:var(--font-head);font-size:13px;font-weight:600;color:var(--color-text-1);white-space:nowrap;">訪客模式</span>
+    <svg id="topNavChevron" width="12" height="12" viewBox="0 0 12 12" fill="none" style="transition:transform .2s"><path d="M2 4l4 4 4-4" stroke="#94A3B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  <div id="topNavAvatar" onclick="toggleAccountDropdown()" class="top-nav__icon-btn" style="display:none;overflow:hidden;padding:0;">
+    <svg id="topNavAvatarDefault" width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#1A1F36"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="#1A1F36"/></svg>
+    <img id="topNavAvatarImg" src="" alt="" style="display:none;width:100%;height:100%;object-fit:cover;">
+  </div>
+
+  <!-- Account Dropdown -->
+  <div id="accountDropdown" style="display:none;position:absolute;top:calc(100% + 8px);right:0;width:200px;background:#fff;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,.12);overflow:hidden;z-index:9999;">
+    <div id="accountDropdownHeader" style="padding:14px 16px 12px;border-bottom:1px solid #F1F5F9;">
+      <div id="accountDropdownName" style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--color-text-1);"></div>
+      <div id="accountDropdownEmail" style="font-size:11px;color:var(--color-text-3);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
+    </div>
+    <div id="accountDropdownMenu" style="padding:6px 0;"></div>
   </div>
 </div>
 
@@ -4448,11 +5005,24 @@
 </div><!-- /mood-modal -->
 
 
+<!-- ══ Metric Explain Popup ══ -->
+<div class="metric-explain-overlay" id="metricExplainOverlay" onclick="closeMetricExplain(event)">
+  <div class="metric-explain-card" id="metricExplainCard">
+    <div class="metric-explain-card__top">
+      <span class="metric-explain-card__emoji" id="meEmoji"></span>
+      <button class="metric-explain-card__close" onclick="closeMetricExplain()">✕</button>
+    </div>
+    <div class="metric-explain-card__title" id="meTitle"></div>
+    <div class="metric-explain-card__body" id="meBody"></div>
+    <div class="metric-explain-card__tag" id="meTag"></div>
+  </div>
+</div>
+
 <!-- ══ 全域 Modal（放在 proto-stage 外，position:fixed 才能在所有頁面正常顯示）══ -->
 
 
 <!-- 隱私設定 Modal -->
-<div id="privacyModalOverlay" style="display:none;position:fixed;inset:0;background:rgba(15,20,40,.48);z-index:9200">
+<div id="privacyModalOverlay" style="display:none;position:fixed;inset:0;background:rgba(15,20,40,.48);z-index:10000">
   <div id="privacyModal" style="background:#fff;border-radius:24px;width:100%;max-width:480px;padding:24px 20px 40px;box-sizing:border-box">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
       <div style="font-family:var(--font-head);font-size:17px;font-weight:800;color:var(--color-text-1)">隱私設定</div>
@@ -4695,7 +5265,7 @@
 
 <!-- 登入提示 Modal -->
 <!-- 匯出確認 Modal -->
-<div id="exportConfirmModal" style="display:none;opacity:0;position:fixed;inset:0;background:rgba(15,20,40,.45);z-index:9200;align-items:center;justify-content:center;">
+<div id="exportConfirmModal" style="display:none;opacity:0;position:fixed;inset:0;background:rgba(15,20,40,.45);z-index:10000;align-items:center;justify-content:center;">
   <div style="background:#fff;border-radius:24px;width:calc(100% - 32px);max-width:360px;padding:28px 24px 28px;box-shadow:0 16px 48px rgba(0,0,0,.2);">
     <div style="width:52px;height:52px;border-radius:16px;background:#EEF3FF;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
       <svg width="24" height="24" viewBox="0 0 18 18" fill="none">
@@ -4723,7 +5293,7 @@
 </div>
 
 <!-- 通知中心 Modal -->
-<div id="notifOverlay" style="display:none;opacity:0;position:fixed;inset:0;background:transparent;z-index:9200;align-items:flex-start;justify-content:flex-end;padding:60px 16px 0;box-sizing:border-box;" onclick="if(event.target===this)closeNotifModal()">
+<div id="notifOverlay" style="display:none;opacity:0;position:fixed;inset:0;background:transparent;z-index:10000;align-items:flex-start;justify-content:flex-end;padding:90px 16px 0;box-sizing:border-box;" onclick="if(event.target===this)closeNotifModal()">
   <div style="background:#fff;border-radius:20px;width:100%;max-width:340px;max-height:72dvh;max-height:72vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.18);animation:dissolveIn .22s ease;overflow:hidden;">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:18px 20px 14px;border-bottom:1px solid #E8EDF5;flex-shrink:0;">
       <div style="font-family:var(--font-head);font-size:16px;font-weight:800;color:#1A1F36;">通知中心</div>
@@ -4737,7 +5307,7 @@
 </div>
 
 <!-- 使用條款與隱私政策 Modal -->
-<div id="termsModalOverlay" style="display:none;opacity:0;position:fixed;inset:0;background:rgba(15,20,40,.48);z-index:9200;align-items:center;justify-content:center;padding:24px 16px;box-sizing:border-box;">
+<div id="termsModalOverlay" style="display:none;opacity:0;position:fixed;inset:0;background:rgba(15,20,40,.48);z-index:10000;align-items:center;justify-content:center;padding:24px 16px;box-sizing:border-box;">
   <div id="termsModal" style="background:#fff;border-radius:24px;overflow:hidden;width:100%;max-width:540px;max-height:82dvh;max-height:82vh;display:flex;flex-direction:column;box-shadow:0 16px 48px rgba(0,0,0,.2);animation:dissolveIn .22s ease;">
     <!-- Header -->
     <div style="display:flex;align-items:center;justify-content:space-between;padding:20px 22px 16px;border-bottom:1px solid #E8EDF5;flex-shrink:0;">
@@ -4802,7 +5372,7 @@
   </div>
 </div>
 
-<div id="loginPromptModal" style="display:none;opacity:0;position:fixed;inset:0;background:rgba(15,20,40,.45);z-index:9200;align-items:center;justify-content:center;">
+<div id="loginPromptModal" style="display:none;opacity:0;position:fixed;inset:0;background:rgba(15,20,40,.45);z-index:10000;align-items:center;justify-content:center;">
   <div style="background:#fff;border-radius:24px;width:calc(100% - 32px);max-width:380px;padding:28px 24px 32px;box-shadow:0 16px 48px rgba(0,0,0,.2);">
     <div style="width:36px;height:4px;background:#E2E8F0;border-radius:2px;margin:0 auto 20px;"></div>
     <div style="width:52px;height:52px;border-radius:16px;background:#EEF3FF;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
@@ -5258,6 +5828,88 @@
     col.style.setProperty('display', 'block', 'important');
   }
 
+  /* ─── Account Dropdown ─── */
+  let _accountDropdownOpen = false;
+
+  function toggleAccountDropdown() {
+    _accountDropdownOpen ? closeAccountDropdown() : openAccountDropdown();
+  }
+
+  function openAccountDropdown() {
+    const dd      = document.getElementById('accountDropdown');
+    const header  = document.getElementById('accountDropdownHeader');
+    const nameEl  = document.getElementById('accountDropdownName');
+    const emailEl = document.getElementById('accountDropdownEmail');
+    const menu    = document.getElementById('accountDropdownMenu');
+    const chevron = document.getElementById('topNavChevron');
+    if (!dd) return;
+
+    if (window._isLoggedIn) {
+      // 已登入：顯示帳號資訊
+      const user = window._currentUser;
+      nameEl.textContent  = user?.user_metadata?.display_name || user?.email?.split('@')[0] || '使用者';
+      emailEl.textContent = user?.email || '';
+      header.style.display = '';
+      const _isDarkNow = document.documentElement.getAttribute('data-theme') === 'dark';
+      menu.innerHTML = `
+        <div onclick="closeAccountDropdown();showScreen('screen-settings')" style="display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;font-size:13px;font-weight:600;color:var(--color-text-1);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z" stroke="#64748B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" stroke="#64748B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          前往設定
+        </div>
+        ${window.innerWidth <= 767 ? `
+        <div onclick="closeAccountDropdown();toggleTheme()" style="display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;font-size:13px;font-weight:600;color:var(--color-text-1);border-top:1px solid #F1F5F9;">
+          ${_isDarkNow
+            ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" stroke="#64748B" stroke-width="1.8"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="#64748B" stroke-width="1.8" stroke-linecap="round"/></svg>切換淺色模式`
+            : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="#64748B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>切換深色模式`
+          }
+        </div>` : ''}
+        <div onclick="closeAccountDropdown();document.getElementById('settingsLogoutBtn')?.click()" style="display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;font-size:13px;font-weight:600;color:#DC2626;border-top:1px solid #F1F5F9;">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M7 15H4a1 1 0 01-1-1V4a1 1 0 011-1h3" stroke="#DC2626" stroke-width="1.5" stroke-linecap="round"/><path d="M12 12l4-3-4-3M8 9h8" stroke="#DC2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          登出帳號
+        </div>`;
+    } else {
+      // 訪客：顯示登入選項
+      nameEl.textContent  = '訪客模式';
+      emailEl.textContent = '登入後可同步資料至雲端';
+      header.style.display = '';
+      const _isDarkGuest = document.documentElement.getAttribute('data-theme') === 'dark';
+      menu.innerHTML = `
+        <div onclick="closeAccountDropdown();showScreen('screen-login')" style="display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;font-size:13px;font-weight:600;color:var(--color-primary);">
+          <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M7 3H4a1 1 0 00-1 1v10a1 1 0 001 1h3" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round"/><path d="M11 12l4-3-4-3M7 9h8" stroke="var(--color-primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          登入帳號
+        </div>
+        ${window.innerWidth <= 767 ? `
+        <div onclick="closeAccountDropdown();toggleTheme()" style="display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;font-size:13px;font-weight:600;color:var(--color-text-1);border-top:1px solid #F1F5F9;">
+          ${_isDarkGuest
+            ? `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5" stroke="#64748B" stroke-width="1.8"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" stroke="#64748B" stroke-width="1.8" stroke-linecap="round"/></svg>切換淺色模式`
+            : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" stroke="#64748B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>切換深色模式`
+          }
+        </div>` : ''}
+`;
+    }
+
+    dd.style.display = 'block';
+    if (chevron) chevron.style.transform = 'rotate(180deg)';
+    _accountDropdownOpen = true;
+  }
+
+  function closeAccountDropdown() {
+    const dd = document.getElementById('accountDropdown');
+    const chevron = document.getElementById('topNavChevron');
+    if (dd) dd.style.display = 'none';
+    if (chevron) chevron.style.transform = '';
+    _accountDropdownOpen = false;
+  }
+
+  document.addEventListener('click', e => {
+    if (_accountDropdownOpen &&
+        !e.target.closest('#topNavLoginBtn') &&
+        !e.target.closest('#topNavAvatar') &&
+        !e.target.closest('#accountDropdown')) {
+      closeAccountDropdown();
+    }
+  });
+
   /* ─── 登入提示 Modal ─── */
   function showLoginPrompt() {
     modalShow(document.getElementById('loginPromptModal'));
@@ -5282,19 +5934,18 @@
 
   /* ── 預測日風險 Tooltip ── */
   let _ftVisible = false;
-  function handleForecastClick(e) {
-    const card = e.target.closest('.tomorrow-mini[data-score]');
-    const tip  = document.getElementById('forecastTooltip');
-    if (!tip) return;
-    if (!card) { hideForecastTooltip(); return; }
+  const _isHoverDevice = () => window.matchMedia('(hover: hover)').matches;
 
-    const label  = card.dataset.label;
-    const score  = Number(card.dataset.score);
-    const hum    = Number(card.dataset.hum);
-    const pm25   = card.dataset.pm25 !== '' ? Number(card.dataset.pm25) : null;
-    const tdiff  = Number(card.dataset.tdiff);
+  function showForecastTooltip(card) {
+    const tip = document.getElementById('forecastTooltip');
+    if (!tip || !card) return;
 
-    // 填入數值
+    const label = card.dataset.label;
+    const score = Number(card.dataset.score);
+    const hum   = Number(card.dataset.hum);
+    const pm25  = card.dataset.pm25 !== '' ? Number(card.dataset.pm25) : null;
+    const tdiff = Number(card.dataset.tdiff);
+
     document.getElementById('ftTitle').textContent = `${label} 風險 ${score}%`;
     const humEl = document.getElementById('ftHum');
     humEl.textContent = `${hum}%`;
@@ -5308,15 +5959,13 @@
     tdEl.textContent = `${tdiff}°C`;
     tdEl.className   = 'ft-val ' + (tdiff >= 7 ? 'ft-val--warn' : 'ft-val--ok');
 
-    // 產生原因文字
     const reasons = [];
-    if (hum >= 75)                         reasons.push(`濕度 ${hum}% 偏高，易誘發塵蟎過敏`);
-    if (pm25 !== null && pm25 > 35)        reasons.push(`PM2.5 超標（${pm25} μg/m³）`);
-    if (tdiff >= 7)                        reasons.push(`溫差 ${tdiff}°C 過大，呼吸道易過敏`);
+    if (hum >= 75)                  reasons.push(`濕度 ${hum}% 偏高，易誘發塵蟎過敏`);
+    if (pm25 !== null && pm25 > 35) reasons.push(`PM2.5 超標（${pm25} μg/m³）`);
+    if (tdiff >= 7)                 reasons.push(`溫差 ${tdiff}°C 過大，呼吸道易過敏`);
     document.getElementById('ftReason').textContent =
       reasons.length ? reasons.join('；') + '。' : '各項環境指標在正常範圍，風險來自基礎過敏體質。';
 
-    // 定位：顯示在 card 上方
     const rect = card.getBoundingClientRect();
     tip.style.left = Math.min(rect.left, window.innerWidth - 216) + 'px';
     tip.style.top  = (rect.top - 10 + window.scrollY) + 'px';
@@ -5324,11 +5973,49 @@
     tip.classList.add('visible');
     _ftVisible = true;
   }
+
   function hideForecastTooltip() {
     const tip = document.getElementById('forecastTooltip');
     if (tip) tip.classList.remove('visible');
     _ftVisible = false;
   }
+
+  // 手機：點按顯示 / 再點其他地方關閉
+  function handleForecastClick(e) {
+    if (_isHoverDevice()) return; // 桌機由 hover 處理
+    const card = e.target.closest('.tomorrow-mini[data-score]');
+    if (!card) { hideForecastTooltip(); return; }
+    if (_ftVisible && e.target.closest('#forecastRow')) { hideForecastTooltip(); return; }
+    showForecastTooltip(card);
+  }
+
+  // 桌機：滑鼠懸浮顯示，離開隱藏
+  document.addEventListener('DOMContentLoaded', () => {
+    const row = document.getElementById('forecastRow');
+    const tip = document.getElementById('forecastTooltip');
+    if (!row) return;
+
+    row.addEventListener('mouseover', e => {
+      if (!_isHoverDevice()) return;
+      const card = e.target.closest('.tomorrow-mini[data-score]');
+      if (card) showForecastTooltip(card);
+    });
+
+    row.addEventListener('mouseout', e => {
+      if (!_isHoverDevice()) return;
+      const to = e.relatedTarget;
+      if (!row.contains(to) && !(tip && tip.contains(to))) hideForecastTooltip();
+    });
+
+    if (tip) {
+      tip.addEventListener('mouseout', e => {
+        if (!_isHoverDevice()) return;
+        const to = e.relatedTarget;
+        if (!row.contains(to) && !tip.contains(to)) hideForecastTooltip();
+      });
+    }
+  });
+
   document.addEventListener('click', e => {
     if (_ftVisible && !e.target.closest('#forecastRow') && !e.target.closest('#forecastTooltip')) {
       hideForecastTooltip();
@@ -5717,7 +6404,7 @@
     if (curRisk !== null && prevRisk !== null) {
       const diff = curRisk - prevRisk;
       deltaText  = diff === 0 ? '持平' : (diff > 0 ? '↑' : '↓') + Math.abs(diff) + '%';
-      deltaColor = diff > 0 ? '#DC2626' : diff < 0 ? '#16A34A' : '#64748B';
+      deltaColor = diff > 0 ? 'var(--color-danger)' : diff < 0 ? 'var(--color-success)' : '#64748B';
     } else if (curRisk !== null) {
       deltaText = '初始紀錄'; deltaColor = '#64748B';
     }
@@ -5813,8 +6500,9 @@
         const entry = logMap7[key];
         const symptom = entry ? Math.round((Number(entry.severity) / 5) * 88 + 8) : 0;
         const env = envFromCache(key, base);
+        const DAYS = ['日','一','二','三','四','五','六'];
         dataPoints.push({
-          label:    `${d.getMonth()+1}/${d.getDate()}`,
+          label:    `${d.getMonth()+1}/${d.getDate()}\n${DAYS[d.getDay()]}`,
           dateStr:  `${d.getMonth()+1}月${d.getDate()}日`,
           symptom,
           humidity: env.humidity,
@@ -5979,17 +6667,6 @@
       `<rect x="${(p.cx - spacing/2).toFixed(1)}" y="${padT}" width="${spacing.toFixed(1)}" height="${chartH}" fill="transparent" style="cursor:pointer" onclick="showBarTooltip(${i})"/>`
     ).join('');
 
-    // 未登入：只顯示格線與 x 軸標籤，不渲染數據
-    if (!window._isLoggedIn) {
-      svg.innerHTML = `${grid}${xLabels}${sideLabel}`;
-      const elBad2  = document.getElementById('trendStatBad');
-      const elMild2 = document.getElementById('trendStatMild');
-      const elGood2 = document.getElementById('trendStatGood');
-      if (elBad2)  elBad2.innerHTML  = '<span style="color:#C4CAD4">—</span>';
-      if (elMild2) elMild2.innerHTML = '<span style="color:#C4CAD4">—</span>';
-      if (elGood2) elGood2.innerHTML = '<span style="color:#C4CAD4">—</span>';
-      return;
-    }
 
     svg.innerHTML = `
       ${grid}
@@ -6108,8 +6785,6 @@
       noteEl.textContent = `累積 ${noteMap[period] || '30 天'} 紀錄後更新`;
     }
 
-    // 未登入：只渲染空圖表，不更新數據
-    if (!window._isLoggedIn) return;
 
     const d = ANALYSIS_TAB_DATA[period];
     if (!d) return;
@@ -6224,7 +6899,8 @@
       const pctVal = Math.min(Math.round((worst.avg / 5) * 100), 100);
       const sevLabel = worst.avg >= 4 ? '嚴重' : worst.avg >= 3 ? '中度' : worst.avg >= 2 ? '輕度' : '輕微';
       if (timeBar) timeBar.style.width = pctVal + '%';
-      if (timePct) { timePct.textContent = sevLabel; timePct.style.color = '#7C3AED'; }
+      const _isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      if (timePct) { timePct.textContent = sevLabel; timePct.style.color = _isDark ? '#A78BFA' : '#7C3AED'; }
       if (timeSub) timeSub.textContent = `${worst.k} 症狀最明顯，共比較 ${slotAvgs.length} 個時段`;
     } else {
       if (timeBar) timeBar.style.width = '0%';
@@ -6304,14 +6980,6 @@
     '不適': { severity: '嚴重程度 3/5' },
   };
   function initTodaySymptomCard() {
-    // 未登入：強制顯示空狀態，不讀取 localStorage
-    if (!window._isLoggedIn) {
-      const body  = document.getElementById('symptomCardBody');
-      const empty = document.getElementById('symptomCardEmpty');
-      if (body)  body.style.display  = 'none';
-      if (empty) empty.style.display = '';
-      return;
-    }
     const todayStr = new Date().toISOString().split('T')[0];
     const logs = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
     const todayLogs = logs.filter(l => l.date === todayStr);
@@ -6551,11 +7219,6 @@
     const list = document.getElementById('log-record-list');
     if (!list) return;
 
-    // 未登入：交由 setLoginState(false) 處理，避免顯示 localStorage 資料
-    if (!window._isLoggedIn) {
-      applyLogGuestState();
-      return;
-    }
 
     const logs = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
     const now = new Date();
@@ -6574,7 +7237,7 @@
     // 虛線新增列 HTML（永遠顯示，文字依是否已有紀錄切換）
     const addRowLabel = hasTodayEntry ? '新增另一筆今日紀錄' : '新增今日紀錄';
     const addRowHtml = `
-      <div id="logAddRow" onclick="window._isLoggedIn ? openMoodModal() : (showLoginPrompt())" style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:#fff;border-radius:14px;cursor:pointer;border:1.5px dashed var(--color-primary);margin-bottom:4px;">
+      <div id="logAddRow" onclick="openMoodModal()" style="display:flex;align-items:center;gap:10px;padding:14px 16px;background:#fff;border-radius:14px;cursor:pointer;border:1.5px dashed var(--color-primary);margin-bottom:4px;">
         <div style="width:32px;height:32px;border-radius:50%;background:var(--color-primary-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 3v10M3 8h10" stroke="var(--color-primary)" stroke-width="2" stroke-linecap="round"/></svg>
         </div>
@@ -6611,7 +7274,10 @@
 
     const MOOD_LABEL = { '舒適': '感覺舒適', '輕微': '輕微不適', '不適': '感覺不適' };
     const SEV_BG     = { 1: '#4ADE80', 2: '#4ADE80', 3: '#FBBF24', 4: '#F97316', 5: '#EF4444' };
-    const SEV_COLOR  = { 1: '#166534', 2: '#166534', 3: '#78350F', 4: '#DC2626', 5: '#B91C1C' };
+    const _dark = () => document.documentElement.getAttribute('data-theme') === 'dark';
+    const SEV_COLOR  = () => _dark()
+      ? { 1: '#4ADE80', 2: '#4ADE80', 3: '#FCD34D', 4: '#F87171', 5: '#F87171' }
+      : { 1: '#166534', 2: '#166534', 3: '#78350F', 4: '#DC2626', 5: '#B91C1C' };
     const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
     const today = new Date().toISOString().split('T')[0];
 
@@ -6633,7 +7299,7 @@
       const isToday = date === today;
       const dayLabel = isToday ? '今天' : `${d.getMonth()+1}月${d.getDate()}日`;
       const title = `${dayLabel} • ${MOOD_LABEL[rep.mood] || rep.mood}`;
-      const sevColor = SEV_COLOR[rep.severity] || '#B45309';
+      const sevColor = SEV_COLOR()[rep.severity] || '#B45309';
       // tag 顏色：嚴重程度依等級、症狀藍紫、共N筆灰色
       const SEV_TAG_COLOR = {
         1: { bg: 'rgba(22,163,74,.12)',  c: '#15803D' },
@@ -6675,7 +7341,7 @@
         (SLOT_ORDER[a.timeSlot] ?? 99) - (SLOT_ORDER[b.timeSlot] ?? 99)
       );
       const detailRows = entries.length > 1 ? sortedEntries.map(e => {
-        const sc = SEV_COLOR[e.severity] || '#B45309';
+        const sc = SEV_COLOR()[e.severity] || '#B45309';
         const sym = (e.symptoms||[]).length ? (e.symptoms||[]).map(s=>`<span class="tag" style="background:rgba(76,125,255,.12);color:#3B5BDB;font-size:10px;padding:2px 7px;border-radius:100px">${s}</span>`).join('') : '';
         const noteHtml = e.note ? `<div style="width:100%;font-size:11px;color:var(--color-text-2);margin-top:4px;padding-left:46px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:4px"><svg width="11" height="11" viewBox="0 0 12 12" fill="none" style="flex-shrink:0;opacity:.5"><path d="M2 9.5h8M8.5 2l1.5 1.5-6 6H2.5V8L8.5 2Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.note}</span></div>` : '';
         return `<div class="log-timeslot-row">
@@ -6823,11 +7489,6 @@
     if (!container) return;
 
     const insightPrompt = document.getElementById('insightLoginPrompt');
-    if (!window._isLoggedIn) {
-      container.innerHTML = '';
-      if (insightPrompt) insightPrompt.style.display = 'flex';
-      return;
-    }
     if (insightPrompt) insightPrompt.style.display = 'none';
 
     const logs = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
@@ -7143,25 +7804,9 @@
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">${r.icon}</svg>
           </div>
           <div class="rec-text">${r.text}</div>
-          <div class="rec-check"></div>
         </div>`;
     }).join('');
 
-    // 重新綁定 click（動態產生的元素需要重新掛載）
-    const _checkSvg = '<svg width="13" height="10" viewBox="0 0 11 8"><path d="M1 4L4 7L10 1" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-    el.querySelectorAll('.rec-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const check = item.querySelector('.rec-check');
-        if (!check) return;
-        if (check.classList.contains('rec-check--done')) {
-          check.classList.remove('rec-check--done');
-          check.innerHTML = '';
-        } else {
-          check.classList.add('rec-check--done');
-          check.innerHTML = _checkSvg;
-        }
-      });
-    });
   }
 
   function deleteLogEntry(date, event) {
@@ -7216,10 +7861,7 @@
   }
 
   function renderMonthlyChart() {
-    // 未登入：強制用空陣列，不讀取 localStorage 資料
-    const logs = window._isLoggedIn
-      ? JSON.parse(localStorage.getItem('allersense_logs') || '[]')
-      : [];
+    const logs = JSON.parse(localStorage.getItem('allersense_logs') || '[]');
     const now = new Date();
     const year = now.getFullYear();
     const month = now.getMonth();
@@ -7459,7 +8101,7 @@
     if (cityItem) {
       cityItem.querySelector('.settings-item__desc').textContent = savedCity + '，台灣';
     }
-    const cityLabelEl = document.querySelector('.top-nav__city');
+    const cityLabelEl = document.getElementById('top-nav-city');
     if (cityLabelEl) cityLabelEl.textContent = savedCity + '，台灣';
   });
 
@@ -7645,28 +8287,6 @@
   })();
 
   /* ─── Rec-check as checkbox（白勾勾） ─── */
-  const checkSvg = '<svg width="13" height="10" viewBox="0 0 11 8"><path d="M1 4L4 7L10 1" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  function toggleRecCheck(check) {
-    if (check.classList.contains('rec-check--done')) {
-      check.classList.remove('rec-check--done');
-      check.innerHTML = '';
-    } else {
-      check.classList.add('rec-check--done');
-      check.innerHTML = checkSvg;
-    }
-  }
-
-  document.querySelectorAll('.rec-check').forEach(check => {
-    if (check.classList.contains('rec-check--done')) check.innerHTML = checkSvg;
-  });
-
-  // 點整條 rec-item 都能勾選
-  document.querySelectorAll('.rec-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const check = item.querySelector('.rec-check');
-      if (check) toggleRecCheck(check);
-    });
-  });
 
   /* ─── Analysis 頁 tab 切換：更新 stat-chips + factor bars ─── */
   const analysisData = {
@@ -7837,6 +8457,32 @@
     closePrefModal('allergenOverlay');
   }
 
+  /* ─── 明暗模式 ─── */
+  function applyTheme(dark) {
+    document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+    // 設定頁「關於」標題旁 icon
+    const iconL = document.getElementById('themeIconLight');
+    const iconD = document.getElementById('themeIconDark');
+    if (iconL) iconL.style.display = dark ? 'none' : '';
+    if (iconD) iconD.style.display = dark ? ''     : 'none';
+    // 首頁 top nav
+    const navL = document.getElementById('navThemeIconLight');
+    const navD = document.getElementById('navThemeIconDark');
+    if (navL) navL.style.display = dark ? 'none' : '';
+    if (navD) navD.style.display = dark ? ''     : 'none';
+  }
+  function toggleTheme() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const next = !isDark;
+    localStorage.setItem('allersense_theme', next ? 'dark' : 'light');
+    applyTheme(next);
+  }
+  // 頁面載入時套用已儲存主題
+  (function() {
+    const saved = localStorage.getItem('allersense_theme');
+    if (saved === 'dark') applyTheme(true);
+  })();
+
   /* ─── 自動偵測城市（僅首次，不覆蓋手動設定） ─── */
   function autoDetectCity() {
     if (localStorage.getItem('allersense_city')) return; // 已手動設定，跳過
@@ -7851,7 +8497,7 @@
       localStorage.setItem('allersense_city', nearest);
       _selectedCity = nearest;
       // 更新 UI
-      const cityLabelEl = document.querySelector('.top-nav__city');
+      const cityLabelEl = document.getElementById('top-nav-city');
       if (cityLabelEl) cityLabelEl.textContent = nearest + '，台灣';
       const cityItem = document.getElementById('settingsPrefLocation');
       if (cityItem) cityItem.querySelector('.settings-item__desc').textContent = nearest + '，台灣';
@@ -7869,6 +8515,10 @@
   }
   /* ── 通知中心 ── */
   function buildNotifs() {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const C = dark
+      ? { amber:'rgba(251,191,36,.12)', blue:'rgba(107,149,255,.12)', green:'rgba(74,222,128,.1)', warn:'rgba(248,113,113,.12)', text:'var(--color-text-1)' }
+      : { amber:'#FFF7ED', blue:'#EFF6FF', green:'#F0FDF4', warn:'#FFF1F2', text:'#1A1F36' };
     const items = [];
     const cache  = JSON.parse(localStorage.getItem('allersense_env_cache') || '{}');
     const pm25   = cache.aqi?.pm25 ?? null;
@@ -7880,34 +8530,50 @@
     const slotHours = { '清晨':[5,6],'早晨':[7,8],'午間':[12,13],'傍晚':[17,18],'深夜':[22,23,0,1] };
 
     if (pm25 !== null && pm25 > 35 && allergens.includes('PM2.5'))
-      items.push({ icon:'🌫', color:'#FFF7ED', text:`今日 PM2.5 達 <strong>${pm25}μg/m³</strong>，超過標準值，建議外出配戴口罩。` });
+      items.push({ icon:'🌫', color:C.amber, text:`今日 PM2.5 達 <strong>${pm25}μg/m³</strong>，超過標準值，建議外出配戴口罩。` });
     if (humid !== null && humid >= 75 && allergens.includes('塵蟎'))
-      items.push({ icon:'💧', color:'#EFF6FF', text:`今日濕度 <strong>${humid}%</strong>，塵蟎風險上升，建議開除濕機。` });
+      items.push({ icon:'💧', color:C.blue, text:`今日濕度 <strong>${humid}%</strong>，塵蟎風險上升，建議開除濕機。` });
     if (humid !== null && humid >= 75 && allergens.includes('黴菌孢子'))
-      items.push({ icon:'🌿', color:'#F0FDF4', text:`今日濕度 <strong>${humid}%</strong>，黴菌活躍，保持室內通風。` });
+      items.push({ icon:'🌿', color:C.green, text:`今日濕度 <strong>${humid}%</strong>，黴菌活躍，保持室內通風。` });
 
     const activeSlots = slots.filter(s => (slotHours[s]||[]).includes(nowHour));
     if (activeSlots.length > 0)
-      items.push({ icon:'⏰', color:'#FEF9EC', text:`現在是你的敏感時段（<strong>${activeSlots.join('、')}</strong>），請特別留意症狀變化。` });
+      items.push({ icon:'⏰', color:C.amber, text:`現在是你的敏感時段（<strong>${activeSlots.join('、')}</strong>），請特別留意症狀變化。` });
 
     const today = new Date().toISOString().split('T')[0];
     const todayLog = logs.find(l => l.date === today);
     if (todayLog && (Number(todayLog.severity) || 0) >= 4)
-      items.push({ icon:'⚠️', color:'#FFF1F2', text:`今日症狀紀錄嚴重度較高（${todayLog.severity}/5），建議多休息並注意環境。` });
+      items.push({ icon:'⚠️', color:C.warn, text:`今日症狀紀錄嚴重度較高（${todayLog.severity}/5），建議多休息並注意環境。` });
 
     if (items.length === 0)
-      items.push({ icon:'✅', color:'#F0FDF4', text:`目前無需特別注意，今日各項指標在正常範圍內。` });
+      items.push({ icon:'✅', color:C.green, text:`目前無需特別注意，今日各項指標在正常範圍內。` });
 
-    return items;
+    return { items, textColor: C.text };
   }
 
   function openNotifModal() {
     const overlay = document.getElementById('notifOverlay');
     const list = document.getElementById('notifList');
     if (!overlay || !list) return;
-    const items = buildNotifs();
+    const { items, textColor } = buildNotifs();
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const borderCol = dark ? 'var(--color-border)' : '#E8EDF5';
+    const headerCol = dark ? 'var(--color-text-1)' : '#1A1F36';
+    const btnBg     = dark ? 'var(--color-border)' : '#F1F5F9';
+    const btnCol    = dark ? 'var(--color-text-2)' : '#64748B';
+    // Update panel header & footer colors dynamically
+    const panel = overlay.querySelector('div');
+    if (panel) {
+      panel.querySelector('div[style*="border-bottom"]')?.style && Object.assign(panel.querySelector('div[style*="border-bottom"]').style, { borderBottomColor: borderCol });
+      const titleEl = panel.querySelector('div[style*="font-weight:800"]');
+      if (titleEl) titleEl.style.color = headerCol;
+      const footerBtn = panel.querySelector('button[onclick*="clearNotifs"]');
+      if (footerBtn) { footerBtn.style.background = btnBg; footerBtn.style.color = btnCol; }
+      const footerDiv = panel.querySelector('div[style*="border-top"]');
+      if (footerDiv) footerDiv.style.borderTopColor = borderCol;
+    }
     list.innerHTML = items.map(n => `
-      <div style="background:${n.color};border-radius:12px;padding:12px 14px;font-size:13px;color:#1A1F36;line-height:1.55;display:flex;gap:10px;align-items:flex-start;">
+      <div style="background:${n.color};border-radius:12px;padding:12px 14px;font-size:13px;color:${textColor};line-height:1.55;display:flex;gap:10px;align-items:flex-start;">
         <span style="font-size:16px;flex-shrink:0;">${n.icon}</span>
         <span>${n.text}</span>
       </div>`).join('');
@@ -7966,7 +8632,7 @@
     const item = document.getElementById('settingsPrefLocation');
     if (item) item.querySelector('.settings-item__desc').textContent = _selectedCity + '，台灣';
     // 同步更新 top-nav 城市顯示
-    const cityLabelEl = document.querySelector('.top-nav__city');
+    const cityLabelEl = document.getElementById('top-nav-city');
     if (cityLabelEl) cityLabelEl.textContent = _selectedCity + '，台灣';
     // 儲存並重新抓取天氣環境數據
     if (typeof onCityChange === 'function') onCityChange(_selectedCity);
@@ -8006,6 +8672,14 @@
         av.style.fontSize = '0';
       }
     }
+    // Top Nav 頭像
+    const navImg     = document.getElementById('topNavAvatarImg');
+    const navDefault = document.getElementById('topNavAvatarDefault');
+    if (navImg && navDefault) {
+      navImg.src = dataUrl;
+      navImg.style.display    = 'block';
+      navDefault.style.display = 'none';
+    }
   }
 
   function loadSavedAvatar() {
@@ -8041,6 +8715,12 @@
 
   function setLoginState(loggedIn) {
     window._isLoggedIn = loggedIn;
+
+    // Top Nav 登入按鈕 / 頭像切換
+    const topNavLoginBtn = document.getElementById('topNavLoginBtn');
+    const topNavAvatar   = document.getElementById('topNavAvatar');
+    if (topNavLoginBtn) topNavLoginBtn.style.display = loggedIn ? 'none' : 'flex';
+    if (topNavAvatar)   topNavAvatar.style.display   = loggedIn ? 'flex' : 'none';
 
     // Sidebar 登入 / 登出按鈕切換
     const sidebarLoginBtn  = document.getElementById('sidebar-login-btn');
@@ -8114,21 +8794,33 @@
           item.onclick = () => openPrivacyModal();
         }
       } else {
-        item.style.opacity = '.6';
-        item.style.cursor = 'pointer';
-        item.onclick = () => { showLoginPrompt(); };
+        // 訪客模式：與登入相同，全部解鎖
+        item.style.opacity = '';
+        item.style.cursor = 'default';
+        item.onclick = null;
+        item.removeAttribute('onclick');
         const desc = item.querySelector('.settings-item__desc');
-        if (desc) desc.textContent = (type === 'arrow') ? '登入後可設定' : '登入後可開啟';
-        // 把 toggle 或 arrow 換成鎖頭
-        const lockSVG = `<svg width="13" height="15" viewBox="0 0 13 15" fill="none"><rect x="1" y="6" width="11" height="8" rx="2" stroke="#C4CAD4" stroke-width="1.4"/><path d="M3.5 6V4.5a3 3 0 016 0V6" stroke="#C4CAD4" stroke-width="1.4" stroke-linecap="round"/></svg>`;
-        const toggleEl = item.querySelector('[data-toggle]');
-        if (toggleEl) toggleEl.outerHTML = `<div class="settings-item__right">${lockSVG}</div>`;
-        else if (rightEl) rightEl.innerHTML = lockSVG;
+        if (desc) desc.textContent = item.dataset.origDesc || '';
+        if (type === 'arrow' && rightEl) {
+          rightEl.innerHTML = ARROW_SVG;
+        } else if (type === 'toggle-on' && rightEl) {
+          rightEl.outerHTML = `<div class="toggle toggle--on" data-toggle style="cursor:pointer"></div>`;
+        } else if (type === 'toggle-off' && rightEl) {
+          rightEl.outerHTML = `<div class="toggle" data-toggle style="cursor:pointer"></div>`;
+        }
+        item.querySelectorAll('[data-toggle]').forEach(t => {
+          t.onclick = (e) => { e.stopPropagation(); t.classList.toggle('toggle--on'); };
+        });
+        if (item.id === 'settingsExportBtn') {
+          item.onclick = () => showExportConfirm();
+        } else if (item.id === 'settingsPrivacyBtn') {
+          item.onclick = () => openPrivacyModal();
+        }
       }
     });
 
     // 偏好設定三個 item：迴圈結束後才設 onclick，避免被 removeAttribute 清掉
-    if (loggedIn) {
+    {
       const pa = document.getElementById('settingsPrefAllergens');
       const pt = document.getElementById('settingsPrefTime');
       const pl = document.getElementById('settingsPrefLocation');
@@ -8152,94 +8844,49 @@
       actionBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M7 3H4a1 1 0 00-1 1v10a1 1 0 001 1h3" stroke="#4C7DFF" stroke-width="1.5" stroke-linecap="round"/><path d="M11 12l4-3-4-3M7 9h8" stroke="#4C7DFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> 登入 / 建立帳號`;
     }
 
-    // 4. 分析頁 empty state（未登入時顯示骨架但清空數據）
-    // Tab bar + Stat chips row：未登入時隱藏
+    // 4. 分析頁：訪客模式也顯示真實 localStorage 數據
     const tabBarEl       = document.getElementById('analysisTabBar');
     const statChipsRowEl = document.getElementById('analysisStatChipsRow');
-    if (tabBarEl)       tabBarEl.style.display       = loggedIn ? '' : 'none';
-    if (statChipsRowEl) statChipsRowEl.style.display = loggedIn ? '' : 'none';
+    if (tabBarEl)       tabBarEl.style.display       = '';
+    if (statChipsRowEl) statChipsRowEl.style.display = '';
 
-    // Stat chips
+    // Stat chips — 登入或訪客都從真實資料取
     const statRisk  = document.getElementById('analysisStatRisk');
     const statDays  = document.getElementById('analysisStatDays');
     const statDelta = document.getElementById('analysisStatDelta');
-    if (!loggedIn) {
-      if (statRisk)  statRisk.innerHTML  = '<span style="color:#C4CAD4">—</span>';
-      if (statDays)  statDays.innerHTML  = '<span style="color:#C4CAD4">—</span>';
-      if (statDelta) { statDelta.innerHTML = '<span style="color:#C4CAD4">—</span>'; statDelta.style.color = ''; }
-    } else {
-      // 從真實資料取得目前 active tab 的統計
-      const activeTabEl = document.querySelector('#analysisTabBar .tab--active');
-      const activePeriod = activeTabEl ? (activeTabEl.dataset.period || '7d') : '7d';
-      const real = typeof calcRealAnalysisStats === 'function' ? calcRealAnalysisStats(activePeriod) : null;
-      const fallback = ANALYSIS_TAB_DATA[activePeriod] || ANALYSIS_TAB_DATA['7d'];
-      const s = real ? { ...fallback, ...real } : fallback;
-      if (statRisk)  statRisk.innerHTML  = s.riskVal;
-      if (statDays)  statDays.innerHTML  = s.daysVal;
-      if (statDelta) { statDelta.innerHTML = s.delta; statDelta.style.color = s.deltaColor || '#15803D'; }
-    }
+    const activeTabEl = document.querySelector('#analysisTabBar .tab--active');
+    const activePeriod = activeTabEl ? (activeTabEl.dataset.period || '7d') : '7d';
+    const real = typeof calcRealAnalysisStats === 'function' ? calcRealAnalysisStats(activePeriod) : null;
+    const fallback = ANALYSIS_TAB_DATA[activePeriod] || ANALYSIS_TAB_DATA['7d'];
+    const s = real ? { ...fallback, ...real } : fallback;
+    if (statRisk)  statRisk.innerHTML  = s.riskVal;
+    if (statDays)  statDays.innerHTML  = s.daysVal;
+    if (statDelta) { statDelta.innerHTML = s.delta; statDelta.style.color = s.deltaColor || 'var(--color-success)'; }
 
-    // Chart：重新渲染（renderAnalysisChart 內部依 _isLoggedIn 決定是否顯示數據）
+    // Chart & factor bars
     if (typeof renderAnalysisChart === 'function') {
       const activeTab = document.querySelector('#analysisTabBar .tab--active');
       const period = activeTab ? (activeTab.dataset.period || '7d') : '7d';
       renderAnalysisChart(period);
     }
-
-    // Factor bars — 未登入時清空；登入後交由 applyRealDataToUI / switchAnalysisTab 填入真實數據
-    if (!loggedIn) {
-      ['Humidity','Pm25','Time','Temp'].forEach(k => {
-        const barEl = document.getElementById('factorBar' + k);
-        const pctEl = document.getElementById('factorPct' + k);
-        const subEl = document.getElementById('factorSub' + k);
-        if (barEl) barEl.style.width = '0%';
-        if (pctEl) { pctEl.textContent = '—'; pctEl.style.color = '#C4CAD4'; }
-        if (subEl) subEl.textContent = '尚無資料';
-      });
-    }
-    // 登入後：重新執行 loadEnvData 填入即時數據，並刷新分析頁 tab 數據
-    if (loggedIn) {
-      if (typeof loadEnvData === 'function') loadEnvData();
-      const activeTab = document.querySelector('#analysisTabBar .tab--active');
-      if (activeTab && typeof switchAnalysisTab === 'function') switchAnalysisTab(activeTab);
-    }
+    if (typeof loadEnvData === 'function') loadEnvData();
+    const activeTab = document.querySelector('#analysisTabBar .tab--active');
+    if (activeTab && typeof switchAnalysisTab === 'function') switchAnalysisTab(activeTab);
 
     // Insight blocks — 統一由 renderInsights() 處理登入/未登入狀態
     if (typeof renderInsights === 'function') renderInsights();
 
-    // 5. 今日症狀卡片：登入 / 未登入狀態切換
-    const bodyEl  = document.getElementById('symptomCardBody');
+    // 5. 今日症狀卡片：登入或訪客都直接可用
     const emptyEl = document.getElementById('symptomCardEmpty');
-    if (loggedIn) {
-      // 登入後：還原 empty state 的文字和按鈕（setLoginState(false) 會改掉它們）
-      const emptySpan = document.querySelector('#symptomCardEmpty span');
-      const emptyBtn  = document.querySelector('#symptomCardEmpty button');
-      if (emptySpan) emptySpan.textContent = '嗨，今天身體還好嗎？✨';
-      if (emptyBtn)  { emptyBtn.textContent = '記錄'; emptyBtn.onclick = () => openMoodModal(); }
-      // 登入後：交由 initTodaySymptomCard 決定顯示 body 或 empty
-      if (typeof initTodaySymptomCard === 'function') initTodaySymptomCard();
-    } else {
-      // 未登入：強制隱藏資料層，顯示空白提示
-      if (bodyEl)  bodyEl.style.display  = 'none';
-      if (emptyEl) emptyEl.style.display = '';
-      if (emptyEl) {
-        const hintEl   = emptyEl.querySelector('span');
-        const recordBtn = emptyEl.querySelector('button');
-        if (hintEl) hintEl.textContent = '記錄每日症狀，讓 AI 找出你的過敏規律';
-        if (recordBtn) {
-          recordBtn.textContent = '立即登入';
-          recordBtn.style.cssText = '';
-          recordBtn.onclick = () => showLoginPrompt();
-        }
-      }
-    }
+    if (emptyEl) emptyEl.classList.remove('guest-mode');
+    const emptySpan = document.querySelector('#symptomCardEmpty span');
+    const emptyBtn  = document.querySelector('#symptomCardEmpty button');
+    if (emptySpan) emptySpan.textContent = '嗨，今天身體還好嗎？✨';
+    if (emptyBtn)  { emptyBtn.textContent = '記錄'; emptyBtn.style.cssText = ''; emptyBtn.onclick = () => openMoodModal(); }
+    if (typeof initTodaySymptomCard === 'function') initTodaySymptomCard();
 
-    // 6. 日誌頁：登入 / 未登入狀態切換
-    if (loggedIn) {
-      if (typeof renderLogPage === 'function') renderLogPage();
-    } else {
-      if (typeof applyLogGuestState === 'function') applyLogGuestState();
-    }
+    // 6. 日誌頁：登入或訪客都顯示 localStorage 資料
+    if (typeof renderLogPage === 'function') renderLogPage();
   }
 </script>
 
@@ -8292,6 +8939,17 @@
     return '雷雨';
   }
 
+  function weatherEmoji(code) {
+    if (code === 0) return '☀️';
+    if (code <= 2) return '⛅';
+    if (code === 3) return '☁️';
+    if (code <= 49) return '🌫️';
+    if (code <= 69) return '🌧️';
+    if (code <= 79) return '🌨️';
+    if (code <= 84) return '🌦️';
+    return '⛈️';
+  }
+
   function riskLevel(aqi) {
     if (aqi <= 50)  return { label: '低風險',  cls: 'badge--ok',   dot: '#15803D', score: Math.round(aqi * 0.4) };
     if (aqi <= 100) return { label: '中等風險', cls: 'badge--warn', dot: '#B45309', score: Math.round(30 + (aqi-50) * 0.6) };
@@ -8299,16 +8957,69 @@
     return               { label: '高風險',   cls: 'badge--bad',  dot: '#DC2626', score: Math.min(98, Math.round(85 + (aqi-150) * 0.1)) };
   }
 
-  const CIRC = 2 * Math.PI * 44;
-  function updateDonut(pct, label) {
-    const arc = document.getElementById('donut-arc');
+  const CIRC = 2 * Math.PI * 52;
+  function updateDonut(pct, label, factors) {
     const txt = document.getElementById('donut-pct');
     const lbl = document.getElementById('donut-label');
-    if (!arc || !txt) return;
-    const filled = (pct / 100) * CIRC;
-    arc.setAttribute('stroke-dasharray', `${filled.toFixed(1)} ${(CIRC - filled).toFixed(1)}`);
+    if (!txt) return;
     txt.textContent = pct + '%';
     if (lbl && label) lbl.textContent = label;
+
+    const filled = (pct / 100) * CIRC;
+    const glow = document.getElementById('donut-glow');
+    if (glow) glow.setAttribute('stroke-dasharray', `${filled.toFixed(1)} ${(CIRC - filled).toFixed(1)}`);
+
+    if (factors) {
+      // ── 多色分段模式 ──
+      const arc = document.getElementById('donut-arc');
+      if (arc) arc.setAttribute('stroke-dasharray', `0 ${CIRC}`); // 隱藏單色 arc
+
+      const KEYS = ['humidity', 'pm25', 'temp', 'weather'];
+      const totalW = KEYS.reduce((s, k) => s + (factors[k] || 0), 0);
+      const nonZero = KEYS.filter(k => (factors[k] || 0) > 0).length;
+      const GAP = 5;
+      const usable = Math.max(0, filled - GAP * nonZero);
+
+      let offset = 0;
+      KEYS.forEach(key => {
+        const seg = document.getElementById(`donut-seg-${key}`);
+        if (!seg) return;
+        const w = factors[key] || 0;
+        const len = totalW > 0 ? (w / totalW) * usable : 0;
+        if (len < 2) { seg.setAttribute('stroke-dasharray', `0 ${CIRC}`); return; }
+        seg.setAttribute('stroke-dasharray', `${len.toFixed(1)} ${(CIRC - len).toFixed(1)}`);
+        seg.setAttribute('stroke-dashoffset', (-offset).toFixed(1));
+        // 重播動畫
+        seg.style.animation = 'none';
+        seg.getBoundingClientRect();
+        seg.style.animation = '';
+        offset += len + GAP;
+      });
+    } else {
+      // ── 單色 fallback ──
+      const arc = document.getElementById('donut-arc');
+      if (!arc) return;
+      const da = `${filled.toFixed(1)} ${(CIRC - filled).toFixed(1)}`;
+      arc.setAttribute('stroke-dasharray', da);
+      const colors = pct >= 70 ? { s: '#EF4444', e: '#FB923C' }
+                   : pct >= 40 ? { s: '#FB923C', e: '#FBBF24' }
+                   :             { s: '#4ADE80', e: '#22C55E' };
+      const gs = document.getElementById('donut-grad-start');
+      const ge = document.getElementById('donut-grad-end');
+      if (gs) gs.setAttribute('stop-color', colors.s);
+      if (ge) ge.setAttribute('stop-color', colors.e);
+      arc.style.animation = 'none';
+      arc.getBoundingClientRect();
+      arc.style.animation = '';
+      // 隱藏分段
+      ['humidity','pm25','temp','weather'].forEach(k => {
+        const s = document.getElementById(`donut-seg-${k}`);
+        if (s) s.setAttribute('stroke-dasharray', `0 ${CIRC}`);
+      });
+    }
+
+    const taglineEl = document.getElementById('home-tagline');
+    if (taglineEl && typeof getTagline === 'function') taglineEl.textContent = getTagline(pct);
   }
 
   function todayStr() {
@@ -8352,7 +9063,17 @@
 
       // 副標題
       const sub = document.getElementById('risk-subtitle');
-      if (sub) sub.textContent = `${todayStr()} • ${city} 即時資料`;
+      if (sub) sub.textContent = `${city} · 即時資料更新中`;
+
+      // 首頁天氣 chip
+      const homeChip  = document.getElementById('home-weather-chip');
+      const homeEmoji = document.getElementById('home-weather-emoji');
+      const homeTemp  = document.getElementById('home-weather-temp');
+      if (homeChip && homeEmoji && homeTemp) {
+        homeEmoji.textContent = weatherEmoji(wx.current.weather_code);
+        homeTemp.textContent  = `${Math.round(wx.current.temperature_2m)}°C`;
+        homeChip.style.display = 'inline-flex';
+      }
 
       // Badge
       const badge = document.getElementById('risk-badge');
@@ -8372,14 +9093,28 @@
       const causeWeather = document.getElementById('cause-weather');
       if (causeHumid) {
         causeHumid.textContent = `${humid}%`;
-        causeHumid.style.color = humid >= 75 ? '#EA580C' : '';
+        causeHumid.style.color = humid >= 75 ? 'var(--color-danger)' : '';
       }
       if (causePm25) {
         causePm25.textContent = `${pm25} μg`;
-        causePm25.style.color = pm25 > 55 ? '#DC2626' : pm25 > 35 ? '#EA580C' : '';
+        causePm25.style.color = pm25 > 55 ? 'var(--color-danger)' : pm25 > 35 ? '#EA580C' : '';
       }
       if (causeTemp)    causeTemp.textContent     = `${temp}°C`;
       if (causeWeather) causeWeather.textContent  = wdesc;
+
+      // 進度條寬度（各誘因嚴重程度 0–100%）
+      const wcode2 = wx.current.weather_code || 0;
+      const barH = Math.min(100, Math.round((humid / 100) * 100));
+      const barP = Math.min(100, Math.round((pm25 / 75) * 100));
+      const barT = Math.min(100, Math.round((Math.abs(temp - 21) / 14) * 100));
+      const barW = [51,53,55,61,63,65,71,73,75,80,81,82,95,96,99].includes(wcode2) ? 75
+                 : [2,3,45,48].includes(wcode2) ? 40 : 15;
+      requestAnimationFrame(() => {
+        const bh = document.getElementById('bar-humidity'); if (bh) bh.style.width = barH + '%';
+        const bp = document.getElementById('bar-pm25');     if (bp) bp.style.width = barP + '%';
+        const bt = document.getElementById('bar-temp');     if (bt) bt.style.width = barT + '%';
+        const bw = document.getElementById('bar-weather');  if (bw) bw.style.width = barW + '%';
+      });
 
       // Stat Chips
       const chipHumid = document.getElementById('chip-humidity');
@@ -8402,6 +9137,7 @@
         } else {
           text = `今日 ${city} 空氣品質良好，PM2.5 僅 <strong>${pm25} μg/m³</strong>，${temp}°C ${wdesc}。適合輕度戶外活動，過敏族群仍建議留意花粉濃度。`;
         }
+        insight.classList.remove('insight-card__text--loading');
         insight.innerHTML = text;
       }
 
@@ -8478,21 +9214,40 @@
     return `${month}月${day}日　${weekday}`;
   }
 
+  // 依時段 + 風險產生招呼語
+  function getTagline(riskPct) {
+    const h = new Date().getHours();
+    if (riskPct !== null && riskPct !== undefined) {
+      if (riskPct >= 70) return '今日過敏指數偏高，外出記得戴口罩 😷';
+      if (riskPct >= 40) return '今日有些過敏風險，注意身體狀況 🌿';
+    }
+    if (h < 6)  return '深夜了，注意休息，睡眠有助降低過敏反應 🌙';
+    if (h < 9)  return '早晨花粉較多，出門前確認今日風險 🌅';
+    if (h < 12) return '記得補充水分，保持良好身體狀態 ☕';
+    if (h < 14) return '午後溫度上升，注意過敏原濃度變化 🌤';
+    if (h < 18) return '下午好，記得追蹤今日症狀 📋';
+    if (h < 21) return '傍晚時段，記得記錄今天的感受 ✏️';
+    return '睡前記錄今天狀況，讓 AI 學習你的規律 🌛';
+  }
+
   // 渲染問候列
-  function renderGreeting(name) {
-    const el = document.getElementById('home-greeting');
+  function renderGreeting(name, riskPct) {
+    const el      = document.getElementById('home-greeting');
+    const tagline = document.getElementById('home-tagline');
+    const date    = document.getElementById('home-date');
     if (!el) return;
     const displayName = name || '朋友';
-    el.innerHTML =
-      `<span class="greeting-name">${getGreeting()}，${displayName} 👋</span>` +
-      `<span class="greeting-date">${formatDate()}</span>`;
+    el.textContent = `${getGreeting()}，${displayName} 👋`;
+    if (tagline) tagline.textContent = getTagline(riskPct);
+    if (date) date.textContent = formatDate();
   }
 
   // 初始渲染（先用預設名字）
   renderGreeting(null);
 
-  // 對外暴露：Supabase 登入後可呼叫此函式更新名字
+  // 對外暴露
   window.updateGreetingName = renderGreeting;
+  window.getTagline = getTagline;
 })();
 </script>
 
@@ -8575,6 +9330,7 @@ window.handleRegisterRedirect = function() {
   /* ── 套用真實使用者資訊到 UI ── */
   function applyUserToUI(user) {
     if (!user) return;
+    window._currentUser = user;
     const name  = user.user_metadata?.full_name
                || user.user_metadata?.nickname
                || user.email?.split('@')[0]
@@ -8953,6 +9709,56 @@ window.handleRegisterRedirect = function() {
 
 } catch(e) { console.warn('[AllerSense Supabase] 初始化失敗，使用 prototype 模式', e); }
 })();
+</script>
+
+<script>
+const METRIC_DATA = {
+  humidity: {
+    emoji: '💧',
+    title: '相對濕度是什麼？',
+    body: '空氣中水分的多寡。就像你在梅雨季節感覺悶熱黏膩，那就是濕度高的感覺。\n\n濕度超過 75% 時，塵蟎和黴菌會大量繁殖——這是台灣最常見的過敏原。保持室內 40–60% 是最理想的範圍。',
+    tag: '✅ 建議範圍：40–60%'
+  },
+  pm25: {
+    emoji: '🌫️',
+    title: 'PM2.5 是什麼？',
+    body: '直徑小於 2.5 微米的懸浮微粒，比頭髮還細 30 倍，眼睛完全看不見。\n\n它能直接飄進肺部，對呼吸道造成刺激，讓過敏者更容易打噴嚏、咳嗽、鼻塞。戶外活動前記得確認今日數值！',
+    tag: '✅ 建議範圍：≤35 μg/m³'
+  },
+  temp: {
+    emoji: '🌡️',
+    title: '溫度為何影響過敏？',
+    body: '早晚溫差大時，身體需要快速調節體溫，免疫系統容易過度反應，就像感冒前那種「虛弱期」的感覺。\n\n溫差超過 7°C，鼻過敏和氣喘的風險會明顯上升。出門多帶一件薄外套，能有效降低誘發機率。',
+    tag: '⚠️ 溫差超過 7°C 需注意'
+  },
+  weather: {
+    emoji: '⛅',
+    title: '天氣怎麼影響過敏？',
+    body: '下雨後空氣中的黴菌孢子濃度反而會升高；乾燥晴天則讓灰塵和花粉更容易飄散。\n\nAI 會根據你設定的過敏原類型，結合當天天氣給出最適合你的建議，而不是一套通用說法。',
+    tag: '🤖 AI 會根據你的體質分析'
+  }
+};
+
+function showMetricExplain(key) {
+  const d = METRIC_DATA[key];
+  if (!d) return;
+  document.getElementById('meEmoji').textContent = d.emoji;
+  document.getElementById('meTitle').textContent = d.title;
+  document.getElementById('meBody').innerHTML = d.body.replace(/\n\n/g, '<br><br>');
+  document.getElementById('meTag').textContent = d.tag;
+  const overlay = document.getElementById('metricExplainOverlay');
+  overlay.style.display = 'flex';
+  requestAnimationFrame(() => overlay.classList.add('open'));
+}
+
+function closeMetricExplain(e) {
+  if (e && e.target !== document.getElementById('metricExplainOverlay') && !e.target.closest('.metric-explain-card__close')) return;
+  const overlay = document.getElementById('metricExplainOverlay');
+  overlay.classList.remove('open');
+  setTimeout(() => { overlay.style.display = 'none'; }, 200);
+}
+window.showMetricExplain = showMetricExplain;
+window.closeMetricExplain = closeMetricExplain;
 </script>
 
 </body>
